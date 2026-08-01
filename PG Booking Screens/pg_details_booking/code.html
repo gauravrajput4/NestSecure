@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NestSecure PG - Property Details</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary-fixed": "#6ffbbe",
+                      "secondary-container": "#6cf8bb",
+                      "on-surface-variant": "#464555",
+                      "primary-fixed": "#e2dfff",
+                      "tertiary-fixed": "#ffdad7",
+                      "surface-container-low": "#f0f3ff",
+                      "on-secondary-container": "#00714d",
+                      "background": "#f9f9ff",
+                      "inverse-primary": "#c3c0ff",
+                      "on-secondary-fixed-variant": "#005236",
+                      "on-background": "#151c27",
+                      "error-container": "#ffdad6",
+                      "on-primary": "#ffffff",
+                      "outline": "#777587",
+                      "surface-container-highest": "#dce2f3",
+                      "primary-container": "#4f46e5",
+                      "secondary": "#006c49",
+                      "on-surface": "#151c27",
+                      "surface": "#f9f9ff",
+                      "surface-variant": "#dce2f3",
+                      "on-tertiary-container": "#ffd0cc",
+                      "on-error": "#ffffff",
+                      "surface-bright": "#f9f9ff",
+                      "surface-container": "#e7eefe",
+                      "outline-variant": "#c7c4d8",
+                      "on-tertiary-fixed-variant": "#930013",
+                      "inverse-on-surface": "#ebf1ff",
+                      "primary": "#3525cd",
+                      "primary-fixed-dim": "#c3c0ff",
+                      "surface-dim": "#d3daea",
+                      "tertiary": "#960014",
+                      "on-tertiary-fixed": "#410004",
+                      "inverse-surface": "#2a313d",
+                      "on-tertiary": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "on-primary-container": "#dad7ff",
+                      "on-secondary": "#ffffff",
+                      "on-primary-fixed": "#0f0069",
+                      "error": "#ba1a1a",
+                      "surface-container-lowest": "#ffffff",
+                      "tertiary-fixed-dim": "#ffb3ad",
+                      "secondary-fixed-dim": "#4edea3",
+                      "surface-tint": "#4d44e3",
+                      "on-secondary-fixed": "#002113",
+                      "tertiary-container": "#bc1d25",
+                      "on-primary-fixed-variant": "#3323cc",
+                      "surface-container-high": "#e2e8f8"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xs": "0.5rem",
+                      "base": "4px",
+                      "lg": "2rem",
+                      "sm": "1rem",
+                      "margin-desktop": "5rem",
+                      "gutter": "1rem",
+                      "margin-mobile": "1rem",
+                      "max-width": "1280px",
+                      "xl": "3rem",
+                      "md": "1.5rem"
+              },
+              "fontFamily": {
+                      "title-md": [
+                              "Inter"
+                      ],
+                      "label-sm": [
+                              "Inter"
+                      ],
+                      "headline-lg-mobile": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "title-md": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "500"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background text-on-background antialiased selection:bg-primary-container selection:text-on-primary-container min-h-screen flex flex-col">
+<!-- Top Navigation Bar (Shared Component) -->
+<nav class="bg-surface dark:bg-surface-dim shadow-sm sticky docked full-width top-0 z-50">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-max-width mx-auto">
+<!-- Brand Logo -->
+<div class="font-headline-lg text-headline-lg text-primary dark:text-inverse-primary tracking-tight">
+                NestSecure PG
+            </div>
+<!-- Navigation Links (Desktop) -->
+<ul class="hidden md:flex gap-gutter items-center">
+<li><a class="text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 font-title-md text-title-md" href="#">Find PG</a></li>
+<li><a class="text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 font-title-md text-title-md" href="#">My Bookings</a></li>
+<li><a class="text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 font-title-md text-title-md" href="#">List Property</a></li>
+<li><a class="text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 font-title-md text-title-md" href="#">Dashboard</a></li>
+</ul>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-sm">
+<!-- Search Icon (Mobile) -->
+<button class="md:hidden text-on-surface-variant hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+<!-- Trailing Icon Actions -->
+<button class="hidden md:flex text-on-surface-variant hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="hidden md:flex text-on-surface-variant hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+<!-- Primary Action -->
+<button class="bg-primary text-on-primary font-label-md text-label-md px-sm py-xs rounded-full hover:bg-primary-container hover:text-on-primary-container transition-colors duration-200 shadow-sm active:scale-95">
+                    Sign In
+                </button>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-lg grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Left Column: Details & Gallery -->
+<div class="md:col-span-8 flex flex-col gap-lg">
+<!-- Breadcrumbs & Header -->
+<div>
+<nav aria-label="Breadcrumb" class="flex text-on-surface-variant font-label-sm text-label-sm mb-xs">
+<ol class="inline-flex items-center space-x-1 md:space-x-2">
+<li class="inline-flex items-center">
+<a class="inline-flex items-center hover:text-primary transition-colors" href="#">
+                        Home
+                      </a>
+</li>
+<li>
+<div class="flex items-center">
+<span class="material-symbols-outlined text-[16px] mx-1">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Find PG</a>
+</div>
+</li>
+<li aria-current="page">
+<div class="flex items-center">
+<span class="material-symbols-outlined text-[16px] mx-1">chevron_right</span>
+<span class="text-primary font-medium">Sunrise Premium Girls PG</span>
+</div>
+</li>
+</ol>
+</nav>
+<div class="flex flex-col md:flex-row md:justify-between md:items-start gap-sm">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-xs hidden md:block">Sunrise Premium Girls PG</h1>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-xs md:hidden">Sunrise Premium Girls PG</h1>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+                            Koramangala Block 5, Bangalore
+                        </p>
+</div>
+<div class="flex items-center gap-xs">
+<span class="bg-[#e8def8] text-[#4a4458] font-label-sm text-label-sm px-xs py-1 rounded-full flex items-center gap-1 border border-[#e8def8]">
+<span class="material-symbols-outlined text-[14px]">female</span> Girls Only
+                        </span>
+<span class="bg-surface-container-high text-on-surface font-label-sm text-label-sm px-xs py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-amber-500" style="font-variation-settings: 'FILL' 1;">star</span> 4.8 (124 Reviews)
+                        </span>
+</div>
+</div>
+</div>
+<!-- Bento Gallery -->
+<div class="grid grid-cols-4 grid-rows-2 gap-base h-[400px] md:h-[500px] rounded-2xl overflow-hidden shadow-[0_2px_4px_rgba(79,70,229,0.05)]">
+<div class="col-span-4 md:col-span-2 row-span-2 relative group cursor-pointer">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="A bright, modern bedroom in a high-end paying guest accommodation. The room features a comfortable twin bed with crisp white linens, a sleek minimalist study desk with a modern chair, and a large window letting in soft, natural daylight. The walls are a calming off-white, and the floor is a warm oak wood. The overall aesthetic is clean, secure, and professional, reflecting a premium housing solution." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHURdPWvoIgVd0fyHaoIssjuMCn5rHkzkhBb1flGv98SuhtlhtW8Yn50KwPwxOfs3ZTWBkm-dPeFhobXpSk5oJxsJOBnpOpKznmZI0lTvyJdw6Xg64oUE2Gsvyo6ySpBAeTaV0HLKv_p3QZzWCSzV5B7WpwnpTIm76BzjlUOCGmvuKrRNvuLVPmfu7Ni442KrsILgvSDYu01EXrugs2_bU1AcBYy8d8Ws-XK5xm6c8svxMUtGOvzj1"/>
+</div>
+<div class="hidden md:block col-span-1 row-span-1 relative group cursor-pointer">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="A modern, spotless communal kitchen in a premium PG. It features sleek white cabinets, stainless steel appliances including a large refrigerator and microwave, and a clean quartz countertop. Soft under-cabinet lighting creates a welcoming, hygienic atmosphere suitable for long-term residents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2ZWMJcBnCLke4JHQAWzH3QGjBYyRTeMLQQVKYdhjU5c9H-J5wR3sCcptWCrAjdn-YQbV8o7HI7POUUMQqxzyg7M9dtQ1QUxpUJ6HVAnZl-ukj7sdMop6a2-rVs6Sx0H9a6JM-wPgJyDIfTwsFaR5tOdkDz_vCWm-IUoWEwrHSWEsJWsfxhonyWuAwWV_gvnclaRDgqvbNvP9qufw9vLnpbOFInhz6Ub8PeJ4tcRMXifyRTRgDflTg"/>
+</div>
+<div class="hidden md:block col-span-1 row-span-1 relative group cursor-pointer">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="A bright and airy lounge area in a modern student housing facility. The space includes comfortable contemporary sofas in neutral tones, a large flat-screen TV mounted on the wall, and minimalist decor. Sunlight streams through large windows, creating an inviting, secure, and relaxing environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxqWaVYnT8_p3nZjN2cnvSEdSJVKngawgI7l89AGnuzEejBdABEw14eoXuyMPbzgdabIWNdiHekj0DxLnWei-9qmBwIRG80MGImHWpMerlaeYdvzmhLlUK27WSCwwx0ahRrYpuaHfX0Wuty1Z72d81S01wyXUjDHABQvbo3U_YyrrZ_ElhRjtT5-APpceQMPGk8mmYdIgFX5Os4VNtgYogJUl34l3PTmsBUys6JvZA7dxqRcYhi6Dm"/>
+</div>
+<div class="hidden md:block col-span-2 row-span-1 relative group cursor-pointer">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="A well-lit, clean, and modern bathroom in a premium paying guest facility. It features a glass-enclosed shower, modern fixtures, a well-lit vanity mirror, and pristine white tiles. The space conveys a sense of high hygiene standards and premium comfort." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYH8p5JvE8oD6f8tzsBod9xceG4Cp5_jGsK-eruMBsG8wS7FO1hcqe2eOsgM5u_314ak6UZliE0ndyEwt5PdXOvhZ8J5z3naoa3GHPZOSs3TXwx7gLLowvnmb0wjwVj3JeJutgXon6n27k3OFs6qzRkViKjCaKmKiqRutuI2fQTY064eAIzSZEullr4311Gn7qGFWon9RLFZhBeMi866w4vysp6X6-WshLJSiV6hsLpyzR9tNOnCzd"/>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<span class="text-white font-title-md text-title-md">View All Photos</span>
+</div>
+</div>
+</div>
+<!-- Facilities Section -->
+<div class="bg-surface-container-lowest p-md rounded-2xl shadow-[0_2px_4px_rgba(79,70,229,0.05)] border border-outline-variant/30">
+<h2 class="font-title-md text-title-md text-on-surface mb-md">Premium Amenities</h2>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-sm">
+<div class="flex items-center gap-sm p-sm bg-surface-container-low rounded-lg">
+<span class="material-symbols-outlined text-primary" data-icon="wifi">wifi</span>
+<span class="font-label-md text-label-md text-on-surface">High-Speed Wi-Fi</span>
+</div>
+<div class="flex items-center gap-sm p-sm bg-surface-container-low rounded-lg">
+<span class="material-symbols-outlined text-primary" data-icon="ac_unit">ac_unit</span>
+<span class="font-label-md text-label-md text-on-surface">Air Conditioning</span>
+</div>
+<div class="flex items-center gap-sm p-sm bg-surface-container-low rounded-lg">
+<span class="material-symbols-outlined text-primary" data-icon="restaurant">restaurant</span>
+<span class="font-label-md text-label-md text-on-surface">Nutritious Meals</span>
+</div>
+<div class="flex items-center gap-sm p-sm bg-surface-container-low rounded-lg">
+<span class="material-symbols-outlined text-primary" data-icon="local_laundry_service">local_laundry_service</span>
+<span class="font-label-md text-label-md text-on-surface">Laundry Service</span>
+</div>
+<div class="flex items-center gap-sm p-sm bg-surface-container-low rounded-lg">
+<span class="material-symbols-outlined text-primary" data-icon="security">security</span>
+<span class="font-label-md text-label-md text-on-surface">24/7 Security</span>
+</div>
+<div class="flex items-center gap-sm p-sm bg-surface-container-low rounded-lg">
+<span class="material-symbols-outlined text-primary" data-icon="cleaning_services">cleaning_services</span>
+<span class="font-label-md text-label-md text-on-surface">Daily Housekeeping</span>
+</div>
+<div class="flex items-center gap-sm p-sm bg-surface-container-low rounded-lg">
+<span class="material-symbols-outlined text-primary" data-icon="power">power</span>
+<span class="font-label-md text-label-md text-on-surface">Power Backup</span>
+</div>
+<div class="flex items-center gap-sm p-sm bg-surface-container-low rounded-lg">
+<span class="material-symbols-outlined text-primary" data-icon="fitness_center">fitness_center</span>
+<span class="font-label-md text-label-md text-on-surface">Mini Gym</span>
+</div>
+</div>
+</div>
+<!-- About Section -->
+<div class="bg-surface-container-lowest p-md rounded-2xl shadow-[0_2px_4px_rgba(79,70,229,0.05)] border border-outline-variant/30">
+<h2 class="font-title-md text-title-md text-on-surface mb-sm">About This Property</h2>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                    Sunrise Premium Girls PG offers a secure, comfortable, and modern living environment designed specifically for female students and professionals. Located in the heart of Koramangala, it provides easy access to major tech parks, universities, and vibrant cafes. Our facility is equipped with biometric security, CCTV surveillance, and a dedicated warden to ensure utmost safety. Experience hassle-free living with our all-inclusive premium amenities.
+                </p>
+</div>
+<!-- Reviews Section -->
+<div class="bg-surface-container-lowest p-md rounded-2xl shadow-[0_2px_4px_rgba(79,70,229,0.05)] border border-outline-variant/30">
+<div class="flex justify-between items-center mb-md">
+<h2 class="font-title-md text-title-md text-on-surface">Verified Reviews</h2>
+<button class="text-primary font-label-md text-label-md hover:underline">See All</button>
+</div>
+<div class="flex flex-col gap-sm">
+<!-- Review Item 1 -->
+<div class="p-sm border border-surface-variant rounded-lg">
+<div class="flex items-center gap-xs mb-xs">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-label-md text-label-md">S</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Sneha R.</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Stayed for 6 months</p>
+</div>
+<div class="ml-auto flex text-amber-500">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star_half</span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">"Very secure and clean. The food quality is surprisingly good compared to other places I've stayed. Highly recommend for working professionals."</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Booking Card (Sticky) -->
+<div class="md:col-span-4 relative">
+<div class="sticky top-[100px] bg-surface-container-lowest p-md rounded-2xl shadow-[0_10px_15px_rgba(79,70,229,0.1)] border border-outline-variant/50 flex flex-col gap-sm">
+<!-- Pricing Header -->
+<div class="flex justify-between items-end border-b border-surface-variant pb-sm">
+<div>
+<span class="font-headline-lg text-headline-lg text-on-surface">₹12,500</span>
+<span class="font-body-md text-body-md text-on-surface-variant">/month</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="bg-green-100 text-green-800 font-label-sm text-label-sm px-2 py-1 rounded-full mb-1 flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Available
+                        </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Rooms Available: 3/10</span>
+</div>
+</div>
+<!-- Room Selection -->
+<div class="flex flex-col gap-xs mt-xs">
+<label class="font-label-md text-label-md text-on-surface">Select Occupancy</label>
+<div class="grid grid-cols-2 gap-xs">
+<label class="relative cursor-pointer">
+<input checked="" class="peer sr-only" name="occupancy" type="radio"/>
+<div class="p-xs text-center border rounded-lg peer-checked:border-primary peer-checked:bg-primary-container/10 border-outline-variant hover:bg-surface-container-low transition-colors">
+<p class="font-label-md text-label-md text-on-surface">Double Sharing</p>
+<p class="font-label-sm text-label-sm text-primary">₹12,500</p>
+</div>
+</label>
+<label class="relative cursor-pointer">
+<input class="peer sr-only" name="occupancy" type="radio"/>
+<div class="p-xs text-center border rounded-lg peer-checked:border-primary peer-checked:bg-primary-container/10 border-outline-variant hover:bg-surface-container-low transition-colors opacity-50">
+<p class="font-label-md text-label-md text-on-surface">Single Room</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Sold Out</p>
+</div>
+</label>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex flex-col gap-xs mt-sm">
+<button class="w-full bg-primary text-on-primary font-title-md text-title-md py-sm rounded-lg hover:bg-[#4338CA] transition-colors duration-200 shadow-sm active:scale-95 flex justify-center items-center gap-2">
+<span class="material-symbols-outlined" data-icon="lock">lock</span>
+                        Book Now
+                    </button>
+<button class="w-full bg-surface-container-lowest text-primary font-title-md text-title-md py-sm rounded-lg border border-primary hover:bg-surface-container-low transition-colors duration-200 shadow-sm active:scale-95 flex justify-center items-center gap-2">
+<span class="material-symbols-outlined" data-icon="directions">directions</span>
+                        Get Directions
+                    </button>
+</div>
+<!-- Policy Summary -->
+<div class="mt-xs pt-xs border-t border-surface-variant text-center">
+<p class="font-label-sm text-label-sm text-on-surface-variant flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[14px]">info</span>
+                        Free cancellation up to 48 hours before move-in.
+                    </p>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer (Shared Component) -->
+<footer class="bg-inverse-surface dark:bg-surface-container-lowest w-full mt-auto">
+<div class="w-full py-lg px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-2 gap-md max-w-max-width mx-auto">
+<!-- Brand & Copyright -->
+<div class="flex flex-col gap-sm">
+<div class="font-headline-lg text-headline-lg text-surface dark:text-primary">
+                    NestSecure PG
+                </div>
+<p class="font-body-md text-body-md text-surface-variant dark:text-on-surface-variant">
+                    © 2024 NestSecure Housing Solutions. All rights reserved.
+                </p>
+</div>
+<!-- Footer Links -->
+<div class="flex flex-wrap gap-md md:justify-end items-center">
+<a class="font-body-md text-body-md text-surface-variant dark:text-on-surface-variant hover:text-secondary-fixed-dim transition-colors" href="#">About Us</a>
+<a class="font-body-md text-body-md text-surface-variant dark:text-on-surface-variant hover:text-secondary-fixed-dim transition-colors" href="#">Contact Support</a>
+<a class="font-body-md text-body-md text-surface-variant dark:text-on-surface-variant hover:text-secondary-fixed-dim transition-colors" href="#">Privacy Policy</a>
+<a class="font-body-md text-body-md text-surface-variant dark:text-on-surface-variant hover:text-secondary-fixed-dim transition-colors" href="#">Terms of Service</a>
+<a class="font-body-md text-body-md text-surface-variant dark:text-on-surface-variant hover:text-secondary-fixed-dim transition-colors" href="#">Safety Guidelines</a>
+</div>
+</div>
+</footer>
+</body></html>

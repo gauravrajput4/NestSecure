@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Owner Dashboard - NestSecure PG</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#6ffbbe",
+                        "secondary-container": "#6cf8bb",
+                        "on-surface-variant": "#464555",
+                        "primary-fixed": "#e2dfff",
+                        "tertiary-fixed": "#ffdad7",
+                        "surface-container-low": "#f0f3ff",
+                        "on-secondary-container": "#00714d",
+                        "background": "#f9f9ff",
+                        "inverse-primary": "#c3c0ff",
+                        "on-secondary-fixed-variant": "#005236",
+                        "on-background": "#151c27",
+                        "error-container": "#ffdad6",
+                        "on-primary": "#ffffff",
+                        "outline": "#777587",
+                        "surface-container-highest": "#dce2f3",
+                        "primary-container": "#4f46e5",
+                        "secondary": "#006c49",
+                        "on-surface": "#151c27",
+                        "surface": "#f9f9ff",
+                        "surface-variant": "#dce2f3",
+                        "on-tertiary-container": "#ffd0cc",
+                        "on-error": "#ffffff",
+                        "surface-bright": "#f9f9ff",
+                        "surface-container": "#e7eefe",
+                        "outline-variant": "#c7c4d8",
+                        "on-tertiary-fixed-variant": "#930013",
+                        "inverse-on-surface": "#ebf1ff",
+                        "primary": "#3525cd",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "surface-dim": "#d3daea",
+                        "tertiary": "#960014",
+                        "on-tertiary-fixed": "#410004",
+                        "inverse-surface": "#2a313d",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-primary-container": "#dad7ff",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed": "#0f0069",
+                        "error": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#ffb3ad",
+                        "secondary-fixed-dim": "#4edea3",
+                        "surface-tint": "#4d44e3",
+                        "on-secondary-fixed": "#002113",
+                        "tertiary-container": "#bc1d25",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "surface-container-high": "#e2e8f8"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "0.5rem",
+                        "base": "4px",
+                        "lg": "2rem",
+                        "sm": "1rem",
+                        "margin-desktop": "5rem",
+                        "gutter": "1rem",
+                        "margin-mobile": "1rem",
+                        "max-width": "1280px",
+                        "xl": "3rem",
+                        "md": "1.5rem"
+                    },
+                    "fontFamily": {
+                        "title-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "title-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "500" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-filled {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav class="bg-surface shadow-sm docked full-width top-0 sticky z-50">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-max-width mx-auto">
+<div class="flex items-center gap-lg">
+<span class="font-headline-lg text-headline-lg text-primary tracking-tight md:block hidden">NestSecure PG</span>
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight md:hidden block">NestSecure PG</span>
+<div class="hidden md:flex items-center gap-md">
+<a class="text-on-surface-variant font-title-md text-title-md hover:text-primary transition-colors duration-200" href="#">Find PG</a>
+<a class="text-on-surface-variant font-title-md text-title-md hover:text-primary transition-colors duration-200" href="#">My Bookings</a>
+<a class="text-on-surface-variant font-title-md text-title-md hover:text-primary transition-colors duration-200" href="#">List Property</a>
+<a class="text-primary border-b-2 border-primary font-bold pb-1 font-title-md text-title-md hover:text-primary transition-colors duration-200" href="#">Dashboard</a>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="relative hidden md:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 transform -translate-y-1/2 text-outline">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container rounded-full border border-outline-variant focus:border-primary-container focus:ring-2 focus:ring-primary-container focus:ring-opacity-50 transition-all w-64 text-on-surface font-body-md text-body-md" placeholder="Search..." type="text"/>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors p-2 rounded-full hover:bg-surface-container-high">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors p-2 rounded-full hover:bg-surface-container-high">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+<button class="bg-primary-container text-on-primary font-title-md text-title-md px-4 py-2 rounded-lg hover:bg-primary transition-colors duration-200 shadow-[0_2px_4px_rgba(79,70,229,0.05)]">
+                    Sign In
+                </button>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-grow w-full max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-xl flex flex-col gap-xl">
+<!-- Header & Quick Actions -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-md">
+<div>
+<h1 class="font-display-lg text-display-lg text-on-background md:block hidden">Welcome back, Owner</h1>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-background md:hidden block">Welcome back, Owner</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-xs">Here's what's happening with your properties today.</p>
+</div>
+<div class="flex gap-sm w-full md:w-auto">
+<button class="flex-1 md:flex-none flex items-center justify-center gap-xs bg-surface border border-primary-container text-primary-container font-title-md text-title-md px-4 py-2 rounded-lg hover:bg-surface-container-high transition-colors duration-200 shadow-[0_2px_4px_rgba(79,70,229,0.05)]">
+<span class="material-symbols-outlined">reviews</span>
+                    View Reviews
+                </button>
+<button class="flex-1 md:flex-none flex items-center justify-center gap-xs bg-primary-container text-on-primary font-title-md text-title-md px-4 py-2 rounded-lg hover:bg-primary transition-colors duration-200 shadow-[0_2px_4px_rgba(79,70,229,0.05)]">
+<span class="material-symbols-outlined">add_business</span>
+                    Add New PG
+                </button>
+</div>
+</div>
+<!-- Bento Grid Stats -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Occupancy Rate (Large Span) -->
+<div class="col-span-1 md:col-span-6 bg-surface-container-lowest rounded-xl p-lg shadow-[0_2px_4px_rgba(79,70,229,0.05)] flex flex-col justify-between border border-outline-variant">
+<div class="flex justify-between items-start">
+<div>
+<h2 class="font-title-md text-title-md text-on-surface">Occupancy Rate</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Across all properties</p>
+</div>
+<span class="material-symbols-outlined text-primary-container text-3xl icon-filled">pie_chart</span>
+</div>
+<div class="mt-lg">
+<div class="flex justify-between items-end mb-xs">
+<span class="font-display-lg text-display-lg text-primary-container md:block hidden">85%</span>
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-primary-container md:hidden block">85%</span>
+<span class="font-label-md text-label-md text-on-surface-variant mb-2">340 / 400 Rooms</span>
+</div>
+<div class="w-full bg-surface-variant rounded-full h-3 overflow-hidden">
+<div class="bg-primary-container h-3 rounded-full" style="width: 85%"></div>
+</div>
+</div>
+</div>
+<!-- Revenue (Medium Span) -->
+<div class="col-span-1 md:col-span-3 bg-primary-container text-on-primary rounded-xl p-lg shadow-[0_10px_15px_rgba(79,70,229,0.1)] flex flex-col justify-between relative overflow-hidden">
+<div class="absolute -right-4 -top-4 opacity-20">
+<span class="material-symbols-outlined text-8xl">payments</span>
+</div>
+<div>
+<h2 class="font-title-md text-title-md text-on-primary-container">Total Revenue</h2>
+<p class="font-label-sm text-label-sm text-on-primary-container uppercase mt-1">This Month</p>
+</div>
+<div class="mt-lg z-10">
+<span class="font-headline-lg text-headline-lg text-on-primary md:block hidden">₹4.2L</span>
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-on-primary md:hidden block">₹4.2L</span>
+<span class="font-label-md text-label-md text-secondary-container flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-sm">arrow_upward</span> +12% from last month
+                    </span>
+</div>
+</div>
+<!-- Small Stats Stack -->
+<div class="col-span-1 md:col-span-3 flex flex-col gap-gutter">
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-[0_2px_4px_rgba(79,70,229,0.05)] flex items-center justify-between border border-outline-variant flex-1">
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant">Total PGs</p>
+<span class="font-headline-lg text-headline-lg text-on-surface md:block hidden">4</span>
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface md:hidden block">4</span>
+</div>
+<div class="bg-surface-container w-12 h-12 rounded-full flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined">apartment</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-[0_2px_4px_rgba(79,70,229,0.05)] flex items-center justify-between border border-outline-variant flex-1">
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant">Total Rooms</p>
+<span class="font-headline-lg text-headline-lg text-on-surface md:block hidden">400</span>
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface md:hidden block">400</span>
+</div>
+<div class="bg-surface-container w-12 h-12 rounded-full flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined">meeting_room</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Two Column Layout for Lists -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-xl">
+<!-- Left Column: Owned PGs & Recent Bookings -->
+<div class="lg:col-span-2 flex flex-col gap-xl">
+<!-- Owned PGs List -->
+<section>
+<div class="flex justify-between items-center mb-md">
+<h2 class="font-headline-lg text-headline-lg text-on-background md:block hidden">My Properties</h2>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-background md:hidden block">My Properties</h2>
+<a class="font-title-md text-title-md text-primary-container hover:text-primary transition-colors" href="#">View All</a>
+</div>
+<div class="flex flex-col gap-md">
+<!-- PG Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-[0_2px_4px_rgba(79,70,229,0.05)] border border-outline-variant flex flex-col md:flex-row gap-md items-start md:items-center">
+<div class="w-full md:w-32 h-24 rounded-lg overflow-hidden flex-shrink-0 relative">
+<img class="w-full h-full object-cover" data-alt="Exterior view of a modern PG building in a vibrant city neighborhood, sleek glass windows reflecting daylight, lush green plants on balconies, bright and inviting atmosphere, high-quality digital photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDH1wadKeRPUuhFe-d3j7Xn-PHZ7r0RBRy6Q-_dqYYkON2vrdD4iGBzjKvS3TZnsRhgCLdqw5wneppU8fi4vFAL-LFgudnNYcNWPLMcigG-CcjKbHbAUYjMXOOLAqpaeFrdKsvK4kcdMlz0HeOWEprDC2hu6lxUW1ME7AM50WFFeGh6QdH4Rqtr0bq_nLxK3LVa9IJIRPOVV58kap7wUjICZ-PSC1xPn1EA32SAKKKGgi6PO_dT4QoL"/>
+</div>
+<div class="flex-grow">
+<div class="flex items-center gap-2 mb-1">
+<h3 class="font-title-md text-title-md text-on-surface">Sunrise Boys Hostel</h3>
+<span class="bg-surface-container-high text-primary-fixed-variant px-2 py-0.5 rounded text-xs font-semibold">Boys</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant flex items-center gap-1 mb-2">
+<span class="material-symbols-outlined text-sm">location_on</span> Koramangala, Bangalore
+                                </p>
+<div class="flex items-center gap-4">
+<div class="font-label-sm text-label-sm text-on-surface-variant">Occupancy: <span class="text-on-surface font-semibold">90/100</span></div>
+<div class="w-24 bg-surface-variant rounded-full h-2 overflow-hidden">
+<div class="bg-secondary h-2 rounded-full" style="width: 90%"></div>
+</div>
+</div>
+</div>
+<button class="w-full md:w-auto mt-2 md:mt-0 bg-surface border border-primary-container text-primary-container font-title-md text-title-md px-4 py-2 rounded-lg hover:bg-surface-container-high transition-colors duration-200">
+                                Manage Rooms
+                            </button>
+</div>
+<!-- PG Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-[0_2px_4px_rgba(79,70,229,0.05)] border border-outline-variant flex flex-col md:flex-row gap-md items-start md:items-center">
+<div class="w-full md:w-32 h-24 rounded-lg overflow-hidden flex-shrink-0 relative">
+<img class="w-full h-full object-cover" data-alt="Interior view of a modern PG common area, comfortable colorful seating, well-lit with natural light streaming through large windows, modern minimal decor, safe and secure aesthetic, professional architectural photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmxOCNsvDmjxkFhZ0xzG-o1fLoubAd2uVQlLxh7Zj0S86TzElPifPEC_Hp0Jib_cA_lqaxxZLRD8oOTjg2au2MPr7T87YI0Pp61_O-tFkOFkqgEGic1CI39YwqeCCVEpdwH7CbuxMgA0ZUktw5qtXVp_iU-OV69snOShgbLNvOqqFIAIiSP92F2wg5hlz7gKZvMcFasavq6F33IsYfsZ7g5Wy32b6aQRIiybIyJITKh4QBJsxtSGl0"/>
+</div>
+<div class="flex-grow">
+<div class="flex items-center gap-2 mb-1">
+<h3 class="font-title-md text-title-md text-on-surface">Luna Girls Residence</h3>
+<span class="bg-tertiary-container text-on-tertiary px-2 py-0.5 rounded text-xs font-semibold">Girls</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant flex items-center gap-1 mb-2">
+<span class="material-symbols-outlined text-sm">location_on</span> HSR Layout, Bangalore
+                                </p>
+<div class="flex items-center gap-4">
+<div class="font-label-sm text-label-sm text-on-surface-variant">Occupancy: <span class="text-on-surface font-semibold">145/150</span></div>
+<div class="w-24 bg-surface-variant rounded-full h-2 overflow-hidden">
+<div class="bg-secondary h-2 rounded-full" style="width: 96%"></div>
+</div>
+</div>
+</div>
+<button class="w-full md:w-auto mt-2 md:mt-0 bg-surface border border-primary-container text-primary-container font-title-md text-title-md px-4 py-2 rounded-lg hover:bg-surface-container-high transition-colors duration-200">
+                                Manage Rooms
+                            </button>
+</div>
+</div>
+</section>
+<!-- Recent Bookings -->
+<section>
+<h2 class="font-headline-lg text-headline-lg text-on-background mb-md md:block hidden">Recent Bookings</h2>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-background mb-md md:hidden block">Recent Bookings</h2>
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_2px_4px_rgba(79,70,229,0.05)] border border-outline-variant overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="p-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Guest</th>
+<th class="p-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Property</th>
+<th class="p-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Date</th>
+<th class="p-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Status</th>
+<th class="p-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider text-right">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="p-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center text-primary font-bold">R</div>
+<span class="font-body-md text-body-md text-on-surface font-medium">Rahul Sharma</span>
+</div>
+</td>
+<td class="p-4 font-body-md text-body-md text-on-surface-variant">Sunrise Boys Hostel</td>
+<td class="p-4 font-body-md text-body-md text-on-surface-variant">Oct 24, 2023</td>
+<td class="p-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800 border border-green-200">
+<span class="w-1.5 h-1.5 rounded-full bg-green-600"></span> Confirmed
+                                            </span>
+</td>
+<td class="p-4 text-right">
+<button class="text-primary-container hover:text-primary transition-colors p-1">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="p-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center text-primary font-bold">A</div>
+<span class="font-body-md text-body-md text-on-surface font-medium">Anjali Gupta</span>
+</div>
+</td>
+<td class="p-4 font-body-md text-body-md text-on-surface-variant">Luna Girls Residence</td>
+<td class="p-4 font-body-md text-body-md text-on-surface-variant">Oct 25, 2023</td>
+<td class="p-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800 border border-yellow-200">
+<span class="w-1.5 h-1.5 rounded-full bg-yellow-600"></span> Pending
+                                            </span>
+</td>
+<td class="p-4 text-right">
+<button class="text-primary-container hover:text-primary transition-colors p-1">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Alerts & Side Widgets -->
+<div class="flex flex-col gap-xl">
+<!-- Rent Reminders / Alerts Widget -->
+<div class="bg-error-container rounded-xl p-md shadow-[0_2px_4px_rgba(79,70,229,0.05)] border border-error/20">
+<div class="flex items-center gap-2 mb-md text-on-error-container">
+<span class="material-symbols-outlined icon-filled">warning</span>
+<h3 class="font-title-md text-title-md">Rent Reminders</h3>
+</div>
+<div class="flex flex-col gap-sm">
+<!-- Alert Item -->
+<div class="bg-surface-container-lowest rounded-lg p-3 flex justify-between items-center shadow-sm">
+<div>
+<p class="font-label-md text-label-md text-on-surface font-semibold">Room 102 - Sunrise</p>
+<p class="font-label-sm text-label-sm text-error mt-0.5">Overdue by 3 days</p>
+</div>
+<button class="bg-surface border border-outline-variant text-on-surface-variant px-2 py-1 rounded text-xs font-semibold hover:bg-surface-container-high transition-colors">
+                                Send Reminder
+                            </button>
+</div>
+<!-- Alert Item -->
+<div class="bg-surface-container-lowest rounded-lg p-3 flex justify-between items-center shadow-sm">
+<div>
+<p class="font-label-md text-label-md text-on-surface font-semibold">Room 305 - Luna</p>
+<p class="font-label-sm text-label-sm text-error mt-0.5">Overdue by 1 day</p>
+</div>
+<button class="bg-surface border border-outline-variant text-on-surface-variant px-2 py-1 rounded text-xs font-semibold hover:bg-surface-container-high transition-colors">
+                                Send Reminder
+                            </button>
+</div>
+</div>
+<button class="w-full mt-md text-on-error-container font-label-md text-label-md hover:underline text-center">
+                        View All Overdue (5)
+                    </button>
+</div>
+<!-- Support/Contact Widget -->
+<div class="bg-surface-container-lowest rounded-xl p-lg shadow-[0_2px_4px_rgba(79,70,229,0.05)] border border-outline-variant text-center flex flex-col items-center">
+<div class="w-16 h-16 bg-surface-container-low rounded-full flex items-center justify-center text-primary-container mb-md">
+<span class="material-symbols-outlined text-3xl">support_agent</span>
+</div>
+<h3 class="font-title-md text-title-md text-on-surface mb-2">Need Help?</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-md">Contact our owner support team for assistance with your properties.</p>
+<button class="w-full bg-surface border border-primary-container text-primary-container font-title-md text-title-md px-4 py-2 rounded-lg hover:bg-surface-container-high transition-colors duration-200">
+                        Contact Support
+                    </button>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-inverse-surface dark:bg-surface-container-lowest w-full mt-auto">
+<div class="w-full py-lg px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-2 gap-md max-w-max-width mx-auto">
+<div>
+<span class="font-headline-lg text-headline-lg text-surface dark:text-primary block mb-sm">NestSecure PG</span>
+<p class="font-body-md text-body-md text-surface-variant dark:text-on-surface-variant">© 2024 NestSecure Housing Solutions. All rights reserved.</p>
+</div>
+<div class="flex flex-wrap gap-x-md gap-y-sm md:justify-end items-center">
+<a class="font-body-md text-body-md text-surface-variant dark:text-on-surface-variant hover:text-secondary-fixed-dim transition-colors" href="#">About Us</a>
+<a class="font-body-md text-body-md text-surface-variant dark:text-on-surface-variant hover:text-secondary-fixed-dim transition-colors" href="#">Contact Support</a>
+<a class="font-body-md text-body-md text-surface-variant dark:text-on-surface-variant hover:text-secondary-fixed-dim transition-colors" href="#">Privacy Policy</a>
+<a class="font-body-md text-body-md text-surface-variant dark:text-on-surface-variant hover:text-secondary-fixed-dim transition-colors" href="#">Terms of Service</a>
+<a class="font-body-md text-body-md text-surface-variant dark:text-on-surface-variant hover:text-secondary-fixed-dim transition-colors" href="#">Safety Guidelines</a>
+</div>
+</div>
+</footer>
+</body></html>

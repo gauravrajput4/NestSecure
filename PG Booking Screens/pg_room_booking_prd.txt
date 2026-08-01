@@ -1,0 +1,15 @@
+PG Room Booking System - Requirements Document
+Project: PG Room Booking
+Tech Stack: React, Tailwind, Node.js, MongoDB, Razorpay, Leaflet.
+
+Core Features:
+1. Auth: User/Owner roles, JWT, Gender field.
+2. Listings: Display name, price, rating, location, genderType, availableRooms.
+3. Details: Images, facilities, reviews, availability, "Book Now", "Get Directions".
+4. Logic: Atomic updates for room counts, gender-based booking validation.
+5. Payments: Razorpay integration (Order -> Checkout -> Verify -> Confirm).
+6. Refunds: Cancellation policy based on time (24h: 100%, 3d: 50%, else 0%).
+7. Map: Leaflet integration showing nearby PGs (5-10km) with interactive markers.
+8. Dashboard: Owner stats (Total PGs, Rooms, Occupancy).
+9. Notifications: Email/WhatsApp for rent reminders.
+10. UI: Indigo/Green/Red color system, smooth animations, loaders, toasts.
