@@ -1,0 +1,261 @@
+import Booking from '../models/Booking.js';
+import PG from '../models/PG.js';
+import Payment from '../models/Payment.js';
+import User from '../models/User.js';
+import { calculateRefund } from '../utils/refund.js';
+import { createRefund, reverseTransfer } from '../utils/razorpay.js';
+import { sendEmail, sendWhatsApp } from '../utils/notify.js';
+
+const GENDER_MAP = { MALE: 'BOYS_ONLY', FEMALE: 'GIRLS_ONLY' };
+
+// Human-readable version of the ACTIVE policy in utils/refund.js — sent to the
+// client so the cancel modal can show the tier table without hard-coding it.
+const REFUND_TIERS = [
+  { label: 'Within 5 days of start', percent: 80 },
+  { label: 'Within 10 days of start', percent: 50 },
+  { label: 'After 10 days', percent: 0 },
+];
+
+function addMonth(date) {
+  const d = new Date(date);
+  d.setMonth(d.getMonth() + 1);
+  return d;
+}
+
+// POST /api/booking — create a booking request (owner approval + payment confirm)
+export async function createBooking(req, res, next) {
+  try {
+    const { pgId, startDate, roomLabel, roomId } = req.body;
+    const pg = await PG.findById(pgId);
+    if (!pg) {
+      return res.status(404).json({ success: false, message: 'PG not found' });
+    }
+
+    // Gender restriction check
+    if (pg.genderType !== 'BOTH') {
+      const required = GENDER_MAP[req.user.gender];
+      if (required !== pg.genderType) {
+        return res.status(403).json({
+          success: false,
+          message: `This PG is ${pg.genderType.replace('_', ' ').toLowerCase()}.`,
+        });
+      }
+    }
+
+    // Room-level PG: a specific room must be chosen and have a free bed.
+    let room = null;
+    if (pg.rooms && pg.rooms.length > 0) {
+      if (!roomId) {
+        return res
+          .status(400)
+          .json({ success: false, message: 'Please select a room.' });
+      }
+      room = pg.rooms.id(roomId);
+      if (!room) {
+        return res
+          .status(404)
+          .json({ success: false, message: 'Room not found' });
+      }
+      if (room.availableBeds <= 0) {
+        return res
+          .status(409)
+          .json({ success: false, message: 'No beds available in this room' });
+      }
+    } else if (pg.availableRooms <= 0) {
+      // Legacy count-based PG
+      return res
+        .status(409)
+        .json({ success: false, message: 'No rooms available' });
+    }
+
+    const monthlyRent = room ? room.rent : pg.price;
+    const securityDeposit = room ? room.deposit : pg.securityDeposit;
+
+    const start = startDate ? new Date(startDate) : new Date();
+    const booking = await Booking.create({
+      user: req.user._id,
+      pg: pg._id,
+      room: room ? room._id : null,
+      sharingType: room ? room.sharingType : '',
+      roomLabel: room ? room.label : roomLabel || '',
+      startDate: start,
+      nextDueDate: addMonth(start),
+      monthlyRent,
+      securityDeposit,
+      bookingStatus: 'REQUESTED',
+    });
+
+    // Let the owner know a request is waiting for approval.
+    try {
+      const owner = await User.findById(pg.owner);
+      if (owner?.email) {
+        await sendEmail(
+          owner.email,
+          'New booking request',
+          `<p>${req.user.name} has requested to book <strong>${pg.name}</strong>${
+            room ? ` (${room.label}, ${room.sharingType.toLowerCase()} sharing)` : ''
+          }. Review it in your owner dashboard.</p>`
+        );
+      }
+    } catch (notifyErr) {
+      console.error('Owner notify failed:', notifyErr);
+    }
+
+    res.status(201).json({
+      success: true,
+      data: booking,
+      payable: monthlyRent + securityDeposit,
+      message: 'Request sent — the owner will review and approve your booking.',
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+// GET /api/booking/my — user's bookings
+export async function myBookings(req, res, next) {
+  try {
+    const bookings = await Booking.find({ user: req.user._id })
+      .populate('pg', 'name city address images price genderType latitude longitude')
+      .sort({ createdAt: -1 });
+    res.json({ success: true, data: bookings });
+  } catch (err) {
+    next(err);
+  }
+}
+
+// GET /api/booking/:bookingId/refund-preview — what a cancellation would refund
+// *right now*, without touching anything. Powers the confirm modal.
+export async function refundPreview(req, res, next) {
+  try {
+    const { bookingId } = req.params;
+    const booking = await Booking.findById(bookingId);
+    if (!booking) {
+      return res.status(404).json({ success: false, message: 'Booking not found' });
+    }
+    if (booking.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ success: false, message: 'Not authorized' });
+    }
+    if (booking.bookingStatus === 'CANCELLED') {
+      return res.status(400).json({ success: false, message: 'Already cancelled' });
+    }
+
+    const payment = await Payment.findOne({
+      booking: booking._id,
+      type: 'BOOKING',
+      status: 'PAID',
+    });
+
+    // Nothing paid yet (e.g. still PENDING) → clean cancel, no money in play.
+    if (!payment) {
+      return res.json({
+        success: true,
+        paid: false,
+        amountPaid: 0,
+        refund: { percent: 0, amount: 0, daysSinceStart: 0 },
+        tiers: REFUND_TIERS,
+      });
+    }
+
+    const refund = calculateRefund(payment.amount, booking.startDate);
+    res.json({
+      success: true,
+      paid: true,
+      amountPaid: payment.amount,
+      refund,
+      tiers: REFUND_TIERS,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+// POST /api/booking/cancel — cancel + refund
+export async function cancelBooking(req, res, next) {
+  try {
+    const { bookingId } = req.body;
+    const booking = await Booking.findById(bookingId).populate('user').populate('pg');
+    if (!booking) {
+      return res.status(404).json({ success: false, message: 'Booking not found' });
+    }
+    if (booking.user._id.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ success: false, message: 'Not authorized' });
+    }
+    if (booking.bookingStatus === 'CANCELLED') {
+      return res.status(400).json({ success: false, message: 'Already cancelled' });
+    }
+
+    // Find the booking payment
+    const payment = await Payment.findOne({
+      booking: booking._id,
+      type: 'BOOKING',
+      status: 'PAID',
+    });
+
+    let refund = { amount: 0, percent: 0 };
+    if (payment) {
+      refund = calculateRefund(payment.amount, booking.startDate);
+      if (refund.amount > 0) {
+        try {
+          const rz = await createRefund(payment.razorpayPaymentId, refund.amount);
+          payment.status = 'REFUNDED';
+          payment.refundId = rz.id;
+          payment.refundAmount = refund.amount;
+          payment.refundedAt = new Date();
+
+          // Claw back the owner's payout so the refund isn't funded by the
+          // platform. Non-fatal: the tenant refund already succeeded, so a
+          // reversal problem is logged for reconciliation rather than failing.
+          if (payment.transferId && payment.payoutStatus === 'PROCESSED') {
+            try {
+              await reverseTransfer(payment.transferId);
+              payment.payoutStatus = 'REVERSED';
+            } catch (revErr) {
+              console.error('Transfer reversal failed:', revErr);
+            }
+          }
+
+          await payment.save();
+        } catch (refundErr) {
+          console.error('Refund failed:', refundErr);
+          return res.status(502).json({
+            success: false,
+            message: 'Refund could not be processed. Please contact support.',
+          });
+        }
+      }
+    }
+
+    // Release the room/bed ONLY if this booking had reserved one (CONFIRMED).
+    if (booking.bookingStatus === 'CONFIRMED') {
+      if (booking.room) {
+        // Room-level: increment that room's beds + aggregate.
+        await PG.updateOne(
+          { _id: booking.pg._id, 'rooms._id': booking.room },
+          { $inc: { 'rooms.$.availableBeds': 1, availableRooms: 1 } }
+        );
+      } else {
+        await PG.updateOne({ _id: booking.pg._id }, { $inc: { availableRooms: 1 } });
+      }
+    }
+
+    booking.bookingStatus = 'CANCELLED';
+    booking.cancelledAt = new Date();
+    booking.refundAmount = refund.amount;
+    await booking.save();
+
+    // Notify
+    const msg = `Your booking at ${booking.pg.name} is cancelled. Refund: ₹${refund.amount} (${refund.percent}%).`;
+    await sendEmail(booking.user.email, 'Booking Cancelled', `<p>${msg}</p>`);
+    if (booking.user.phone) await sendWhatsApp(booking.user.phone, msg);
+
+    res.json({
+      success: true,
+      message: 'Booking cancelled',
+      refund,
+      booking,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
