@@ -104,30 +104,30 @@ export default function RentLedger() {
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-indigo-brand mb-2">
             Rent ledger
           </p>
-          <h1 className="font-display font-extrabold text-4xl text-ink">
+          <h1 className="font-display font-extrabold text-3xl sm:text-4xl text-ink text-balance break-words">
             {booking.pgName}
           </h1>
           <p className="text-ink/60 mt-1">{booking.city}</p>
         </div>
 
         {/* Summary */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-8">
           <div className="bg-white rounded-xl2 shadow-card p-4">
             <p className="text-xs text-ink/50 mb-1">Months</p>
-            <p className="font-mono font-bold text-2xl text-ink">
+            <p className="font-mono font-bold text-xl sm:text-2xl text-ink tabular-nums">
               {summary.paidMonths}/{summary.months}
             </p>
           </div>
           <div className="bg-white rounded-xl2 shadow-card p-4">
             <p className="text-xs text-ink/50 mb-1">Total paid</p>
-            <p className="font-mono font-bold text-2xl text-success">
+            <p className="font-mono font-bold text-xl sm:text-2xl text-success tabular-nums break-all">
               ₹{summary.totalPaid.toLocaleString('en-IN')}
             </p>
           </div>
           <div className="bg-white rounded-xl2 shadow-card p-4">
             <p className="text-xs text-ink/50 mb-1">Outstanding</p>
             <p
-              className={`font-mono font-bold text-2xl ${
+              className={`font-mono font-bold text-xl sm:text-2xl tabular-nums break-all ${
                 summary.totalDue > 0 ? 'text-danger' : 'text-ink/40'
               }`}
             >
@@ -136,9 +136,9 @@ export default function RentLedger() {
           </div>
         </div>
 
-        {/* Ledger */}
+        {/* Ledger — table on sm+, stacked cards on mobile */}
         <div className="bg-white rounded-xl2 shadow-card overflow-hidden">
-          <div className="overflow-x-auto">
+          <div className="hidden sm:block overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-ink/10 text-left text-ink/50">
@@ -187,6 +187,44 @@ export default function RentLedger() {
               </tbody>
             </table>
           </div>
+
+          {/* Mobile cards */}
+          <ul className="sm:hidden divide-y divide-ink/10">
+            {invoices.map((inv) => (
+              <li key={inv._id} className="p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-semibold text-ink">{inv.periodLabel}</p>
+                    <p className="text-xs text-ink/50 mt-0.5">
+                      Due {new Date(inv.dueDate).toLocaleDateString('en-IN')}
+                    </p>
+                  </div>
+                  <span
+                    className={`shrink-0 px-2.5 py-1 rounded-full text-xs font-semibold ${
+                      statusStyle[inv.status]
+                    }`}
+                  >
+                    {inv.status}
+                  </span>
+                </div>
+                <div className="mt-3 flex items-center justify-between">
+                  <p className="font-mono font-bold text-lg text-ink tabular-nums">
+                    ₹{inv.amount.toLocaleString('en-IN')}
+                  </p>
+                  {inv.status === 'PAID' ? (
+                    <button
+                      onClick={() => openReceipt(inv._id)}
+                      className="text-sm text-indigo-brand font-semibold hover:underline"
+                    >
+                      View receipt
+                    </button>
+                  ) : (
+                    <span className="text-ink/30 text-sm">No receipt</span>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
 
