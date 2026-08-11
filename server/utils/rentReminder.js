@@ -3,7 +3,12 @@ import Booking from '../models/Booking.js';
 import User from '../models/User.js';
 import PG from '../models/PG.js';
 import RentInvoice from '../models/RentInvoice.js';
-import { sendEmail, sendWhatsApp } from './notify.js';
+import {
+  createInteractiveEmail,
+  createWhatsAppMessage,
+  sendEmail,
+  sendWhatsApp,
+} from './notify.js';
 
 /**
  * Rent reminder cron job — runs daily at 9 AM.
@@ -80,16 +85,31 @@ async function sendRentReminder(booking, type) {
       ? `Hi ${user.name}, your rent for ${pg.name} was due on ${dueDate} and is now overdue. Please pay at the earliest to avoid late fees.`
       : `Hi ${user.name}, your rent for ${pg.name} is due on ${dueDate}. Please ensure timely payment.`;
 
-  const html = `
-    <h3>${subject}</h3>
-    <p>${message}</p>
-    <p><strong>PG:</strong> ${pg.name}<br/>
-    <strong>Monthly Rent:</strong> ₹${booking.monthlyRent}<br/>
-    <strong>Due Date:</strong> ${dueDate}</p>
-  `;
-
-  await sendEmail(user.email, subject, html);
+  await sendEmail(
+    user.email,
+    subject,
+    createInteractiveEmail({
+      userName: user.name,
+      subject,
+      title: type === 'overdue' ? 'Rent Payment Overdue' : 'Rent Due Reminder',
+      message,
+      details: [
+        { label: 'PG', value: pg.name },
+        { label: 'Monthly Rent', value: `₹${booking.monthlyRent}` },
+        { label: 'Due Date', value: dueDate },
+      ],
+      ctaText: 'View My Booking',
+      ctaUrl: `${process.env.CLIENT_URL || 'http://localhost:5173'}/my-bookings`,
+    })
+  );
   if (user.phone) {
-    await sendWhatsApp(user.phone, message);
+    await sendWhatsApp(
+      user.phone,
+      createWhatsAppMessage({
+        userName: user.name,
+        message,
+        ctaUrl: `${process.env.CLIENT_URL || 'http://localhost:5173'}/my-bookings`,
+      })
+    );
   }
 }

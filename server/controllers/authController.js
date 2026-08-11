@@ -1,7 +1,7 @@
 import User from '../models/User.js';
 import crypto from 'crypto';
 import generateToken from '../utils/generateToken.js';
-import { sendEmail } from '../utils/notify.js';
+import { createInteractiveEmail, sendEmail } from '../utils/notify.js';
 import { createLinkedAccount } from '../utils/razorpay.js';
 
 const publicUser = (u) => ({
@@ -98,14 +98,19 @@ export async function forgotPassword(req, res, next) {
 
     const base = process.env.CLIENT_URL || 'http://localhost:5173';
     const link = `${base}/reset-password/${rawToken}`;
-    const html = `
-      <p>Hi ${user.name},</p>
-      <p>You asked to reset your Roomward password. This link is valid for 1 hour:</p>
-      <p><a href="${link}">${link}</a></p>
-      <p>If you didn't request this, you can safely ignore this email.</p>`;
+    const html = createInteractiveEmail({
+      userName: user.name,
+      subject: 'Reset your PG Booking password',
+      title: 'Password Reset Request',
+      message:
+        'You requested a password reset. Please use the button below to reset your password. This link is valid for 1 hour.',
+      details: [{ label: 'Reset Link', value: link }],
+      ctaText: 'Reset Password',
+      ctaUrl: link,
+    });
 
     try {
-      await sendEmail(user.email, 'Reset your Roomward password', html);
+      await sendEmail(user.email, 'Reset your PG Booking password', html);
     } catch (mailErr) {
       // Roll back the token if we couldn't actually send the mail.
       user.resetPasswordToken = undefined;

@@ -1,6 +1,11 @@
 import PG from '../models/PG.js';
 import Booking from '../models/Booking.js';
-import { sendEmail, sendWhatsApp } from '../utils/notify.js';
+import {
+  createInteractiveEmail,
+  createWhatsAppMessage,
+  sendEmail,
+  sendWhatsApp,
+} from '../utils/notify.js';
 
 // GET /api/owner/dashboard — aggregate stats for the logged-in owner
 export async function getDashboard(req, res, next) {
@@ -133,8 +138,29 @@ export async function approveBooking(req, res, next) {
     await booking.save();
 
     const msg = `Good news! Your booking request at ${booking.pg.name} was approved. Log in to pay and reserve your room.`;
-    await sendEmail(booking.user.email, 'Booking approved', `<p>${msg}</p>`);
-    if (booking.user.phone) await sendWhatsApp(booking.user.phone, msg);
+    await sendEmail(
+      booking.user.email,
+      'Booking approved',
+      createInteractiveEmail({
+        userName: booking.user.name,
+        subject: 'Booking approved',
+        title: 'Booking Request Approved',
+        message: msg,
+        details: [{ label: 'PG', value: booking.pg.name }],
+        ctaText: 'Pay & Reserve Room',
+        ctaUrl: `${process.env.CLIENT_URL || 'http://localhost:5173'}/bookings`,
+      })
+    );
+    if (booking.user.phone) {
+      await sendWhatsApp(
+        booking.user.phone,
+        createWhatsAppMessage({
+          userName: booking.user.name,
+          message: msg,
+          ctaUrl: `${process.env.CLIENT_URL || 'http://localhost:5173'}/bookings`,
+        })
+      );
+    }
 
     res.json({ success: true, message: 'Booking approved', booking });
   } catch (err) {
@@ -166,8 +192,32 @@ export async function rejectBooking(req, res, next) {
     const msg = `Your booking request at ${booking.pg.name} was declined${
       reason ? `: ${reason}` : '.'
     }`;
-    await sendEmail(booking.user.email, 'Booking request declined', `<p>${msg}</p>`);
-    if (booking.user.phone) await sendWhatsApp(booking.user.phone, msg);
+    await sendEmail(
+      booking.user.email,
+      'Booking request declined',
+      createInteractiveEmail({
+        userName: booking.user.name,
+        subject: 'Booking request declined',
+        title: 'Booking Request Declined',
+        message: msg,
+        details: [
+          { label: 'PG', value: booking.pg.name },
+          { label: 'Reason', value: reason || 'Not specified by owner' },
+        ],
+        ctaText: 'Find Other PGs',
+        ctaUrl: `${process.env.CLIENT_URL || 'http://localhost:5173'}/`,
+      })
+    );
+    if (booking.user.phone) {
+      await sendWhatsApp(
+        booking.user.phone,
+        createWhatsAppMessage({
+          userName: booking.user.name,
+          message: msg,
+          ctaUrl: `${process.env.CLIENT_URL || 'http://localhost:5173'}/`,
+        })
+      );
+    }
 
     res.json({ success: true, message: 'Booking rejected', booking });
   } catch (err) {

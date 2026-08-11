@@ -4,7 +4,12 @@ import Payment from '../models/Payment.js';
 import User from '../models/User.js';
 import { calculateRefund } from '../utils/refund.js';
 import { createRefund, reverseTransfer } from '../utils/razorpay.js';
-import { sendEmail, sendWhatsApp } from '../utils/notify.js';
+import {
+  createInteractiveEmail,
+  createWhatsAppMessage,
+  sendEmail,
+  sendWhatsApp,
+} from '../utils/notify.js';
 
 const GENDER_MAP = { MALE: 'BOYS_ONLY', FEMALE: 'GIRLS_ONLY' };
 
@@ -89,13 +94,37 @@ export async function createBooking(req, res, next) {
     try {
       const owner = await User.findById(pg.owner);
       if (owner?.email) {
+        const info = room
+          ? `${room.label}, ${room.sharingType.toLowerCase()} sharing`
+          : 'Room details available in dashboard';
+        const ownerMessage = `${req.user.name} has requested to book ${pg.name}. Please review the request and approve or reject it from your dashboard.`;
         await sendEmail(
           owner.email,
           'New booking request',
-          `<p>${req.user.name} has requested to book <strong>${pg.name}</strong>${
-            room ? ` (${room.label}, ${room.sharingType.toLowerCase()} sharing)` : ''
-          }. Review it in your owner dashboard.</p>`
+          createInteractiveEmail({
+            userName: owner.name || 'Owner',
+            subject: 'New booking request',
+            title: 'New Booking Request',
+            message: ownerMessage,
+            details: [
+              { label: 'Tenant', value: req.user.name },
+              { label: 'PG', value: pg.name },
+              { label: 'Room', value: info },
+            ],
+            ctaText: 'Review Request',
+            ctaUrl: `${process.env.CLIENT_URL || 'http://localhost:5173'}/owner/requests`,
+          })
         );
+        if (owner.phone) {
+          await sendWhatsApp(
+            owner.phone,
+            createWhatsAppMessage({
+              userName: owner.name || 'Owner',
+              message: ownerMessage,
+              ctaUrl: `${process.env.CLIENT_URL || 'http://localhost:5173'}/owner/requests`,
+            })
+          );
+        }
       }
     } catch (notifyErr) {
       console.error('Owner notify failed:', notifyErr);
@@ -245,9 +274,34 @@ export async function cancelBooking(req, res, next) {
     await booking.save();
 
     // Notify
-    const msg = `Your booking at ${booking.pg.name} is cancelled. Refund: ₹${refund.amount} (${refund.percent}%).`;
-    await sendEmail(booking.user.email, 'Booking Cancelled', `<p>${msg}</p>`);
-    if (booking.user.phone) await sendWhatsApp(booking.user.phone, msg);
+    const msg = `Your booking at ${booking.pg.name} is cancelled. Refund amount: ₹${refund.amount} (${refund.percent}%).`;
+    await sendEmail(
+      booking.user.email,
+      'Booking Cancelled',
+      createInteractiveEmail({
+        userName: booking.user.name,
+        subject: 'Booking Cancelled',
+        title: 'Booking Cancellation Confirmed',
+        message: msg,
+        details: [
+          { label: 'PG', value: booking.pg.name },
+          { label: 'Refund', value: `₹${refund.amount}` },
+          { label: 'Refund Percent', value: `${refund.percent}%` },
+        ],
+        ctaText: 'View My Bookings',
+        ctaUrl: `${process.env.CLIENT_URL || 'http://localhost:5173'}/bookings`,
+      })
+    );
+    if (booking.user.phone) {
+      await sendWhatsApp(
+        booking.user.phone,
+        createWhatsAppMessage({
+          userName: booking.user.name,
+          message: msg,
+          ctaUrl: `${process.env.CLIENT_URL || 'http://localhost:5173'}/bookings`,
+        })
+      );
+    }
 
     res.json({
       success: true,

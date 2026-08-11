@@ -3,7 +3,12 @@ import PG from '../models/PG.js';
 import Payment from '../models/Payment.js';
 import User from '../models/User.js';
 import { createOrder, verifySignature, createTransfer } from '../utils/razorpay.js';
-import { sendEmail, sendWhatsApp } from '../utils/notify.js';
+import {
+  createInteractiveEmail,
+  createWhatsAppMessage,
+  sendEmail,
+  sendWhatsApp,
+} from '../utils/notify.js';
 import { ensureInvoice, settleInvoice } from '../utils/rentLedger.js';
 
 // Platform commission (percent of each payment kept by Roomward). Defaults to 0
@@ -199,8 +204,35 @@ export async function verifyPayment(req, res, next) {
       const msg = `Booking confirmed at ${booking.pg.name}! Room reserved. Next rent due ${new Date(
         booking.nextDueDate
       ).toLocaleDateString('en-IN')}.`;
-      await sendEmail(booking.user.email, 'Booking Confirmed', `<p>${msg}</p>`);
-      if (booking.user.phone) await sendWhatsApp(booking.user.phone, msg);
+      await sendEmail(
+        booking.user.email,
+        'Booking Confirmed',
+        createInteractiveEmail({
+          userName: booking.user.name,
+          subject: 'Booking Confirmed',
+          title: 'Your Room Is Confirmed',
+          message: msg,
+          details: [
+            { label: 'PG', value: booking.pg.name },
+            {
+              label: 'Next Rent Due',
+              value: new Date(booking.nextDueDate).toLocaleDateString('en-IN'),
+            },
+          ],
+          ctaText: 'View Booking',
+          ctaUrl: `${process.env.CLIENT_URL || 'http://localhost:5173'}/bookings`,
+        })
+      );
+      if (booking.user.phone) {
+        await sendWhatsApp(
+          booking.user.phone,
+          createWhatsAppMessage({
+            userName: booking.user.name,
+            message: msg,
+            ctaUrl: `${process.env.CLIENT_URL || 'http://localhost:5173'}/ookings`,
+          })
+        );
+      }
     } else {
       // RENT payment — settle the oldest open month, then advance the cycle and
       // open the next month's invoice.

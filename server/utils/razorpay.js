@@ -1,5 +1,11 @@
 import crypto from 'crypto';
 import Razorpay from 'razorpay';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const KEY_ID = process.env.RAZORPAY_KEY_ID;
 const KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
@@ -139,4 +145,3 @@ export async function reverseTransfer(transferId) {
   }
   return instance.transfers.reverse(transferId);
 }
-
