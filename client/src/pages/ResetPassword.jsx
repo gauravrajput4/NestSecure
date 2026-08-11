@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import Input from '../components/Input.jsx';
 import Button from '../components/Button.jsx';
+import AuthShell from '../components/AuthShell.jsx';
 
 export default function ResetPassword() {
   const { token } = useParams();
@@ -28,7 +29,9 @@ export default function ResetPassword() {
       setLoading(true);
       const user = await resetPassword(token, password);
       toast.success('Password updated — you are logged in');
-      navigate(user.role === 'OWNER' ? '/owner/dashboard' : '/');
+      navigate(
+        user.role === 'OWNER' ? '/owner/dashboard' : user.role === 'ADMIN' ? '/admin' : '/'
+      );
     } catch (err) {
       toast.error(err.message);
     } finally {
@@ -37,42 +40,50 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-ink via-ink-soft to-indigo-brand flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl2 shadow-lift p-8 w-full max-w-md">
-        <h1 className="font-display font-extrabold text-3xl text-ink mb-2">
-          Choose a new password
-        </h1>
-        <p className="text-ink/60 mb-6">Enter and confirm your new password.</p>
+    <AuthShell
+      title="Set a new password"
+      subtitle="Use a strong password with at least 6 characters."
+      footerText="Prefer signing in instead?"
+      footerLinkTo="/login"
+      footerLinkLabel="Back to login"
+      sideSubtitle="After reset, you’ll be signed in automatically and redirected to your workspace."
+      highlights={[
+        'Strong-password minimum enforced',
+        'Secure token verification',
+        'Automatic authenticated session',
+      ]}
+    >
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <Input
+          label="New password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          autoComplete="new-password"
+          required
+        />
+        <Input
+          label="Confirm password"
+          type="password"
+          value={confirm}
+          onChange={(e) => setConfirm(e.target.value)}
+          autoComplete="new-password"
+          required
+        />
+        <Button type="submit" fullWidth loading={loading}>
+          Update password
+        </Button>
+      </form>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <Input
-            label="New password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <Input
-            label="Confirm password"
-            type="password"
-            value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
-            required
-          />
-          <Button type="submit" className="w-full" loading={loading}>
-            Update password
-          </Button>
-        </form>
-
-        <p className="text-center text-sm text-ink/60 mt-6">
-          <Link
-            to="/login"
-            className="text-indigo-brand font-semibold hover:underline"
-          >
-            Back to login
-          </Link>
+      <div className="mt-4 rounded-xl border border-outline-soft/70 bg-paper p-3">
+        <p className="text-xs text-ink/65">
+          Need help? Use{' '}
+          <Link to="/forgot-password" className="font-semibold text-indigo-deep hover:underline">
+            forgot password
+          </Link>{' '}
+          to request a fresh reset link.
         </p>
       </div>
-    </div>
+    </AuthShell>
   );
 }

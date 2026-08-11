@@ -134,11 +134,20 @@ export default function Home() {
   };
 
   const filteredPGs = pgs;
+  const activeFilters = [
+    city ? `City: ${city}` : null,
+    gender ? `Occupancy: ${gender.replace('_', ' ')}` : null,
+    maxPrice ? `Max ₹${Number(maxPrice).toLocaleString('en-IN')}` : null,
+    minRating ? `Min rating ${minRating}+` : null,
+    maxDistance ? `Within ${maxDistance} km` : null,
+    availableOnly ? 'Available only' : null,
+  ].filter(Boolean);
+  const availableCount = filteredPGs.filter((pg) => pg.availableRooms > 0).length;
 
   return (
-    <div className="min-h-screen bg-paper">
+    <div className="page-shell">
       {/* ── Hero + Map split ───────────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 lg:py-14">
+      <section className="page-container py-8 sm:py-10 lg:py-14">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left: search canvas */}
           <div className="lg:col-span-5 flex flex-col gap-6">
@@ -164,7 +173,7 @@ export default function Home() {
                 e.preventDefault();
                 applyFilters();
               }}
-              className="bg-surface-low p-5 sm:p-6 rounded-xl2 shadow-card flex flex-col gap-4"
+              className="surface-card bg-surface-low p-5 sm:p-6 flex flex-col gap-4"
             >
               <Input
                 label="City, neighborhood, or landmark"
@@ -245,7 +254,36 @@ export default function Home() {
                   Reset
                 </Button>
               </div>
+              {activeFilters.length > 0 && (
+                <div className="flex flex-wrap gap-2 pt-1 border-t border-outline-soft/60">
+                  {activeFilters.map((f) => (
+                    <span
+                      key={f}
+                      className="inline-flex rounded-full border border-outline-soft/70 bg-white px-2.5 py-1 text-xs font-semibold text-ink/70"
+                    >
+                      {f}
+                    </span>
+                  ))}
+                </div>
+              )}
             </form>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="surface-card p-3.5">
+                <p className="text-xs font-semibold uppercase tracking-wide text-ink/50">
+                  Live results
+                </p>
+                <p className="mt-1 font-display text-2xl font-extrabold text-ink">{total}</p>
+              </div>
+              <div className="surface-card p-3.5">
+                <p className="text-xs font-semibold uppercase tracking-wide text-ink/50">
+                  Available now
+                </p>
+                <p className="mt-1 font-display text-2xl font-extrabold text-success">
+                  {availableCount}
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Right: interactive map */}
@@ -264,14 +302,16 @@ export default function Home() {
 
       {/* ── Featured properties ───────────────────────────────────────── */}
       <section className="bg-surface-low border-t border-outline-soft/70 py-12 sm:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="page-container">
           <div className="flex flex-wrap items-end justify-between gap-3 mb-8">
             <div>
               <h2 className="font-display font-extrabold text-2xl sm:text-3xl text-ink tracking-tight">
                 Featured Properties
               </h2>
               <p className="text-ink/60 mt-2">
-                Highly rated accommodations in prime locations.
+                {activeFilters.length > 0
+                  ? 'Filtered properties based on your search criteria.'
+                  : 'Highly rated accommodations in prime locations.'}
               </p>
             </div>
             {!loading && (

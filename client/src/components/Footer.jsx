@@ -7,15 +7,14 @@ export default function Footer() {
   const links = [
     { label: 'Explore PGs', to: '/' },
     { label: 'My Bookings', to: '/bookings' },
-    { label: 'List a Property', to: '/register' },
-    { label: 'Profile', to: '/profile' },
+    { label: 'Owner Dashboard', to: '/owner/dashboard' },
     { label: 'Help Center', to: '/help' },
   ];
 
   return (
-    <footer className="bg-ink-soft text-white/70 mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-        <div className="flex flex-col gap-3">
+    <footer className="mt-auto border-t border-outline-soft/70 bg-ink-soft text-white/70">
+      <div className="page-container py-10 grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        <div className="flex flex-col gap-3 lg:col-span-1">
           <div className="flex items-center gap-2">
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-brand text-white">
               <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -36,17 +35,33 @@ export default function Footer() {
           </p>
         </div>
 
-        <nav className="flex flex-wrap gap-x-8 gap-y-3 md:justify-end">
-          {links.map((l) => (
-            <Link
-              key={l.label}
-              to={l.to}
-              className="text-sm text-white/60 hover:text-white transition-colors"
-            >
-              {l.label}
-            </Link>
-          ))}
-        </nav>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 lg:col-span-2">
+          <nav className="flex flex-col gap-3">
+            <h3 className="text-xs uppercase tracking-wide font-bold text-white/45">
+              Product
+            </h3>
+            {links.map((l) => (
+              <Link
+                key={l.label}
+                to={l.to}
+                className="text-sm text-white/65 hover:text-white transition-colors"
+              >
+                {l.label}
+              </Link>
+            ))}
+          </nav>
+          <div className="flex flex-col gap-3">
+            <h3 className="text-xs uppercase tracking-wide font-bold text-white/45">
+              Trust
+            </h3>
+            <p className="text-sm text-white/60">
+              Verified tenant onboarding, role-based approvals, and secure payment flow.
+            </p>
+            <p className="text-xs text-white/45">
+              Built for students, professionals, and PG owners.
+            </p>
+          </div>
+        </div>
       </div>
     </footer>
   );

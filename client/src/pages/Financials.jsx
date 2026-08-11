@@ -171,8 +171,8 @@ export default function Financials() {
   );
 
   return (
-    <div className="min-h-screen bg-paper py-10">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="page-shell py-10">
+      <div className="page-container max-w-6xl">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
           <div>
@@ -280,7 +280,7 @@ export default function Financials() {
         </div>
 
         {/* Rent collection list */}
-        <section className="bg-white rounded-xl2 shadow-card p-6 sm:p-8 mb-6">
+        <section className="surface-card p-6 sm:p-8 mb-6">
           <div className="flex items-center justify-between mb-5">
             <h2 className="font-display font-bold text-xl text-ink">
               Rent collection
@@ -433,7 +433,7 @@ export default function Financials() {
 
         {/* Honest empty states for data we don't track */}
         <div className="grid gap-6 lg:grid-cols-2">
-          <section className="bg-white rounded-xl2 shadow-card p-6 sm:p-8">
+          <section className="surface-card p-6 sm:p-8">
             <h2 className="flex items-center gap-2 font-display font-bold text-lg text-ink mb-4">
               <IconReceipt className="h-5 w-5 text-indigo-brand" />
               Payout history
@@ -451,7 +451,7 @@ export default function Financials() {
             </div>
           </section>
 
-          <section className="bg-white rounded-xl2 shadow-card p-6 sm:p-8">
+          <section className="surface-card p-6 sm:p-8">
             <h2 className="flex items-center gap-2 font-display font-bold text-lg text-ink mb-4">
               <IconTrend className="h-5 w-5 text-indigo-brand" />
               Revenue trends

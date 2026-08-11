@@ -154,12 +154,26 @@ export default function OwnerPGs() {
 
   if (loading) return <Loader className="min-h-screen" />;
 
+  const totalPGs = pgs.length;
+  const totalUnits = pgs.reduce((sum, pg) => sum + Number(pg.totalRooms || 0), 0);
+  const availableUnits = pgs.reduce(
+    (sum, pg) => sum + Number(pg.availableRooms || 0),
+    0
+  );
+  const occupancy =
+    totalUnits > 0
+      ? Math.round(((totalUnits - availableUnits) / totalUnits) * 100)
+      : 0;
+
   return (
-    <div className="min-h-screen bg-paper py-10">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="page-shell py-10">
+      <div className="page-container max-w-6xl">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
+            <p className="mb-2 font-mono text-xs uppercase tracking-[0.2em] text-indigo-brand">
+              Owner · Listings
+            </p>
             <h1 className="font-display font-extrabold text-3xl sm:text-4xl text-ink">
               Property Listings
             </h1>
@@ -172,8 +186,39 @@ export default function OwnerPGs() {
           </Button>
         </div>
 
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+          <div className="surface-card p-4">
+            <p className="text-xs uppercase tracking-wide font-semibold text-ink/50">
+              Total listings
+            </p>
+            <p className="mt-1 font-display text-2xl font-extrabold text-ink">{totalPGs}</p>
+          </div>
+          <div className="surface-card p-4">
+            <p className="text-xs uppercase tracking-wide font-semibold text-ink/50">
+              Total units
+            </p>
+            <p className="mt-1 font-display text-2xl font-extrabold text-ink">{totalUnits}</p>
+          </div>
+          <div className="surface-card p-4">
+            <p className="text-xs uppercase tracking-wide font-semibold text-ink/50">
+              Available now
+            </p>
+            <p className="mt-1 font-display text-2xl font-extrabold text-success">
+              {availableUnits}
+            </p>
+          </div>
+          <div className="surface-card p-4">
+            <p className="text-xs uppercase tracking-wide font-semibold text-ink/50">
+              Occupancy
+            </p>
+            <p className="mt-1 font-display text-2xl font-extrabold text-indigo-brand">
+              {occupancy}%
+            </p>
+          </div>
+        </div>
+
         {pgs.length === 0 ? (
-          <div className="bg-white rounded-xl2 shadow-card p-12 text-center">
+          <div className="surface-card p-12 text-center">
             <span className="mx-auto h-14 w-14 rounded-full bg-indigo-brand/10 text-indigo-brand flex items-center justify-center">
               <IconBuilding className="h-7 w-7" />
             </span>
@@ -204,7 +249,7 @@ export default function OwnerPGs() {
               return (
                 <div
                   key={pg._id}
-                  className="bg-white rounded-xl2 shadow-card overflow-hidden flex flex-col"
+                  className="surface-card overflow-hidden flex flex-col"
                 >
                   {/* Image + status */}
                   <div className="relative aspect-[16/10] bg-paper-sunk">

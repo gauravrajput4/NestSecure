@@ -139,6 +139,14 @@ export default function PGDetails() {
     );
 
   const hasRooms = pg.rooms && pg.rooms.length > 0;
+  const selectedRoomData = hasRooms
+    ? pg.rooms.find((room) => room._id === selectedRoom) || null
+    : null;
+  const displayRent = selectedRoomData ? selectedRoomData.rent : pg.price;
+  const displayDeposit = selectedRoomData
+    ? selectedRoomData.deposit
+    : pg.securityDeposit;
+  const totalPayable = displayRent + (displayDeposit || 0);
   const canBook =
     user &&
     user.role === 'USER' &&
@@ -154,10 +162,23 @@ export default function PGDetails() {
         : 'Request to Book';
 
   return (
-    <div className="min-h-screen bg-paper pb-28 lg:pb-12">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
+    <div className="page-shell pb-28 lg:pb-12">
+      <div className="page-container max-w-6xl pt-6 sm:pt-8">
+        <div className="mb-4 sm:mb-6 flex items-center justify-between gap-3">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-outline-soft bg-white px-3 py-2 text-sm font-semibold text-ink/70 transition hover:border-indigo-brand/40 hover:text-indigo-deep"
+          >
+            <span aria-hidden="true">←</span> Back
+          </button>
+          <span className="hidden sm:inline-flex rounded-full border border-outline-soft/80 bg-white px-3 py-1 text-xs font-semibold text-ink/55">
+            PG details
+          </span>
+        </div>
+
         {/* Product-style gallery (signature magnifier) */}
-        <div className="bg-white rounded-xl2 shadow-card p-3 sm:p-6 mb-6 sm:mb-8 relative">
+        <div className="surface-card p-3 sm:p-6 mb-6 sm:mb-8 relative">
           {pg.availableRooms === 0 && (
             <div className="absolute top-5 right-5 sm:top-6 sm:right-6 z-10 bg-danger text-white text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-card">
               Fully booked
@@ -174,7 +195,7 @@ export default function PGDetails() {
           {/* ---- Left: details ---- */}
           <div className="min-w-0 space-y-6 sm:space-y-8">
             {/* Header + description */}
-            <div className="bg-white rounded-xl2 shadow-lift p-5 sm:p-8">
+            <div className="surface-card shadow-lift p-5 sm:p-8">
               <div className="mb-5">
                 <h1 className="font-display font-extrabold text-3xl sm:text-4xl text-ink mb-2 text-balance">
                   {pg.name}
@@ -246,7 +267,7 @@ export default function PGDetails() {
 
             {/* Room picker (room-level PGs) */}
             {hasRooms && (
-              <div className="bg-white rounded-xl2 shadow-card p-5 sm:p-8">
+              <div className="surface-card p-5 sm:p-8">
                 <h2 className="font-display font-bold text-lg text-ink mb-1">
                   Choose a room
                 </h2>
@@ -330,10 +351,37 @@ export default function PGDetails() {
             )}
 
             {/* Reviews section */}
-            <div className="bg-white rounded-xl2 shadow-card p-5 sm:p-8">
+            <div className="surface-card p-5 sm:p-8">
               <h2 className="font-display font-bold text-2xl text-ink mb-6">
                 Reviews ({reviews.length})
               </h2>
+
+              <div className="mb-6 grid gap-3 rounded-xl border border-outline-soft/70 bg-paper p-4 sm:grid-cols-3">
+                <div>
+                  <p className="text-xs uppercase tracking-wide font-semibold text-ink/50">
+                    Average rating
+                  </p>
+                  <p className="mt-1 font-display text-2xl font-extrabold text-ink">
+                    {pg.rating.toFixed(1)} <span className="text-marigold">★</span>
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-wide font-semibold text-ink/50">
+                    Total reviews
+                  </p>
+                  <p className="mt-1 font-display text-2xl font-extrabold text-ink">
+                    {pg.reviewCount}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-wide font-semibold text-ink/50">
+                    Current availability
+                  </p>
+                  <p className="mt-1 font-display text-2xl font-extrabold text-success">
+                    {pg.availableRooms}
+                  </p>
+                </div>
+              </div>
 
               {/* Add review */}
               {user && user.role === 'USER' && (
@@ -417,16 +465,16 @@ export default function PGDetails() {
 
           {/* ---- Right: sticky booking panel (desktop) ---- */}
           <aside className="hidden lg:block lg:sticky lg:top-24">
-            <div className="bg-white rounded-xl2 shadow-lift p-6">
+            <div className="surface-card shadow-lift p-6">
               <div className="flex items-baseline gap-1 mb-1">
                 <span className="font-display text-3xl font-extrabold text-ink">
-                  ₹{pg.price.toLocaleString('en-IN')}
+                  ₹{displayRent.toLocaleString('en-IN')}
                 </span>
                 <span className="text-sm text-ink/60">/month</span>
               </div>
-              {pg.securityDeposit > 0 && (
+              {displayDeposit > 0 && (
                 <p className="text-xs text-ink/50 mb-4">
-                  + ₹{pg.securityDeposit.toLocaleString('en-IN')} security
+                  + ₹{displayDeposit.toLocaleString('en-IN')} security
                   deposit
                 </p>
               )}
@@ -443,6 +491,27 @@ export default function PGDetails() {
                     Select a room below to continue
                   </p>
                 )}
+              </div>
+
+              <div className="mb-4 rounded-xl border border-outline-soft/70 bg-white p-4">
+                <div className="mb-2 flex items-center justify-between text-sm">
+                  <span className="text-ink/60">Monthly rent</span>
+                  <span className="font-semibold text-ink">
+                    ₹{displayRent.toLocaleString('en-IN')}
+                  </span>
+                </div>
+                <div className="mb-2 flex items-center justify-between text-sm">
+                  <span className="text-ink/60">Security deposit</span>
+                  <span className="font-semibold text-ink">
+                    ₹{(displayDeposit || 0).toLocaleString('en-IN')}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between border-t border-outline-soft pt-2.5">
+                  <span className="text-sm font-semibold text-ink">Due now</span>
+                  <span className="font-display text-xl font-extrabold text-ink">
+                    ₹{totalPayable.toLocaleString('en-IN')}
+                  </span>
+                </div>
               </div>
 
               <Button
@@ -467,7 +536,7 @@ export default function PGDetails() {
         <div className="flex items-center gap-3 mb-3">
           <div className="shrink-0">
             <p className="font-display text-xl font-extrabold text-ink leading-none">
-              ₹{pg.price.toLocaleString('en-IN')}
+              ₹{displayRent.toLocaleString('en-IN')}
             </p>
             <p className="text-[11px] text-ink/50">
               {pg.availableRooms > 0

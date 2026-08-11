@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { ownerDashboard } from '../services/bookingService.js';
 import { useToast } from '../context/ToastContext.jsx';
 import Loader from '../components/Loader.jsx';
@@ -55,16 +56,73 @@ export default function OwnerDashboard() {
   if (!data) return null;
 
   const { summary, perPG } = data;
+  const totalRentRoll = perPG.reduce(
+    (sum, pg) =>
+      sum +
+      (pg.tenants || []).reduce(
+        (tenantSum, tenant) => tenantSum + Number(tenant.monthlyRent || 0),
+        0
+      ),
+    0
+  );
+  const totalOverdue = perPG.reduce(
+    (sum, pg) =>
+      sum +
+      (pg.tenants || []).filter((tenant) => tenant.rentStatus === 'OVERDUE').length,
+    0
+  );
+  const occupancyRate =
+    summary.totalRooms > 0
+      ? Math.round((summary.occupiedRooms / summary.totalRooms) * 100)
+      : 0;
 
   return (
-    <div className="min-h-screen bg-paper py-12">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="font-display font-extrabold text-3xl sm:text-4xl text-ink tracking-tight mb-1">
-          Owner Dashboard
-        </h1>
-        <p className="text-ink/60 mb-8">
-          Here's how your properties are performing.
-        </p>
+    <div className="page-shell py-12">
+      <div className="page-container max-w-6xl">
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="mb-2 font-mono text-xs uppercase tracking-[0.2em] text-indigo-brand">
+              Owner · Overview
+            </p>
+            <h1 className="font-display font-extrabold text-3xl sm:text-4xl text-ink tracking-tight mb-1">
+              Owner Dashboard
+            </h1>
+            <p className="text-ink/60">
+              Real-time view of occupancy, tenants, and monthly rent pipeline.
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <Link to="/owner/requests">
+              <button className="h-control-sm rounded-xl border border-outline-soft bg-white px-3.5 text-sm font-semibold text-ink/70 transition hover:border-indigo-brand/40 hover:text-indigo-deep">
+                Review Requests
+              </button>
+            </Link>
+            <Link to="/owner/financials">
+              <button className="h-control-sm rounded-xl bg-indigo-brand px-3.5 text-sm font-semibold text-white transition hover:bg-indigo-deep">
+                Open Financials
+              </button>
+            </Link>
+          </div>
+        </div>
+
+        <section className="mb-8 rounded-xl2 bg-gradient-to-br from-ink via-ink-soft to-indigo-brand p-6 text-white shadow-lift sm:p-8">
+          <div className="grid gap-6 lg:grid-cols-3">
+            <div>
+              <p className="text-xs uppercase tracking-wide text-white/65">Monthly rent roll</p>
+              <p className="mt-2 font-display text-4xl font-extrabold">
+                ₹{totalRentRoll.toLocaleString('en-IN')}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-wide text-white/65">Occupancy</p>
+              <p className="mt-2 font-display text-4xl font-extrabold">{occupancyRate}%</p>
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-wide text-white/65">Overdue tenants</p>
+              <p className="mt-2 font-display text-4xl font-extrabold">{totalOverdue}</p>
+            </div>
+          </div>
+        </section>
 
         {/* Summary stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -124,7 +182,7 @@ export default function OwnerDashboard() {
             </div>
           )}
           {perPG.map((pg) => (
-            <div key={pg._id} className="bg-white rounded-xl2 shadow-card p-6">
+            <div key={pg._id} className="surface-card p-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h3 className="font-display font-bold text-xl text-ink">
@@ -153,9 +211,17 @@ export default function OwnerDashboard() {
               {/* Tenants */}
               {pg.tenants.length > 0 && (
                 <div className="border-t border-ink/10 pt-4">
-                  <p className="text-sm font-semibold text-ink mb-3">
-                    Tenants ({pg.tenants.length})
-                  </p>
+                  <div className="mb-3 flex items-center justify-between">
+                    <p className="text-sm font-semibold text-ink">
+                      Tenants ({pg.tenants.length})
+                    </p>
+                    <p className="text-xs text-ink/55">
+                      Rent roll: ₹
+                      {pg.tenants
+                        .reduce((sum, tenant) => sum + Number(tenant.monthlyRent || 0), 0)
+                        .toLocaleString('en-IN')}
+                    </p>
+                  </div>
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>

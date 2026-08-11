@@ -152,8 +152,8 @@ export default function OwnerRequests() {
   );
 
   return (
-    <div className="min-h-screen bg-paper py-10">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="page-shell py-10">
+      <div className="page-container max-w-4xl">
         {/* Header */}
         <div className="mb-8">
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-indigo-brand mb-2">
@@ -203,7 +203,7 @@ export default function OwnerRequests() {
         </div>
 
         {requests.length === 0 ? (
-          <div className="bg-white rounded-xl2 shadow-card p-12 text-center">
+          <div className="surface-card p-12 text-center">
             <span className="mx-auto h-14 w-14 rounded-full bg-indigo-brand/10 text-indigo-brand flex items-center justify-center">
               <IconInbox className="h-7 w-7" />
             </span>
@@ -221,7 +221,7 @@ export default function OwnerRequests() {
               return (
                 <div
                   key={r._id}
-                  className="bg-white rounded-xl2 shadow-card p-5 sm:p-6"
+                  className="surface-card p-5 sm:p-6"
                 >
                   <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                     <div className="flex gap-4 min-w-0">

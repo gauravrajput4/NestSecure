@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import Input from '../components/Input.jsx';
 import Button from '../components/Button.jsx';
+import AuthShell from '../components/AuthShell.jsx';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -29,68 +30,62 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-ink via-ink-soft to-indigo-brand flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl2 shadow-lift p-8 w-full max-w-md">
-        <h1 className="font-display font-extrabold text-3xl text-ink mb-2">
-          Reset password
-        </h1>
-
-        {sent ? (
-          <div className="space-y-4">
-            <p className="text-ink/70">
-              If an account exists for{' '}
-              <span className="font-semibold text-ink">{email}</span>, we've sent
-              a reset link. It's valid for one hour.
-            </p>
-            {demoLink && (
-              <div className="rounded-xl bg-paper border border-warning/40 p-4">
-                <p className="text-xs font-mono uppercase tracking-wide text-ink/40 mb-1">
-                  Demo mode · no email configured
-                </p>
-                <Link
-                  to={demoLink.replace(/^https?:\/\/[^/]+/, '')}
-                  className="text-sm text-indigo-brand font-semibold break-all hover:underline"
-                >
-                  Open reset link
-                </Link>
-              </div>
-            )}
-            <Link
-              to="/login"
-              className="inline-block text-sm text-indigo-brand font-semibold hover:underline"
-            >
-              Back to login
-            </Link>
+    <AuthShell
+      title="Reset your password"
+      subtitle="Enter your account email and we’ll send a secure reset link."
+      footerText={!sent ? 'Remember your password?' : undefined}
+      footerLinkTo={!sent ? '/login' : undefined}
+      footerLinkLabel={!sent ? 'Back to login' : undefined}
+      sideSubtitle="Password resets are time-limited and tied to your account for security."
+      highlights={[
+        'One-time secure reset token',
+        'Time-limited link validity',
+        'Automatic login after successful reset',
+      ]}
+    >
+      {sent ? (
+        <div className="space-y-4">
+          <div className="rounded-xl border border-success/30 bg-success/10 p-4 text-sm text-ink/80">
+            If an account exists for <span className="font-semibold text-ink">{email}</span>,
+            a reset link has been sent. The link expires in 1 hour.
           </div>
-        ) : (
-          <>
-            <p className="text-ink/60 mb-6">
-              Enter your email and we'll send a link to reset your password.
-            </p>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <Input
-                label="Email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-              <Button type="submit" className="w-full" loading={loading}>
-                Send reset link
-              </Button>
-            </form>
-            <p className="text-center text-sm text-ink/60 mt-6">
-              Remembered it?{' '}
+
+          {demoLink && (
+            <div className="rounded-xl border border-warning/40 bg-warning/10 p-4">
+              <p className="mb-1 text-xs font-mono uppercase tracking-wide text-ink/45">
+                Demo mode
+              </p>
               <Link
-                to="/login"
-                className="text-indigo-brand font-semibold hover:underline"
+                to={demoLink.replace(/^https?:\/\/[^/]+/, '')}
+                className="break-all text-sm font-semibold text-indigo-brand hover:underline"
               >
-                Log in
+                Open reset link
               </Link>
-            </p>
-          </>
-        )}
-      </div>
-    </div>
+            </div>
+          )}
+
+          <Link
+            to="/login"
+            className="inline-flex text-sm font-semibold text-indigo-deep hover:underline"
+          >
+            Back to login
+          </Link>
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <Input
+            label="Email address"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="email"
+            required
+          />
+          <Button type="submit" fullWidth loading={loading}>
+            Send reset link
+          </Button>
+        </form>
+      )}
+    </AuthShell>
   );
 }

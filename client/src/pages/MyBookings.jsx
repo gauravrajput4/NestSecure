@@ -30,6 +30,17 @@ export default function MyBookings() {
   const { user } = useAuth();
   const toast = useToast();
 
+  const stats = {
+    total: bookings.length,
+    active: bookings.filter(
+      (b) => b.bookingStatus === 'CONFIRMED' || b.bookingStatus === 'PENDING'
+    ).length,
+    awaitingApproval: bookings.filter((b) => b.bookingStatus === 'REQUESTED').length,
+    overdue: bookings.filter(
+      (b) => b.bookingStatus === 'CONFIRMED' && b.rentStatus === 'OVERDUE'
+    ).length,
+  };
+
   useEffect(() => {
     loadBookings();
   }, []);
@@ -153,15 +164,57 @@ export default function MyBookings() {
   if (loading) return <Loader className="min-h-screen" />;
 
   return (
-    <div className="min-h-screen bg-paper py-12">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="font-display font-extrabold text-4xl text-ink mb-8">
+    <div className="page-shell py-12">
+      <div className="page-container max-w-5xl">
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="mb-2 text-xs font-bold uppercase tracking-wide text-indigo-brand">
+              Booking workspace
+            </p>
+            <h1 className="font-display font-extrabold text-4xl text-ink">
+              My Bookings
+            </h1>
+          </div>
+          {user?.name && (
+            <span className="rounded-full border border-outline-soft bg-white px-3 py-1 text-xs font-semibold text-ink/60">
+              {user.name}
+            </span>
+          )}
+        </div>
+
+        <div className="mb-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="surface-card p-4">
+            <p className="text-xs uppercase tracking-wide font-semibold text-ink/50">Total</p>
+            <p className="mt-1 font-display text-2xl font-extrabold text-ink">{stats.total}</p>
+          </div>
+          <div className="surface-card p-4">
+            <p className="text-xs uppercase tracking-wide font-semibold text-ink/50">Active</p>
+            <p className="mt-1 font-display text-2xl font-extrabold text-success">{stats.active}</p>
+          </div>
+          <div className="surface-card p-4">
+            <p className="text-xs uppercase tracking-wide font-semibold text-ink/50">
+              Awaiting approval
+            </p>
+            <p className="mt-1 font-display text-2xl font-extrabold text-indigo-brand">
+              {stats.awaitingApproval}
+            </p>
+          </div>
+          <div className="surface-card p-4">
+            <p className="text-xs uppercase tracking-wide font-semibold text-ink/50">Overdue</p>
+            <p className="mt-1 font-display text-2xl font-extrabold text-danger">{stats.overdue}</p>
+          </div>
+        </div>
+
+        <h2 className="sr-only">
           My Bookings
-        </h1>
+        </h2>
 
         {bookings.length === 0 && (
-          <div className="bg-white rounded-xl2 shadow-card p-12 text-center">
-            <p className="text-ink/60">You have no bookings yet.</p>
+          <div className="surface-card p-12 text-center">
+            <p className="text-ink/60 mb-4">You have no bookings yet.</p>
+            <Link to="/">
+              <Button variant="outline">Explore PGs</Button>
+            </Link>
           </div>
         )}
 
@@ -169,7 +222,7 @@ export default function MyBookings() {
           {bookings.map((b) => (
             <div
               key={b._id}
-              className="bg-white rounded-xl2 shadow-card p-6 border-2 border-transparent hover:border-indigo-brand/20 transition"
+              className="surface-card p-6 border-2 border-transparent hover:border-indigo-brand/20 transition"
             >
               <div className="flex flex-col md:flex-row md:items-start gap-4">
                 {b.pg?.images?.[0] && (
@@ -248,9 +301,9 @@ export default function MyBookings() {
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 md:min-w-[9rem]">
                   {b.bookingStatus === 'REQUESTED' && (
-                    <span className="text-xs text-ink/50 text-right max-w-[9rem]">
+                    <span className="text-xs text-ink/50 text-right md:max-w-[9rem]">
                       Waiting for the owner to approve your request.
                     </span>
                   )}

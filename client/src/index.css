@@ -5,8 +5,59 @@
 @tailwind utilities;
 
 @layer base {
+  html,
+  body,
+  #root {
+    @apply min-h-full;
+  }
+
   body {
     @apply bg-paper text-ink font-sans antialiased;
+  }
+
+  ::selection {
+    @apply bg-indigo-brand/20 text-ink;
+  }
+
+  a,
+  button,
+  input,
+  select,
+  textarea {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-brand/60 focus-visible:ring-offset-2 focus-visible:ring-offset-paper;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(79, 70, 229, 0.35) rgba(79, 70, 229, 0.08);
+  }
+
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: rgba(79, 70, 229, 0.35);
+    border-radius: 9999px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: rgba(79, 70, 229, 0.08);
+  }
+}
+
+@layer components {
+  .page-shell {
+    @apply min-h-screen bg-paper;
+  }
+
+  .page-container {
+    @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .surface-card {
+    @apply rounded-xl2 border border-outline-soft/50 bg-white shadow-subtle;
   }
 }
 

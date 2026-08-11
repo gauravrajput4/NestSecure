@@ -30,132 +30,143 @@ const Admin = lazy(() => import('./pages/Admin.jsx'));
 
 export default function App() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="page-shell flex flex-col">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[110] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-ink focus:shadow-card"
+      >
+        Skip to main content
+      </a>
       <NavigationTracker />
       <Navbar />
-      <main className="flex-grow flex flex-col">
+      <main id="main-content" className="flex-grow flex flex-col">
         <Suspense fallback={<Loader className="min-h-screen" />}>
           <Routes>
-          {/* Public */}
-          <Route path="/" element={<Home />} />
-          <Route
-            path="/pg/:id"
-            element={
-              <Suspense fallback={<PGDetailsSkeleton />}>
-                <PGDetails />
-              </Suspense>
-            }
-          />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password/:token" element={<ResetPassword />} />
-          <Route path="/help" element={<Help />} />
+            {/* Public */}
+            <Route path="/" element={<Home />} />
+            <Route
+              path="/pg/:id"
+              element={
+                <Suspense fallback={<PGDetailsSkeleton />}>
+                  <PGDetails />
+                </Suspense>
+              }
+            />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route path="/help" element={<Help />} />
 
-          {/* User protected */}
-          <Route
-            path="/bookings"
-            element={
-              <ProtectedRoute role="USER">
-                <MyBookings />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/rent/:bookingId"
-            element={
-              <ProtectedRoute>
-                <RentLedger />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/settings"
-            element={
-              <ProtectedRoute>
-                <Settings />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/wishlist"
-            element={
-              <ProtectedRoute role="USER">
-                <Wishlist />
-              </ProtectedRoute>
-            }
-          />
+            {/* User protected */}
+            <Route
+              path="/bookings"
+              element={
+                <ProtectedRoute role="USER">
+                  <MyBookings />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/rent/:bookingId"
+              element={
+                <ProtectedRoute>
+                  <RentLedger />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <Settings />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/wishlist"
+              element={
+                <ProtectedRoute role="USER">
+                  <Wishlist />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Owner protected */}
-          <Route
-            path="/owner/dashboard"
-            element={
-              <ProtectedRoute role="OWNER">
-                <OwnerDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/owner/pgs"
-            element={
-              <ProtectedRoute role="OWNER">
-                <OwnerPGs />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/owner/pgs/new"
-            element={
-              <ProtectedRoute role="OWNER">
-                <AddListing />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/owner/requests"
-            element={
-              <ProtectedRoute role="OWNER">
-                <OwnerRequests />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/owner/financials"
-            element={
-              <ProtectedRoute role="OWNER">
-                <Financials />
-              </ProtectedRoute>
-            }
-          />
+            {/* Owner protected */}
+            <Route
+              path="/owner/dashboard"
+              element={
+                <ProtectedRoute role="OWNER">
+                  <OwnerDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/owner/pgs"
+              element={
+                <ProtectedRoute role="OWNER">
+                  <OwnerPGs />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/owner/pgs/new"
+              element={
+                <ProtectedRoute role="OWNER">
+                  <AddListing />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/owner/requests"
+              element={
+                <ProtectedRoute role="OWNER">
+                  <OwnerRequests />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/owner/financials"
+              element={
+                <ProtectedRoute role="OWNER">
+                  <Financials />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Admin protected */}
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute role="ADMIN">
-                <Admin />
-              </ProtectedRoute>
-            }
-          />
+            {/* Admin protected */}
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute role="ADMIN">
+                  <Admin />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Fallback */}
-          <Route
-            path="*"
-            element={
-              <div className="min-h-screen flex flex-col items-center justify-center text-ink">
-                <h1 className="font-display font-extrabold text-6xl mb-2">404</h1>
-                <p className="text-ink/60">This page wandered off the map.</p>
-              </div>
-            }
-          />
+            {/* Fallback */}
+            <Route
+              path="*"
+              element={
+                <div className="page-container min-h-[65vh] flex flex-col items-center justify-center text-ink">
+                  <span className="mb-3 rounded-full bg-indigo-brand/10 px-3 py-1 text-xs font-bold tracking-wide text-indigo-brand">
+                    Not Found
+                  </span>
+                  <h1 className="font-display font-extrabold text-5xl sm:text-6xl mb-2">404</h1>
+                  <p className="text-ink/60 text-center text-balance">
+                    This page wandered off the map.
+                  </p>
+                </div>
+              }
+            />
           </Routes>
         </Suspense>
       </main>
