@@ -1,0 +1,11 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="NestSecure PG">
+  <title>NestSecure PG</title>
+  <!-- Brand indigo tile -->
+  <rect width="64" height="64" rx="14" fill="#4F46E5"/>
+  <!-- Shield (security) — enlarged to fill the tile for 16px legibility -->
+  <path d="M16 11 H48 Q52 11 52 15 V33 C52 44.5 43.5 51.5 32 55.5 C20.5 51.5 12 44.5 12 33 V15 Q12 11 16 11 Z" fill="#FFFFFF"/>
+  <!-- House / roof knockout (home) -->
+  <path d="M32 18 L42 30 L42 43 L22 43 L22 30 Z" fill="#4F46E5"/>
+  <!-- Door -->
+  <rect x="29" y="35.5" width="6" height="7.5" rx="0.8" fill="#FFFFFF"/>
+</svg>
