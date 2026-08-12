@@ -41,49 +41,59 @@ export function createInteractiveEmail({
   const safeCompanyWebsite = escapeHtml(COMPANY_WEBSITE);
   const safeSupportEmail = escapeHtml(COMPANY_SUPPORT_EMAIL);
 
-  const detailRows = details
-    .filter((d) => d?.label && d?.value !== undefined && d?.value !== null)
+  // Email-client-safe font stack (Inter where available, graceful system fallback).
+  const FONT =
+    "'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
+
+  const detailList = details.filter(
+    (d) => d?.label && d?.value !== undefined && d?.value !== null
+  );
+  const detailRows = detailList
     .map(
       (d) => `
         <tr>
-          <td style="padding:10px 0;color:#475569;font-size:13px;font-weight:600;">${escapeHtml(d.label)}</td>
-          <td style="padding:10px 0;color:#0f172a;font-size:13px;text-align:right;">${escapeHtml(d.value)}</td>
+          <td style="padding:11px 20px;border-top:1px solid #ECEEF6;color:#6b7280;font-size:13px;font-weight:600;font-family:${FONT};">${escapeHtml(
+            d.label
+          )}</td>
+          <td style="padding:11px 20px;border-top:1px solid #ECEEF6;color:#151c27;font-size:13px;font-weight:600;text-align:right;font-family:${FONT};">${escapeHtml(
+            d.value
+          )}</td>
         </tr>`
     )
     .join('');
 
   return `
   <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">
-    ${safeTitle} | ${safeCompanyName}
+    ${safeTitle} — ${safeCompanyName}
   </div>
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9;margin:0;padding:28px 0;font-family:Arial,Helvetica,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f0f3ff;margin:0;padding:32px 0;">
     <tr>
-      <td align="center" style="padding:0 12px;">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:640px;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;overflow:hidden;">
+      <td align="center" style="padding:0 14px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background:#ffffff;border:1px solid #e4e7f2;border-radius:16px;overflow:hidden;">
           <tr>
-            <td style="padding:24px;background:#1d4ed8;background-image:linear-gradient(135deg,#1d4ed8 0%,#7c3aed 100%);">
-              <div style="font-size:11px;letter-spacing:1px;color:#dbeafe;font-weight:700;">${safeCompanyName.toUpperCase()}</div>
-              <div style="margin-top:10px;font-size:24px;line-height:1.35;font-weight:700;color:#ffffff;">${safeTitle}</div>
+            <td style="padding:30px 32px;background:#4f46e5;">
+              <div style="font-size:11px;letter-spacing:1.5px;color:#c7d2fe;font-weight:700;text-transform:uppercase;font-family:${FONT};">${safeCompanyName}</div>
+              <div style="margin-top:10px;font-size:23px;line-height:1.3;font-weight:700;color:#ffffff;font-family:${FONT};">${safeTitle}</div>
             </td>
           </tr>
           <tr>
-            <td style="padding:24px;">
-              <p style="margin:0 0 10px 0;font-size:15px;color:#0f172a;">Hi ${safeUserName},</p>
-              <p style="margin:0;font-size:14px;line-height:1.7;color:#334155;">${safeMessage}</p>
+            <td style="padding:32px;">
+              <p style="margin:0 0 12px 0;font-size:15px;color:#151c27;font-weight:600;font-family:${FONT};">Hi ${safeUserName},</p>
+              <p style="margin:0;font-size:14.5px;line-height:1.7;color:#3f4656;font-family:${FONT};">${safeMessage}</p>
               ${
                 detailRows
-                  ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:18px;padding:0 14px;border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc;">
-                       <tr><td style="padding:12px 0 2px 0;font-size:12px;color:#64748b;font-weight:700;letter-spacing:0.3px;">DETAIL SUMMARY</td></tr>
+                  ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:24px;border:1px solid #e4e7f2;border-radius:12px;background:#f9f9ff;overflow:hidden;">
+                       <tr><td colspan="2" style="padding:14px 20px 2px 20px;font-size:11px;color:#7a8194;font-weight:700;letter-spacing:0.8px;font-family:${FONT};">DETAILS</td></tr>
                        ${detailRows}
                      </table>`
                   : ''
               }
               ${
                 ctaUrl
-                  ? `<table role="presentation" cellpadding="0" cellspacing="0" style="margin-top:22px;">
+                  ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:26px;">
                        <tr>
-                         <td style="border-radius:8px;background:#0f172a;">
-                           <a href="${safeCtaUrl}" style="display:inline-block;padding:12px 18px;color:#ffffff;text-decoration:none;font-size:14px;font-weight:700;">
+                         <td align="center" bgcolor="#4f46e5" style="border-radius:10px;">
+                           <a href="${safeCtaUrl}" target="_blank" style="display:inline-block;padding:13px 26px;color:#ffffff;text-decoration:none;font-size:14px;font-weight:700;border-radius:10px;font-family:${FONT};">
                              ${safeCtaText}
                            </a>
                          </td>
@@ -91,17 +101,23 @@ export function createInteractiveEmail({
                      </table>`
                   : ''
               }
-              <p style="margin:18px 0 0 0;font-size:12px;line-height:1.6;color:#64748b;">${safeFooterNote}</p>
+              <p style="margin:22px 0 0 0;font-size:12.5px;line-height:1.6;color:#7a8194;font-family:${FONT};">${safeFooterNote}</p>
             </td>
           </tr>
           <tr>
-            <td style="padding:14px 24px;background:#f8fafc;border-top:1px solid #e2e8f0;">
-              <p style="margin:0;font-size:12px;line-height:1.6;color:#64748b;">
-                ${safeCompanyName}
-                ${COMPANY_SUPPORT_EMAIL ? ` | Support: <a href="mailto:${safeSupportEmail}" style="color:#1d4ed8;text-decoration:none;">${safeSupportEmail}</a>` : ''}
-                ${COMPANY_WEBSITE ? ` | <a href="${safeCompanyWebsite}" style="color:#1d4ed8;text-decoration:none;">Website</a>` : ''}
+            <td style="padding:18px 32px;background:#f9f9ff;border-top:1px solid #e4e7f2;">
+              <p style="margin:0;font-size:12px;line-height:1.6;color:#6b7280;font-family:${FONT};">
+                ${safeCompanyName}${
+    COMPANY_SUPPORT_EMAIL
+      ? ` &nbsp;·&nbsp; <a href="mailto:${safeSupportEmail}" style="color:#4f46e5;text-decoration:none;">${safeSupportEmail}</a>`
+      : ''
+  }${
+    COMPANY_WEBSITE
+      ? ` &nbsp;·&nbsp; <a href="${safeCompanyWebsite}" style="color:#4f46e5;text-decoration:none;">Visit website</a>`
+      : ''
+  }
               </p>
-              <p style="margin:4px 0 0 0;font-size:11px;color:#94a3b8;">&copy; ${year} ${safeCompanyName}. All rights reserved.</p>
+              <p style="margin:6px 0 0 0;font-size:11px;color:#9aa1b2;font-family:${FONT};">&copy; ${year} ${safeCompanyName}. All rights reserved.</p>
             </td>
           </tr>
         </table>
@@ -111,14 +127,17 @@ export function createInteractiveEmail({
 }
 
 export function createWhatsAppMessage({ userName = 'Customer', message, ctaUrl = '' }) {
-  const lines = [
+  const parts = [
     `Hi ${userName},`,
-    `${COMPANY_NAME} update: ${message}`,
-    ctaUrl ? `Open: ${ctaUrl}` : '',
-    `Thank you,`,
-    `${COMPANY_NAME}`,
-  ].filter(Boolean);
-  return lines.join('\n');
+    '',
+    `*${COMPANY_NAME}*`,
+    `${message}`,
+  ];
+  if (ctaUrl) {
+    parts.push('', `View: ${ctaUrl}`);
+  }
+  parts.push('', 'Thank you,', `Team ${COMPANY_NAME}`);
+  return parts.join('\n');
 }
 
 // ---------- Email ----------
