@@ -16,7 +16,7 @@ export default function Select({
       {label && (
         <label
           htmlFor={selectId}
-          className="block text-sm font-semibold text-ink mb-1.5"
+          className="block text-sm font-medium text-neutral-700 mb-1.5"
         >
           {label}
         </label>
@@ -26,10 +26,10 @@ export default function Select({
           id={selectId}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? `${selectId}-error` : undefined}
-          className={`w-full h-control pl-4 pr-10 rounded-xl border-2 text-ink appearance-none
-            focus:outline-none focus:ring-2 focus:ring-indigo-brand/50 focus:border-indigo-brand/60 transition-colors
-            bg-white cursor-pointer
-            ${error ? 'border-danger' : 'border-ink/20 hover:border-ink/30'}`}
+          className={`w-full h-11 pl-4 pr-10 rounded-lg border appearance-none
+            focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-colors shadow-sm
+            bg-white cursor-pointer text-neutral-900
+            ${error ? 'border-error-500 focus:border-error-500 focus:ring-error-500/50' : 'border-neutral-300 hover:border-neutral-400'}`}
           {...props}
         >
           {options.map((opt) => (
@@ -40,7 +40,7 @@ export default function Select({
         </select>
         {/* Custom chevron — native appearance removed for cross-browser consistency */}
         <svg
-          className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-ink/50"
+          className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500"
           viewBox="0 0 20 20"
           fill="currentColor"
           aria-hidden="true"
@@ -53,7 +53,7 @@ export default function Select({
         </svg>
       </div>
       {error && (
-        <p id={`${selectId}-error`} className="text-sm text-danger mt-1.5">
+        <p id={`${selectId}-error`} className="text-sm text-error-600 mt-1.5">
           {error}
         </p>
       )}

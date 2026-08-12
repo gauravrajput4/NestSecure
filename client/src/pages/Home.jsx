@@ -152,16 +152,16 @@ export default function Home() {
           {/* Left: search canvas */}
           <div className="lg:col-span-5 flex flex-col gap-6">
             <div>
-              <span className="inline-flex items-center gap-2 rounded-full bg-indigo-brand/10 px-3 py-1 text-sm font-semibold text-indigo-deep mb-4">
+              <span className="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3 py-1 text-sm font-semibold text-indigo-700 mb-4">
                 <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" />
                 </svg>
                 Verified &amp; secure PGs near you
               </span>
-              <h1 className="font-display font-extrabold text-4xl sm:text-5xl text-ink tracking-tight mb-4 text-balance leading-[1.05]">
+              <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-neutral-900 tracking-tight mb-4 text-balance leading-[1.05]">
                 Find Your Safe Haven.
               </h1>
-              <p className="text-lg text-ink/60 text-pretty max-w-md">
+              <p className="text-lg text-neutral-500 text-pretty max-w-md">
                 Discover verified, secure, and comfortable PGs tailored to your
                 needs. Zero friction, total peace of mind.
               </p>
@@ -173,7 +173,7 @@ export default function Home() {
                 e.preventDefault();
                 applyFilters();
               }}
-              className="surface-card bg-surface-low p-5 sm:p-6 flex flex-col gap-4"
+              className="surface-card p-5 sm:p-6 flex flex-col gap-4 bg-white"
             >
               <Input
                 label="City, neighborhood, or landmark"
@@ -220,12 +220,12 @@ export default function Home() {
                   />
                 ) : (
                   <div className="flex items-end">
-                    <label className="flex items-center gap-2 text-sm font-semibold text-ink cursor-pointer min-h-control">
+                    <label className="flex items-center gap-2 text-sm font-medium text-neutral-700 cursor-pointer min-h-[44px]">
                       <input
                         type="checkbox"
                         checked={availableOnly}
                         onChange={(e) => setAvailableOnly(e.target.checked)}
-                        className="w-5 h-5 rounded border-outline text-indigo-brand focus:ring-indigo-brand"
+                        className="w-5 h-5 rounded border-neutral-300 text-indigo-600 focus:ring-indigo-500"
                       />
                       Available only
                     </label>
@@ -233,12 +233,12 @@ export default function Home() {
                 )}
               </div>
               {userLocation && (
-                <label className="flex items-center gap-2 text-sm font-semibold text-ink cursor-pointer">
+                <label className="flex items-center gap-2 text-sm font-medium text-neutral-700 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={availableOnly}
                     onChange={(e) => setAvailableOnly(e.target.checked)}
-                    className="w-5 h-5 rounded border-outline text-indigo-brand focus:ring-indigo-brand"
+                    className="w-5 h-5 rounded border-neutral-300 text-indigo-600 focus:ring-indigo-500"
                   />
                   Available only
                 </label>
@@ -255,11 +255,11 @@ export default function Home() {
                 </Button>
               </div>
               {activeFilters.length > 0 && (
-                <div className="flex flex-wrap gap-2 pt-1 border-t border-outline-soft/60">
+                <div className="flex flex-wrap gap-2 pt-1 border-t border-neutral-200">
                   {activeFilters.map((f) => (
                     <span
                       key={f}
-                      className="inline-flex rounded-full border border-outline-soft/70 bg-white px-2.5 py-1 text-xs font-semibold text-ink/70"
+                      className="inline-flex rounded-full border border-neutral-200 bg-neutral-50 px-2.5 py-1 text-xs font-medium text-neutral-600"
                     >
                       {f}
                     </span>
@@ -270,16 +270,16 @@ export default function Home() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="surface-card p-3.5">
-                <p className="text-xs font-semibold uppercase tracking-wide text-ink/50">
+                <p className="text-xs font-bold uppercase tracking-wider text-neutral-400">
                   Live results
                 </p>
-                <p className="mt-1 font-display text-2xl font-extrabold text-ink">{total}</p>
+                <p className="mt-1 font-display text-2xl font-bold text-neutral-900">{total}</p>
               </div>
               <div className="surface-card p-3.5">
-                <p className="text-xs font-semibold uppercase tracking-wide text-ink/50">
+                <p className="text-xs font-bold uppercase tracking-wider text-neutral-400">
                   Available now
                 </p>
-                <p className="mt-1 font-display text-2xl font-extrabold text-success">
+                <p className="mt-1 font-display text-2xl font-bold text-success-600">
                   {availableCount}
                 </p>
               </div>
@@ -287,7 +287,7 @@ export default function Home() {
           </div>
 
           {/* Right: interactive map */}
-          <div className="lg:col-span-7 h-[400px] lg:h-[600px] relative rounded-xl2 overflow-hidden shadow-card border border-outline-soft">
+          <div className="lg:col-span-7 h-[400px] lg:h-[600px] relative rounded-2xl overflow-hidden shadow-card border border-neutral-200">
             <PGMap
               pgs={filteredPGs}
               center={mapCenter}
@@ -301,21 +301,21 @@ export default function Home() {
       </section>
 
       {/* ── Featured properties ───────────────────────────────────────── */}
-      <section className="bg-surface-low border-t border-outline-soft/70 py-12 sm:py-16">
+      <section className="bg-neutral-50 border-t border-neutral-200 py-12 sm:py-16">
         <div className="page-container">
           <div className="flex flex-wrap items-end justify-between gap-3 mb-8">
             <div>
-              <h2 className="font-display font-extrabold text-2xl sm:text-3xl text-ink tracking-tight">
+              <h2 className="font-display font-bold text-2xl sm:text-3xl text-neutral-900 tracking-tight">
                 Featured Properties
               </h2>
-              <p className="text-ink/60 mt-2">
+              <p className="text-neutral-500 mt-2">
                 {activeFilters.length > 0
                   ? 'Filtered properties based on your search criteria.'
                   : 'Highly rated accommodations in prime locations.'}
               </p>
             </div>
             {!loading && (
-              <span className="text-sm font-semibold text-ink/60">
+              <span className="text-sm font-medium text-neutral-500">
                 {total} {total === 1 ? 'PG' : 'PGs'} found
               </span>
             )}
@@ -330,14 +330,14 @@ export default function Home() {
 
           {/* Empty state */}
           {!loading && filteredPGs.length === 0 && (
-            <div className="text-center py-16 px-6 bg-white rounded-xl2 shadow-card">
+            <div className="text-center py-16 px-6 bg-white rounded-2xl shadow-sm border border-neutral-200">
               <div className="text-5xl mb-4" aria-hidden="true">
                 🗺️
               </div>
-              <h3 className="font-display font-bold text-xl text-ink mb-1">
+              <h3 className="font-display font-bold text-xl text-neutral-900 mb-1">
                 No PGs match your filters
               </h3>
-              <p className="text-ink/60 mb-5">
+              <p className="text-neutral-500 mb-5">
                 Try widening your search or clearing a filter or two.
               </p>
               <Button variant="outline" onClick={resetFilters}>
@@ -368,7 +368,7 @@ export default function Home() {
 
           {/* End of results */}
           {!loading && !hasMore && filteredPGs.length > 0 && (
-            <p className="text-center text-sm text-ink/40 py-8">
+            <p className="text-center text-sm text-neutral-400 py-8">
               You've reached the end · {total} {total === 1 ? 'PG' : 'PGs'} total
             </p>
           )}

@@ -12,11 +12,11 @@
   }
 
   body {
-    @apply bg-paper text-ink font-sans antialiased;
+    @apply bg-neutral-50 text-neutral-900 font-sans antialiased;
   }
 
   ::selection {
-    @apply bg-indigo-brand/20 text-ink;
+    @apply bg-indigo-500/20 text-neutral-900;
   }
 
   a,
@@ -24,7 +24,7 @@
   input,
   select,
   textarea {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-brand/60 focus-visible:ring-offset-2 focus-visible:ring-offset-paper;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-50;
   }
 
   * {
@@ -49,7 +49,7 @@
 
 @layer components {
   .page-shell {
-    @apply min-h-screen bg-paper;
+    @apply min-h-screen bg-neutral-50;
   }
 
   .page-container {
@@ -57,7 +57,7 @@
   }
 
   .surface-card {
-    @apply rounded-xl2 border border-outline-soft/50 bg-white shadow-subtle;
+    @apply rounded-2xl border border-neutral-200 bg-white shadow-sm;
   }
 }
 

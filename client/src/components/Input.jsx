@@ -21,7 +21,7 @@ export default function Input({
       {label && (
         <label
           htmlFor={inputId}
-          className="block text-sm font-semibold text-ink mb-1.5"
+          className="block text-sm font-medium text-neutral-700 mb-1.5"
         >
           {label}
         </label>
@@ -30,18 +30,18 @@ export default function Input({
         id={inputId}
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy}
-        className={`w-full h-control px-4 rounded-xl border-2 text-ink placeholder:text-ink/40
-          focus:outline-none focus:ring-2 focus:ring-indigo-brand/50 focus:border-indigo-brand/60 transition-colors
-          ${error ? 'border-danger' : 'border-ink/20 hover:border-ink/30'}`}
+        className={`w-full h-11 px-4 rounded-lg border bg-white text-neutral-900 placeholder:text-neutral-400
+          focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-colors shadow-sm
+          ${error ? 'border-error-500 focus:border-error-500 focus:ring-error-500/50' : 'border-neutral-300 hover:border-neutral-400'}`}
         {...props}
       />
       {error && (
-        <p id={`${inputId}-error`} className="text-sm text-danger mt-1.5">
+        <p id={`${inputId}-error`} className="text-sm text-error-600 mt-1.5">
           {error}
         </p>
       )}
       {helperText && !error && (
-        <p id={`${inputId}-help`} className="text-sm text-ink/60 mt-1.5">
+        <p id={`${inputId}-help`} className="text-sm text-neutral-500 mt-1.5">
           {helperText}
         </p>
       )}

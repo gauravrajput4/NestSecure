@@ -97,33 +97,33 @@ export default function Navbar() {
     : '';
 
   const linkClass = (path) =>
-    `text-sm font-semibold transition pb-0.5 border-b-2 ${
+    `text-sm font-medium transition pb-4 border-b-2 -mb-[1px] ${
       isActive(path)
-        ? 'text-indigo-deep border-indigo-deep'
-        : 'text-ink/60 border-transparent hover:text-indigo-deep'
+        ? 'text-neutral-900 border-neutral-900'
+        : 'text-neutral-500 border-transparent hover:text-neutral-900'
     }`;
 
   const Badge = ({ count }) =>
     count > 0 ? (
-      <span className="ml-0.5 inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1 rounded-full bg-indigo-brand text-white text-xs font-bold font-mono">
+      <span className="ml-1 inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-indigo-600 text-white text-[10px] font-bold">
         {count}
       </span>
     ) : null;
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-outline-soft/60 bg-white/90 backdrop-blur-xl">
+    <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-neutral-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group shrink-0">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-brand text-white shadow-subtle transition group-hover:bg-indigo-deep">
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-600 text-white shadow-sm transition group-hover:bg-indigo-700">
               <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" />
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9.5 12l1.8 1.8 3.2-3.6" />
               </svg>
             </span>
-            <span className="font-display font-extrabold text-xl tracking-tight text-indigo-deep">
-              NestSecure<span className="text-ink"> PG</span>
+            <span className="font-display font-bold text-xl tracking-tight text-neutral-900">
+              NestSecure
             </span>
           </Link>
 
@@ -133,7 +133,7 @@ export default function Navbar() {
               type="button"
               onClick={handleBack}
               disabled={!canGoBack}
-              className="h-9 w-9 flex items-center justify-center rounded-lg text-ink hover:bg-ink/5 disabled:opacity-30 disabled:cursor-not-allowed transition"
+              className="h-9 w-9 flex items-center justify-center rounded-lg text-neutral-700 hover:bg-neutral-100 disabled:opacity-30 disabled:cursor-not-allowed transition"
               aria-label="Go back"
               title="Go back"
             >
@@ -145,7 +145,7 @@ export default function Navbar() {
               type="button"
               onClick={handleForward}
               disabled={!canGoForward}
-              className="h-9 w-9 flex items-center justify-center rounded-lg text-ink hover:bg-ink/5 disabled:opacity-30 disabled:cursor-not-allowed transition"
+              className="h-9 w-9 flex items-center justify-center rounded-lg text-neutral-700 hover:bg-neutral-100 disabled:opacity-30 disabled:cursor-not-allowed transition"
               aria-label="Go forward"
               title="Go forward"
             >
@@ -173,11 +173,11 @@ export default function Navbar() {
                     {l.badge != null && <Badge count={l.badge} />}
                   </Link>
                 ))}
-                <div className="ml-1 flex items-center gap-2 rounded-full border border-outline-soft bg-paper px-2.5 py-1.5">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-brand text-xs font-bold text-white">
+                <div className="ml-1 flex items-center gap-2 rounded-full border border-neutral-200 bg-neutral-50 px-2.5 py-1.5">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
                     {initials || 'U'}
                   </span>
-                  <span className="hidden lg:block text-xs font-semibold text-ink/70">
+                  <span className="hidden lg:block text-xs font-medium text-neutral-500">
                     {roleLabel}
                   </span>
                 </div>
@@ -202,7 +202,7 @@ export default function Navbar() {
           {/* Mobile toggle */}
           <button
             type="button"
-            className="md:hidden flex h-11 w-11 -mr-2 items-center justify-center rounded-lg text-ink hover:bg-ink/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-brand"
+            className="md:hidden flex h-11 w-11 -mr-2 items-center justify-center rounded-lg text-neutral-700 hover:bg-neutral-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
@@ -223,27 +223,27 @@ export default function Navbar() {
       {menuOpen && (
         <div className="md:hidden fixed inset-0 top-16 z-40" id="mobile-menu">
           <div
-            className="absolute inset-0 bg-ink/40"
+            className="absolute inset-0 bg-neutral-900/40"
             onClick={() => setMenuOpen(false)}
             aria-hidden="true"
           />
-          <div className="relative bg-white border-b border-ink/10 shadow-card max-h-[calc(100vh-4rem)] overflow-y-auto">
+          <div className="relative bg-white border-b border-neutral-200 shadow-sm max-h-[calc(100vh-4rem)] overflow-y-auto">
             <div className="px-4 py-4 flex flex-col gap-1">
               {user ? (
                 <>
-                  <div className="mb-2 rounded-xl border border-outline-soft/70 bg-paper px-3 py-2.5">
-                    <p className="text-sm font-semibold text-ink">{user.name}</p>
-                    <p className="text-xs text-ink/60">{roleLabel} account</p>
+                  <div className="mb-2 rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2.5">
+                    <p className="text-sm font-semibold text-neutral-900">{user.name}</p>
+                    <p className="text-xs text-neutral-500">{roleLabel} account</p>
                   </div>
                   {links.map((l) => (
                     <Link
                       key={l.to}
                       to={l.to}
                       aria-current={isActive(l.to) ? 'page' : undefined}
-                      className={`flex items-center gap-2 px-3 py-3 rounded-xl text-base font-semibold min-h-control ${
+                      className={`flex items-center gap-2 px-3 py-3 rounded-lg text-base font-medium min-h-11 ${
                         isActive(l.to)
-                          ? 'bg-indigo-brand/10 text-indigo-brand'
-                          : 'text-ink/80 hover:bg-ink/5'
+                          ? 'bg-indigo-50 text-indigo-700'
+                          : 'text-neutral-700 hover:bg-neutral-100'
                       }`}
                     >
                       {l.heart && <span className="text-danger">♥</span>}

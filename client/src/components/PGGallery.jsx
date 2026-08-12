@@ -90,9 +90,11 @@ export default function PGGallery({ images = [], name = 'PG' }) {
           </span>
         </div>
 
-        {/* Zoom panel — hidden on touch / small screens */}
+        {/* Zoom panel — magnified detail overlays the stage on pointer devices.
+            Kept within the stage bounds (inset-0) so it can never push past the
+            viewport and cause horizontal scroll. Hidden on touch / small screens. */}
         {zoom && (
-          <div className="pointer-events-none absolute left-full top-0 z-20 ml-4 hidden aspect-[4/3] w-[110%] overflow-hidden rounded-xl2 border border-ink/10 bg-white shadow-lift lg:block">
+          <div className="pointer-events-none absolute inset-0 z-20 hidden overflow-hidden rounded-xl2 border border-ink/10 bg-white shadow-lift lg:block">
             <div
               className="h-full w-full"
               style={{

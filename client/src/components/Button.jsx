@@ -9,25 +9,25 @@ export default function Button({
   ...props
 }) {
   const base =
-    'inline-flex items-center justify-center gap-2 font-semibold rounded-xl leading-none transition-all duration-150 select-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] motion-reduce:transition-none motion-reduce:active:scale-100';
+    'inline-flex items-center justify-center gap-2 font-medium rounded-lg leading-none transition-all duration-200 select-none focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-60 disabled:pointer-events-none active:scale-[0.98] motion-reduce:transition-none motion-reduce:active:scale-100';
 
   const variants = {
     primary:
-      'bg-indigo-brand text-white hover:bg-indigo-deep focus-visible:outline-indigo-brand shadow-subtle hover:shadow-card',
+      'bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm focus:ring-indigo-500 focus:ring-offset-paper',
     secondary:
-      'bg-ink text-white hover:bg-ink-soft focus-visible:outline-ink shadow-subtle hover:shadow-card',
+      'bg-white text-neutral-700 border border-neutral-300 hover:bg-neutral-50 shadow-sm focus:ring-indigo-500 focus:ring-offset-paper',
     outline:
-      'border border-indigo-brand text-indigo-brand hover:bg-indigo-brand hover:text-white focus-visible:outline-indigo-brand',
-    ghost: 'text-indigo-brand hover:bg-indigo-brand/5 focus-visible:outline-indigo-brand',
+      'border-2 border-indigo-600 text-indigo-700 hover:bg-indigo-50 focus:ring-indigo-500 focus:ring-offset-paper',
+    ghost: 'text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900 focus:ring-neutral-200 focus:ring-offset-paper',
     danger:
-      'bg-danger text-white hover:bg-red-700 focus-visible:outline-danger shadow-subtle hover:shadow-card',
+      'bg-error-600 text-white hover:bg-error-700 shadow-sm focus:ring-error-500 focus:ring-offset-paper',
   };
 
   // Sizes map to the shared control-height grid so buttons line up with inputs.
   const sizes = {
-    sm: 'h-control-sm px-3.5 text-sm',
-    md: 'h-control px-5 text-base',
-    lg: 'h-control-lg px-7 text-lg',
+    sm: 'h-9 px-4 text-sm',
+    md: 'h-11 px-5 text-sm',
+    lg: 'h-12 px-6 text-base',
   };
 
   return (

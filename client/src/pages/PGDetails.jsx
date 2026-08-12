@@ -162,25 +162,25 @@ export default function PGDetails() {
         : 'Request to Book';
 
   return (
-    <div className="page-shell pb-28 lg:pb-12">
+    <div className="page-shell pb-28 lg:pb-12 bg-neutral-50">
       <div className="page-container max-w-6xl pt-6 sm:pt-8">
         <div className="mb-4 sm:mb-6 flex items-center justify-between gap-3">
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-outline-soft bg-white px-3 py-2 text-sm font-semibold text-ink/70 transition hover:border-indigo-brand/40 hover:text-indigo-deep"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-600 transition hover:border-indigo-200 hover:text-indigo-700 shadow-sm"
           >
             <span aria-hidden="true">←</span> Back
           </button>
-          <span className="hidden sm:inline-flex rounded-full border border-outline-soft/80 bg-white px-3 py-1 text-xs font-semibold text-ink/55">
+          <span className="hidden sm:inline-flex rounded-full border border-neutral-200 bg-white px-3 py-1 text-xs font-medium text-neutral-500 shadow-sm">
             PG details
           </span>
         </div>
 
         {/* Product-style gallery (signature magnifier) */}
-        <div className="surface-card p-3 sm:p-6 mb-6 sm:mb-8 relative">
+        <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-3 sm:p-6 mb-6 sm:mb-8 relative">
           {pg.availableRooms === 0 && (
-            <div className="absolute top-5 right-5 sm:top-6 sm:right-6 z-10 bg-danger text-white text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-card">
+            <div className="absolute top-5 right-5 sm:top-6 sm:right-6 z-10 bg-error-600 text-white text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-sm">
               Fully booked
             </div>
           )}
@@ -195,12 +195,12 @@ export default function PGDetails() {
           {/* ---- Left: details ---- */}
           <div className="min-w-0 space-y-6 sm:space-y-8">
             {/* Header + description */}
-            <div className="surface-card shadow-lift p-5 sm:p-8">
+            <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-5 sm:p-8">
               <div className="mb-5">
-                <h1 className="font-display font-extrabold text-3xl sm:text-4xl text-ink mb-2 text-balance">
+                <h1 className="font-display font-bold text-3xl sm:text-4xl text-neutral-900 mb-2 text-balance">
                   {pg.name}
                 </h1>
-                <p className="text-base sm:text-lg text-ink/60 flex items-start gap-1.5">
+                <p className="text-base sm:text-lg text-neutral-500 flex items-start gap-1.5">
                   <span aria-hidden="true">📍</span>
                   <span>
                     {pg.address}, {pg.city}
@@ -211,14 +211,14 @@ export default function PGDetails() {
                     <span className="text-marigold text-xl" aria-hidden="true">
                       ⭐
                     </span>
-                    <span className="font-bold text-ink">
+                    <span className="font-bold text-neutral-900">
                       {pg.rating.toFixed(1)}
                     </span>
-                    <span className="text-ink/40 text-sm">
+                    <span className="text-neutral-400 text-sm">
                       ({pg.reviewCount} reviews)
                     </span>
                   </div>
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-ink/5 px-3 py-1 text-sm font-semibold text-ink/70">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-neutral-100 px-3 py-1 text-sm font-medium text-neutral-700">
                     <span className="text-base" aria-hidden="true">
                       {genderIcons[pg.genderType]}
                     </span>
@@ -228,7 +228,7 @@ export default function PGDetails() {
               </div>
 
               {pg.description && (
-                <p className="text-ink/80 leading-relaxed mb-6 text-pretty">
+                <p className="text-neutral-700 leading-relaxed mb-6 text-pretty">
                   {pg.description}
                 </p>
               )}
@@ -236,17 +236,17 @@ export default function PGDetails() {
               {/* Facilities */}
               {pg.facilities?.length > 0 && (
                 <div>
-                  <h2 className="font-display font-bold text-lg text-ink mb-3">
+                  <h2 className="font-display font-bold text-lg text-neutral-900 mb-3">
                     Amenities
                   </h2>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                     {pg.facilities.map((f, i) => (
                       <span
                         key={i}
-                        className="flex items-center gap-2 px-3 py-2.5 bg-surface-low rounded-xl text-sm font-medium text-ink/80"
+                        className="flex items-center gap-2 px-3 py-2.5 bg-neutral-50 rounded-lg text-sm font-medium text-neutral-700 border border-neutral-200"
                       >
                         <svg
-                          className="h-4 w-4 shrink-0 text-indigo-brand"
+                          className="h-4 w-4 shrink-0 text-indigo-600"
                           viewBox="0 0 20 20"
                           fill="currentColor"
                           aria-hidden="true"
@@ -267,11 +267,11 @@ export default function PGDetails() {
 
             {/* Room picker (room-level PGs) */}
             {hasRooms && (
-              <div className="surface-card p-5 sm:p-8">
-                <h2 className="font-display font-bold text-lg text-ink mb-1">
+              <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-5 sm:p-8">
+                <h2 className="font-display font-bold text-lg text-neutral-900 mb-1">
                   Choose a room
                 </h2>
-                <p className="text-sm text-ink/60 mb-4">
+                <p className="text-sm text-neutral-500 mb-4">
                   Each room has its own sharing type and rent.
                 </p>
                 <div className="grid sm:grid-cols-2 gap-3">
@@ -285,12 +285,12 @@ export default function PGDetails() {
                         disabled={soldOut}
                         aria-pressed={selected}
                         onClick={() => setSelectedRoom(room._id)}
-                        className={`text-left rounded-xl2 border-2 p-4 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-brand ${
+                        className={`text-left rounded-xl border-2 p-4 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/50 ${
                           selected
-                            ? 'border-indigo-brand bg-indigo-brand/5 shadow-card'
+                            ? 'border-indigo-600 bg-indigo-50 shadow-sm'
                             : soldOut
-                              ? 'border-ink/10 bg-ink/[0.03] opacity-60 cursor-not-allowed'
-                              : 'border-ink/10 hover:border-indigo-brand/40'
+                              ? 'border-neutral-200 bg-neutral-50 opacity-60 cursor-not-allowed'
+                              : 'border-neutral-200 hover:border-indigo-300'
                         }`}
                       >
                         {room.images?.[0] && (

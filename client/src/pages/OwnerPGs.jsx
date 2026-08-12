@@ -6,6 +6,7 @@ import { useToast } from '../context/ToastContext.jsx';
 import Button from '../components/Button.jsx';
 import Input from '../components/Input.jsx';
 import Loader from '../components/Loader.jsx';
+import Modal from '../components/Modal.jsx';
 import ImageUploader from '../components/ImageUploader.jsx';
 
 const Svg = ({ children, className = 'h-5 w-5', ...p }) => (
@@ -64,6 +65,8 @@ export default function OwnerPGs() {
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState(null);
   const [editSaving, setEditSaving] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
   const toast = useToast();
   const navigate = useNavigate();
 
@@ -141,14 +144,18 @@ export default function OwnerPGs() {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm('Delete this PG listing?')) return;
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
     try {
-      await deletePG(id);
+      await deletePG(deleteTarget._id);
       toast.success('PG deleted');
+      setDeleteTarget(null);
       loadPGs();
     } catch (err) {
       toast.error(err.message);
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -472,7 +479,7 @@ export default function OwnerPGs() {
                         <Button
                           size="sm"
                           variant="danger"
-                          onClick={() => handleDelete(pg._id)}
+                          onClick={() => setDeleteTarget(pg)}
                         >
                           Delete
                         </Button>
@@ -502,6 +509,34 @@ export default function OwnerPGs() {
           </div>
         )}
       </div>
+
+      <Modal
+        open={Boolean(deleteTarget)}
+        onClose={() => !deleting && setDeleteTarget(null)}
+        title="Delete this listing?"
+        footer={
+          <>
+            <Button
+              variant="secondary"
+              onClick={() => setDeleteTarget(null)}
+              disabled={deleting}
+            >
+              Keep listing
+            </Button>
+            <Button variant="danger" onClick={confirmDelete} loading={deleting}>
+              Delete listing
+            </Button>
+          </>
+        }
+      >
+        <p className="text-sm leading-relaxed text-ink/70">
+          <span className="font-semibold text-ink">
+            {deleteTarget?.name}
+          </span>{' '}
+          will be permanently removed, along with its rooms and photos. This
+          can’t be undone.
+        </p>
+      </Modal>
     </div>
   );
 }
