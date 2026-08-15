@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import {
   adminStats,
   adminUsers,
@@ -43,12 +44,29 @@ export default function Admin() {
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-indigo-brand mb-2">
             Control room
           </p>
-          <h1 className="font-display font-extrabold text-4xl text-ink">
-            Admin panel
-          </h1>
-          <p className="text-ink/60 mt-2">
-            Moderate listings, users, and disputes across NestSecure PG.
-          </p>
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <h1 className="font-display font-extrabold text-4xl text-ink">
+                Admin panel
+              </h1>
+              <p className="text-ink/60 mt-2">
+                Moderate listings, users, and disputes across NestSecure PG.
+              </p>
+            </div>
+            <Link
+              to="/admin/settings"
+              className="inline-flex h-11 items-center gap-2 rounded-lg border border-indigo-brand/30 bg-white px-4 text-sm font-semibold text-indigo-brand shadow-sm transition-colors hover:bg-indigo-brand/5"
+            >
+              <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path
+                  fillRule="evenodd"
+                  d="M8.34 1.804A1 1 0 019.32 1h1.36a1 1 0 01.98.804l.295 1.473c.497.144.968.34 1.409.582l1.25-.834a1 1 0 011.271.124l.962.962a1 1 0 01.124 1.272l-.834 1.25c.242.44.438.912.582 1.408l1.473.295a1 1 0 01.804.98v1.36a1 1 0 01-.804.98l-1.473.295a6.95 6.95 0 01-.582 1.409l.834 1.25a1 1 0 01-.124 1.271l-.962.962a1 1 0 01-1.272.124l-1.25-.834c-.44.242-.912.438-1.408.582l-.295 1.473a1 1 0 01-.98.804H9.32a1 1 0 01-.98-.804l-.295-1.473a6.957 6.957 0 01-1.409-.582l-1.25.834a1 1 0 01-1.271-.124l-.962-.962a1 1 0 01-.124-1.272l.834-1.25a6.957 6.957 0 01-.582-1.408l-1.473-.295A1 1 0 011 10.68V9.32a1 1 0 01.804-.98l1.473-.295c.144-.496.34-.968.582-1.409l-.834-1.25a1 1 0 01.124-1.271l.962-.962A1 1 0 015.383 3.03l1.25.834c.44-.242.912-.438 1.408-.582l.295-1.473zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              Site settings
+            </Link>
+          </div>
         </div>
 
         {/* Tabs */}

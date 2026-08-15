@@ -7,6 +7,7 @@ import Select from '../components/Select.jsx';
 import Button from '../components/Button.jsx';
 import { PGCardSkeletonList } from '../components/Skeleton.jsx';
 import { useToast } from '../context/ToastContext.jsx';
+import { useSiteSettings } from '../context/SiteSettingsContext.jsx';
 
 const PAGE_SIZE = 9;
 
@@ -21,6 +22,13 @@ export default function Home() {
   const [userLocation, setUserLocation] = useState(null);
   const [mapCenter, setMapCenter] = useState([12.9716, 77.5946]); // Bangalore default
   const toast = useToast();
+  const { settings } = useSiteSettings();
+  const homepage = settings?.homepage || {};
+  const heroHeading = homepage.heroHeading || 'Find Your Safe Haven.';
+  const heroSubheading =
+    homepage.heroSubheading ||
+    'Discover verified, secure, and comfortable PGs tailored to your needs. Zero friction, total peace of mind.';
+  const featuredTitle = homepage.featuredTitle || 'Featured Properties';
 
   // Filters (form state) + the snapshot that's actually applied to queries
   const [city, setCity] = useState('');
@@ -159,11 +167,10 @@ export default function Home() {
                 Verified &amp; secure PGs near you
               </span>
               <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-neutral-900 tracking-tight mb-4 text-balance leading-[1.05]">
-                Find Your Safe Haven.
+                {heroHeading}
               </h1>
               <p className="text-lg text-neutral-500 text-pretty max-w-md">
-                Discover verified, secure, and comfortable PGs tailored to your
-                needs. Zero friction, total peace of mind.
+                {heroSubheading}
               </p>
             </div>
 
@@ -306,7 +313,7 @@ export default function Home() {
           <div className="flex flex-wrap items-end justify-between gap-3 mb-8">
             <div>
               <h2 className="font-display font-bold text-2xl sm:text-3xl text-neutral-900 tracking-tight">
-                Featured Properties
+                {featuredTitle}
               </h2>
               <p className="text-neutral-500 mt-2">
                 {activeFilters.length > 0

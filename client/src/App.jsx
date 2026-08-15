@@ -2,6 +2,8 @@ import { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar.jsx';
 import Footer from './components/Footer.jsx';
+import AnnouncementBar from './components/AnnouncementBar.jsx';
+import MaintenanceGate from './components/MaintenanceGate.jsx';
 import NavigationTracker from './components/NavigationTracker.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import Home from './pages/Home.jsx';
@@ -27,18 +29,21 @@ const Financials = lazy(() => import('./pages/Financials.jsx'));
 const Settings = lazy(() => import('./pages/Settings.jsx'));
 const Help = lazy(() => import('./pages/Help.jsx'));
 const Admin = lazy(() => import('./pages/Admin.jsx'));
+const AdminSettings = lazy(() => import('./pages/AdminSettings.jsx'));
 
 export default function App() {
   return (
-    <div className="page-shell flex flex-col">
-      <a
-        href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[110] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-ink focus:shadow-card"
-      >
-        Skip to main content
-      </a>
-      <NavigationTracker />
-      <Navbar />
+    <MaintenanceGate>
+      <div className="page-shell flex flex-col">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[110] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-ink focus:shadow-card"
+        >
+          Skip to main content
+        </a>
+        <NavigationTracker />
+        <AnnouncementBar />
+        <Navbar />
       <main id="main-content" className="flex-grow flex flex-col">
         <Suspense fallback={<Loader className="min-h-screen" />}>
           <Routes>
@@ -151,6 +156,14 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/admin/settings"
+              element={
+                <ProtectedRoute role="ADMIN">
+                  <AdminSettings />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Fallback */}
             <Route
@@ -170,7 +183,8 @@ export default function App() {
           </Routes>
         </Suspense>
       </main>
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </MaintenanceGate>
   );
 }

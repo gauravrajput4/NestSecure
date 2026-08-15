@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import LogoMark from './Logo.jsx';
 
 const defaultHighlights = [
   'Secure authentication and protected routes',
@@ -22,6 +23,12 @@ export default function AuthShell({
       <div className="mx-auto grid max-w-6xl overflow-hidden rounded-xl2 border border-outline-soft/60 bg-white shadow-card lg:grid-cols-2">
         <aside className="hidden lg:flex flex-col justify-between gap-8 bg-gradient-to-br from-indigo-brand via-indigo-deep to-ink-soft p-10 text-white">
           <div className="space-y-4">
+            <div className="flex items-center gap-2.5">
+              <LogoMark className="h-10 w-10 rounded-xl ring-1 ring-white/25" />
+              <span className="font-display text-lg font-bold tracking-tight">
+                NestSecure
+              </span>
+            </div>
             <span className="inline-flex rounded-full bg-white/15 px-3 py-1 text-xs font-bold uppercase tracking-wide">
               Secure Platform
             </span>

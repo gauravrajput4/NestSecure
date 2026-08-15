@@ -7,19 +7,22 @@ import App from './App.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
 import { ToastProvider } from './context/ToastContext.jsx';
 import { WishlistProvider } from './context/WishlistContext.jsx';
+import { SiteSettingsProvider } from './context/SiteSettingsContext.jsx';
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <Provider store={store}>
       <BrowserRouter>
-        <ToastProvider>
-          <AuthProvider>
-            <WishlistProvider>
-              <App />
-            </WishlistProvider>
-          </AuthProvider>
-        </ToastProvider>
+        <SiteSettingsProvider>
+          <ToastProvider>
+            <AuthProvider>
+              <WishlistProvider>
+                <App />
+              </WishlistProvider>
+            </AuthProvider>
+          </ToastProvider>
+        </SiteSettingsProvider>
       </BrowserRouter>
     </Provider>
   </React.StrictMode>

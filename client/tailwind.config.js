@@ -1,11 +1,30 @@
 /** @type {import('tailwindcss').Config} */
+
+// Brand ramp tokens resolve through CSS custom properties (space-separated RGB
+// channels) so the whole indigo family can be re-themed at runtime while still
+// supporting Tailwind opacity modifiers (e.g. bg-indigo-brand/10). The :root
+// block in index.css holds the exact current hexes as defaults, so the default
+// theme is pixel-identical; applyTheme() only sets these vars for non-default
+// themes. Steps not listed here (indigo 100/400/800/900/950) are unused by the
+// UI and keep Tailwind's static defaults.
+const ch = (name) => `rgb(var(${name}) / <alpha-value>)`;
+
 export default {
   content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
     extend: {
       colors: {
         ink: { DEFAULT: '#151C27', soft: '#2A313D', muted: '#4F46E5' },
-        indigo: { brand: '#4F46E5', deep: '#3525CD' },
+        indigo: {
+          brand: ch('--c-primary-600'),
+          deep: ch('--c-primary-deep'),
+          50: ch('--c-primary-50'),
+          200: ch('--c-primary-200'),
+          300: ch('--c-primary-300'),
+          500: ch('--c-primary-500'),
+          600: ch('--c-primary-600'),
+          700: ch('--c-primary-700'),
+        },
         marigold: { DEFAULT: '#F59E0B', soft: '#FBBF24', deep: '#D97706' },
         paper: { DEFAULT: '#F9F9FF', sunk: '#F0F3FF' },
         surface: {
@@ -13,16 +32,19 @@ export default {
           100: '#F9FAFB', 200: '#F3F4F6', 300: '#E5E7EB',
         },
         outline: { DEFAULT: '#777587', soft: '#C7C4D8' },
-        
+
         // Expanded scales for a complete UI system
         neutral: {
           50: '#F9FAFB', 100: '#F3F4F6', 200: '#E5E7EB', 300: '#D1D5DB',
           400: '#9CA3AF', 500: '#6B7280', 600: '#4B5563', 700: '#374151',
           800: '#1F2937', 900: '#111827', 950: '#030712',
         },
+        // Brand scale (mirrors the indigo ramp). The steps the UI actually paints
+        // with resolve through the same CSS vars so custom themes stay coherent.
         primary: {
-          50: '#EEF2FF', 100: '#E0E7FF', 200: '#C7D2FE', 300: '#A5B4FC',
-          400: '#818CF8', 500: '#6366F1', 600: '#4F46E5', 700: '#4338CA',
+          50: ch('--c-primary-50'), 100: '#E0E7FF', 200: ch('--c-primary-200'),
+          300: ch('--c-primary-300'), 400: '#818CF8', 500: ch('--c-primary-500'),
+          600: ch('--c-primary-600'), 700: ch('--c-primary-700'),
           800: '#3730A3', 900: '#312E81', 950: '#1E1B4B',
         },
         secondary: {
@@ -64,8 +86,10 @@ export default {
         },
       },
       fontFamily: {
-        display: ['Inter', 'system-ui', 'sans-serif'],
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        // Resolve through CSS vars so the typography settings can swap fonts at
+        // runtime. Defaults (set in :root) are Inter — identical to before.
+        display: ['var(--font-heading)'],
+        sans: ['var(--font-body)'],
         mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
       },
       boxShadow: {

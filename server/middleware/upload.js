@@ -28,6 +28,9 @@ export const uploadPgImages = base.array('images', 8);
 // User verification: exactly one live selfie under "photo".
 export const uploadVerificationPhoto = base.single('photo');
 
+// Site branding: a single logo/favicon/etc. image under "image".
+export const uploadSettingsImage = base.single('image');
+
 // Translate multer's own errors into clean JSON instead of a 500.
 export function handleUploadError(err, req, res, next) {
   if (err instanceof multer.MulterError) {

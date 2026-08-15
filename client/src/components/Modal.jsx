@@ -3,7 +3,16 @@ import { useEffect, useId } from 'react';
 // Lightweight centered modal. Closes on Escape and backdrop click; locks body
 // scroll while open. Kept dependency-free so any page can drop it in. On small
 // screens it docks to the bottom as a sheet for easier thumb reach.
-export default function Modal({ open, onClose, title, children, footer }) {
+// `size` widens the desktop dialog; it defaults to 'md' so existing callers are
+// unaffected.
+const SIZES = {
+  md: 'sm:max-w-md',
+  lg: 'sm:max-w-lg',
+  xl: 'sm:max-w-2xl',
+  '2xl': 'sm:max-w-3xl',
+};
+
+export default function Modal({ open, onClose, title, children, footer, size = 'md' }) {
   const titleId = useId();
 
   useEffect(() => {
@@ -31,7 +40,7 @@ export default function Modal({ open, onClose, title, children, footer }) {
         className="absolute inset-0 bg-ink/60 backdrop-blur-sm motion-safe:animate-[fade-up_0.15s_ease-out]"
         onClick={onClose}
       />
-      <div className="relative w-full sm:max-w-md max-h-[90vh] flex flex-col bg-white rounded-t-xl2 sm:rounded-xl2 shadow-lift overflow-hidden motion-safe:animate-fade-up">
+      <div className={`relative w-full ${SIZES[size] || SIZES.md} max-h-[90vh] flex flex-col bg-white rounded-t-xl2 sm:rounded-xl2 shadow-lift overflow-hidden motion-safe:animate-fade-up`}>
         {title && (
           <div className="flex items-start justify-between gap-4 px-6 pt-6 pb-3 border-b border-ink/10">
             <h2 id={titleId} className="font-display font-bold text-xl text-ink">

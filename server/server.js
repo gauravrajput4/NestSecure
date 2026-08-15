@@ -12,7 +12,9 @@ import uploadRoutes from './routes/uploadRoutes.js';
 import wishlistRoutes from './routes/wishlistRoutes.js';
 import rentRoutes from './routes/rentRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import settingsRoutes from './routes/settingsRoutes.js';
 import { apiLimiter, authLimiter } from './middleware/rateLimit.js';
+import maintenanceMiddleware from './middleware/maintenanceMiddleware.js';
 import { startRentReminderJob } from './utils/rentReminder.js';
 
 dotenv.config();
@@ -28,6 +30,10 @@ app.use(express.urlencoded({ extended: true }));
 // Baseline rate limit across the API surface
 app.use('/api', apiLimiter);
 
+// Maintenance gate: when enabled, non-admins get a 503 (admins + auth + public
+// settings always pass). Purely additive — existing route logic is unchanged.
+app.use('/api', maintenanceMiddleware);
+
 // Routes
 app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/pg', pgRoutes);
@@ -39,6 +45,7 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/rent', rentRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/settings', settingsRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

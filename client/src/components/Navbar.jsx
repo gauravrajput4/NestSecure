@@ -11,15 +11,27 @@ import {
 } from '../store/navigationSlice.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useWishlist } from '../context/WishlistContext.jsx';
+import { useSiteSettings } from '../context/SiteSettingsContext.jsx';
 import Button from './Button.jsx';
+import LogoMark from './Logo.jsx';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
   const wishlist = useWishlist();
+  const { settings } = useSiteSettings();
+  const { general = {}, branding = {}, navigation = {} } = settings || {};
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // Branding + navigation prefs. Defaults reproduce the current header exactly.
+  const brandName = branding.brandName || general.shortName || 'NestSecure';
+  const customLogo = branding.logo || '';
+  const sticky = navigation.sticky !== false;
+  const showWishlist = navigation.showWishlist !== false;
+  const showOwnerPortal = navigation.showOwnerPortal !== false;
+  const showAuthButtons = navigation.showAuthButtons !== false;
 
   const canGoBack = useSelector(selectCanGoBack);
   const canGoForward = useSelector(selectCanGoForward);
@@ -63,7 +75,7 @@ export default function Navbar() {
 
   // Role-aware link set, defined once and rendered in both desktop + drawer.
   const links = [{ to: '/', label: 'Explore' }];
-  if (user?.role === 'OWNER') {
+  if (user?.role === 'OWNER' && showOwnerPortal) {
     links.push(
       { to: '/owner/dashboard', label: 'Dashboard' },
       { to: '/owner/pgs', label: 'My PGs' },
@@ -72,10 +84,10 @@ export default function Navbar() {
     );
   }
   if (user?.role === 'USER') {
-    links.push(
-      { to: '/bookings', label: 'My Bookings' },
-      { to: '/wishlist', label: 'Wishlist', badge: wishlist?.count, heart: true }
-    );
+    links.push({ to: '/bookings', label: 'My Bookings' });
+    if (showWishlist) {
+      links.push({ to: '/wishlist', label: 'Wishlist', badge: wishlist?.count, heart: true });
+    }
   }
   if (user?.role === 'ADMIN') {
     links.push({ to: '/admin', label: 'Admin' });
@@ -111,19 +123,22 @@ export default function Navbar() {
     ) : null;
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-neutral-200">
+    <nav className={`${sticky ? 'sticky top-0' : ''} z-50 bg-white/80 backdrop-blur-md border-b border-neutral-200`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group shrink-0">
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-600 text-white shadow-sm transition group-hover:bg-indigo-700">
-              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9.5 12l1.8 1.8 3.2-3.6" />
-              </svg>
-            </span>
+            {customLogo ? (
+              <img
+                src={customLogo}
+                alt={brandName}
+                className="h-9 w-auto max-w-[9rem] object-contain transition group-hover:scale-105"
+              />
+            ) : (
+              <LogoMark className="h-9 w-9 rounded-lg shadow-sm transition group-hover:scale-105" />
+            )}
             <span className="font-display font-bold text-xl tracking-tight text-neutral-900">
-              NestSecure
+              {brandName}
             </span>
           </Link>
 
@@ -186,16 +201,18 @@ export default function Navbar() {
                 </Button>
               </>
             ) : (
-              <>
-                <Link to="/login">
-                  <Button variant="ghost" size="sm">
-                    Login
-                  </Button>
-                </Link>
-                <Link to="/register">
-                  <Button size="sm">Sign up</Button>
-                </Link>
-              </>
+              showAuthButtons && (
+                <>
+                  <Link to="/login">
+                    <Button variant="ghost" size="sm">
+                      Login
+                    </Button>
+                  </Link>
+                  <Link to="/register">
+                    <Button size="sm">Sign up</Button>
+                  </Link>
+                </>
+              )
             )}
           </div>
 
@@ -261,16 +278,18 @@ export default function Navbar() {
                   </Button>
                 </>
               ) : (
-                <div className="flex flex-col gap-2">
-                  <Link to="/login">
-                    <Button variant="outline" fullWidth>
-                      Login
-                    </Button>
-                  </Link>
-                  <Link to="/register">
-                    <Button fullWidth>Sign up</Button>
-                  </Link>
-                </div>
+                showAuthButtons && (
+                  <div className="flex flex-col gap-2">
+                    <Link to="/login">
+                      <Button variant="outline" fullWidth>
+                        Login
+                      </Button>
+                    </Link>
+                    <Link to="/register">
+                      <Button fullWidth>Sign up</Button>
+                    </Link>
+                  </div>
+                )
               )}
             </div>
           </div>

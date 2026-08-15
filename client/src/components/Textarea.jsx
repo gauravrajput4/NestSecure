@@ -1,11 +1,14 @@
 import { useId } from 'react';
 
-export default function Input({
+// Multi-line text field that matches Input's look (labels, error/helper text,
+// a11y wiring). `rows` defaults to 4; everything else forwards to <textarea>.
+export default function Textarea({
   label,
   error,
   helperText,
   className = '',
   id,
+  rows = 4,
   ...props
 }) {
   const autoId = useId();
@@ -26,12 +29,13 @@ export default function Input({
           {label}
         </label>
       )}
-      <input
+      <textarea
         id={inputId}
+        rows={rows}
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy}
-        className={`w-full h-11 px-4 rounded-[var(--radius-control)] border bg-white text-neutral-900 placeholder:text-neutral-400
-          focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-colors shadow-sm
+        className={`w-full px-4 py-3 rounded-lg border bg-white text-neutral-900 placeholder:text-neutral-400 leading-relaxed
+          focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-colors shadow-sm resize-y
           ${error ? 'border-error-500 focus:border-error-500 focus:ring-error-500/50' : 'border-neutral-300 hover:border-neutral-400'}`}
         {...props}
       />
