@@ -99,6 +99,32 @@
   animation: pin-drop 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/*
+ * Leaflet's internal panes default to z-indexes 400–700, which escape the card
+ * and float above the sticky Navbar (z-50 = 500). Cap every pane below the
+ * navbar so maps stay tucked under the header while scrolling — internal marker
+ * ordering is preserved because each pane only drops by a constant offset.
+ */
+.leaflet-map-pane      { z-index: 1   !important; } /* 400 -> below navbar    */
+.leaflet-overlay-pane  { z-index: 2   !important; } /* 400 tiles/overlays     */
+.leaflet-shadow-pane   { z-index: 3   !important; } /* 500 shadows            */
+.leaflet-marker-pane   { z-index: 4   !important; } /* 600 markers            */
+.leaflet-tooltip-pane  { z-index: 5   !important; } /* 650 tooltips          */
+.leaflet-popup-pane    { z-index: 6   !important; } /* 700 popups             */
+.leaflet-top,
+.leaflet-bottom        { z-index: 7   !important; } /* zoom control/attribution */
+
+/* Draggable picker marker should feel grabbable, not just animated. */
+.pg-picker-marker .pg-picker-pin {
+  cursor: grab;
+  transition: transform 0.12s ease;
+}
+.pg-picker-marker .pg-picker-pin:active {
+  cursor: grabbing;
+  transform: scale(1.08);
+}
+
+
 /* Skeleton loader — indigo-tinted shimmer to match the NestSecure palette */
 .skeleton {
   background: linear-gradient(
