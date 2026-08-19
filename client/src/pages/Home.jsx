@@ -294,7 +294,7 @@ export default function Home() {
           </div>
 
           {/* Right: interactive map */}
-          <div className="lg:col-span-7 h-[400px] lg:h-[600px] relative rounded-2xl overflow-hidden shadow-card border border-neutral-200">
+          <div className="lg:col-span-7 h-[400px] lg:h-[600px] relative rounded-2xl overflow-hidden shadow-card border border-neutral-200 z-10">
             <PGMap
               pgs={filteredPGs}
               center={mapCenter}

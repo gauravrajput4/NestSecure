@@ -5,7 +5,7 @@ import { useToast } from '../context/ToastContext.jsx';
 import Input from '../components/Input.jsx';
 import Button from '../components/Button.jsx';
 import ImageUploader from '../components/ImageUploader.jsx';
-import LocationPicker from '../components/LocationPicker.jsx';
+import LocationPickerMap from '../components/LocationPickerMap.jsx';
 
 // Beds per sharing type — auto-fills totalBeds when the type changes (same
 // contract as the original OwnerPGs create form).
@@ -316,18 +316,29 @@ export default function AddListing() {
                 2. Location
               </h2>
               <div className="space-y-5">
-                <LocationPicker
-                  value={form}
-                  onChange={(patch) =>
-                    setForm((f) => ({ ...f, ...patch }))
+                <LocationPickerMap
+                  latitude={form.latitude}
+                  longitude={form.longitude}
+                  onError={(msg) => toast.error(msg)}
+                  onLocationChange={({ latitude, longitude, address, city }) =>
+                    setForm((f) => ({
+                      ...f,
+                      latitude: String(latitude),
+                      longitude: String(longitude),
+                      ...(address != null && address !== ''
+                        ? { address }
+                        : {}),
+                      ...(city != null && city !== '' ? { city } : {}),
+                    }))
                   }
                 />
+
                 <Input
                   label="Street Address"
                   name="address"
                   value={form.address}
                   onChange={handleChange}
-                  placeholder="Auto-filled by the map — edit if needed"
+                  placeholder="Building, street, area"
                   required
                 />
                 <Input
@@ -347,8 +358,6 @@ export default function AddListing() {
                     value={form.latitude}
                     onChange={handleChange}
                     placeholder="12.9716"
-                    readOnly
-                    helperText="Set by the map above"
                     required
                   />
                   <Input
@@ -359,15 +368,14 @@ export default function AddListing() {
                     value={form.longitude}
                     onChange={handleChange}
                     placeholder="77.5946"
-                    readOnly
-                    helperText="Set by the map above"
                     required
                   />
                 </div>
                 <p className="text-sm text-ink/50">
-                  Place the pin on the map above to set your PG's coordinates.
-                 Dragging moves the marker and auto-fills the address fields.
-               	</p>
+                  Drag the map pin or tap the location icon to fill address,
+                  city, and coordinates automatically. You can still edit the
+                  fields by hand.
+                </p>
               </div>
             </div>
           )}

@@ -387,31 +387,112 @@ export default function MyBookings() {
             </p>
 
             {preview.paid ? (
-              <div className="rounded-xl bg-paper border border-ink/10 p-4">
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-ink/60">Amount paid</span>
-                  <span className="font-mono font-semibold text-ink">
-                    ₹{preview.amountPaid.toLocaleString('en-IN')}
-                  </span>
+              <div className="space-y-3">
+                <div className="rounded-xl bg-paper border border-ink/10 p-4">
+                  <div className="flex justify-between text-sm mb-2">
+                    <span className="text-ink/60">Amount paid</span>
+                    <span className="font-mono font-semibold text-ink">
+                      ₹{preview.amountPaid.toLocaleString('en-IN')}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm mb-2">
+                    <span className="text-ink/60">
+                      Days since start · {preview.refund.daysSinceStart}
+                    </span>
+                    <span className="font-semibold text-ink">
+                      {preview.refund.percent}% rent refund
+                    </span>
+                  </div>
+                  
+                  {preview.refund.proRata && (
+                    <div className="rounded-lg bg-indigo-brand/5 border border-indigo-brand/10 p-2 mb-2">
+                      <p className="text-xs font-semibold text-indigo-deep mb-1">
+                        Pro-rata Calculation
+                      </p>
+                      <div className="text-xs text-ink/60 space-y-0.5">
+                        <div className="flex justify-between">
+                          <span>Days stayed: {preview.refund.daysStayed}</span>
+                          <span>Days total: {preview.refund.totalDays}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Daily rate: ₹{preview.refund.dailyRate}</span>
+                          <span>Unused: {preview.refund.unusedDays} days</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="flex justify-between text-sm mb-2">
+                    <span className="text-ink/60">Rent refund</span>
+                    <span className="font-mono font-semibold text-success">
+                      ₹{preview.refund.rentRefund?.toLocaleString('en-IN') || 0}
+                    </span>
+                  </div>
+                  
+                  {/* Security deposit breakdown */}
+                  <div className="pt-2 mt-2 border-t border-ink/10 space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-ink/60">Security deposit</span>
+                      <span className="font-mono font-semibold text-ink">
+                        ₹{preview.refund.securityDeposit?.toLocaleString('en-IN') || 0}
+                      </span>
+                    </div>
+                    {preview.refund.unpaidRent > 0 && (
+                      <>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-danger/70">Unpaid rent (deducted)</span>
+                          <span className="font-mono font-semibold text-danger">
+                            -₹{preview.refund.securityDeduction?.toLocaleString('en-IN') || 0}
+                          </span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-ink/60">Security refund</span>
+                          <span className="font-mono font-semibold text-success">
+                            ₹{preview.refund.securityRefund?.toLocaleString('en-IN') || 0}
+                          </span>
+                        </div>
+                      </>
+                    )}
+                    {preview.refund.unpaidRent === 0 && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-ink/60">Security refund</span>
+                        <span className="font-mono font-semibold text-success">
+                          ₹{preview.refund.securityRefund?.toLocaleString('en-IN') || 0}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex justify-between items-baseline pt-3 mt-3 border-t border-ink/10">
+                    <span className="text-ink font-semibold">Total refund</span>
+                    <span
+                      className={`font-mono font-bold text-2xl ${
+                        preview.refund.amount > 0 ? 'text-success' : 'text-danger'
+                      }`}
+                    >
+                      ₹{preview.refund.amount.toLocaleString('en-IN')}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-ink/60">
-                    Days since start · {preview.refund.daysSinceStart}
-                  </span>
-                  <span className="font-semibold text-ink">
-                    {preview.refund.percent}% refund
-                  </span>
-                </div>
-                <div className="flex justify-between items-baseline pt-2 border-t border-ink/10">
-                  <span className="text-ink font-semibold">You'll get back</span>
-                  <span
-                    className={`font-mono font-bold text-2xl ${
-                      preview.refund.amount > 0 ? 'text-success' : 'text-danger'
-                    }`}
-                  >
-                    ₹{preview.refund.amount.toLocaleString('en-IN')}
-                  </span>
-                </div>
+
+                {preview.refund.unpaidRent > 0 && (
+                  <div className="rounded-lg bg-warning/10 border border-warning/20 p-3">
+                    <p className="text-xs text-warning font-semibold mb-1">
+                      ⚠️ Unpaid Rent Notice
+                    </p>
+                    <p className="text-xs text-ink/70">
+                      You have ₹{preview.refund.unpaidRent.toLocaleString('en-IN')} in unpaid rent. 
+                      This will be deducted from your security deposit before refund.
+                    </p>
+                    {preview.refund.outstandingBalance > 0 && (
+                      <p className="text-xs text-danger font-semibold mt-2">
+                        🚨 Outstanding Balance: ₹{preview.refund.outstandingBalance.toLocaleString('en-IN')}
+                        <br />
+                        Your security deposit is insufficient. You will still owe this amount after cancellation.
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
             ) : (
               <div className="rounded-xl bg-paper border border-ink/10 p-4 text-sm text-ink/70">

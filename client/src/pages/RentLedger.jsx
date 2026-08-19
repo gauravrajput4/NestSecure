@@ -1,10 +1,23 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { rentLedger, rentReceipt } from '../services/bookingService.js';
+import { rentLedger, rentReceipt, createOrder, verifyPayment } from '../services/bookingService.js';
 import { useToast } from '../context/ToastContext.jsx';
 import Button from '../components/Button.jsx';
 import Loader from '../components/Loader.jsx';
 import Modal from '../components/Modal.jsx';
+
+const loadRazorpay = () => {
+  return new Promise((resolve) => {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+};
+
+// Payment lock key for optimistic concurrency control
+const getPaymentLockKey = (bookingId) => `payment-lock-${bookingId}`;
 
 const statusStyle = {
   PAID: 'bg-success/10 text-success',
@@ -55,21 +68,38 @@ export default function RentLedger() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [receipt, setReceipt] = useState(null);
+  const [paymentLoading, setPaymentLoading] = useState(null);
+  const [paymentLock, setPaymentLock] = useState(false);
   const toast = useToast();
 
   useEffect(() => {
-    (async () => {
-      try {
-        const res = await rentLedger(bookingId);
-        setData(res.data);
-      } catch (err) {
-        toast.error(err.message);
-      } finally {
-        setLoading(false);
+    loadLedger();
+    // Set up payment lock on mount
+    const lockKey = getPaymentLockKey(bookingId);
+    const currentLock = localStorage.getItem(lockKey);
+    if (currentLock) {
+      const lockTime = parseInt(currentLock, 10);
+      const isExpired = Date.now() - lockTime > 30000; // 30 second timeout
+      if (!isExpired) {
+        setPaymentLock(true);
+      } else {
+        localStorage.removeItem(lockKey);
       }
-    })();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookingId]);
+
+  const loadLedger = async () => {
+    try {
+      setLoading(true);
+      const res = await rentLedger(bookingId);
+      setData(res.data);
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const openReceipt = async (invoiceId) => {
     try {
@@ -77,6 +107,94 @@ export default function RentLedger() {
       setReceipt(res.data);
     } catch (err) {
       toast.error(err.message);
+    }
+  };
+
+  const handlePayRent = async (invoice) => {
+    try {
+      // Check for payment lock from another tab
+      const lockKey = getPaymentLockKey(bookingId);
+      const currentLock = localStorage.getItem(lockKey);
+      
+      if (currentLock) {
+        const lockTime = parseInt(currentLock, 10);
+        const isExpired = Date.now() - lockTime > 30000; // 30 second timeout
+        
+        if (!isExpired) {
+          toast.error('Payment already in progress. Please wait or try another invoice.');
+          return;
+        }
+      }
+      
+      // Acquire lock
+      localStorage.setItem(lockKey, Date.now().toString());
+      setPaymentLock(true);
+      setPaymentLoading(invoice._id);
+      const loaded = await loadRazorpay();
+      if (!loaded) {
+        toast.error('Payment gateway failed to load');
+        return;
+      }
+
+      // Create order for rent payment
+      const orderRes = await createOrder({ bookingId, type: 'RENT' });
+      const { order, paymentId, keyId, demo } = orderRes;
+
+      if (demo) {
+        // Demo mode — auto-verify with mock signature
+        await verifyPayment({
+          paymentId,
+          razorpayOrderId: order.id,
+          razorpayPaymentId: 'pay_demo_' + Date.now(),
+          razorpaySignature: 'demo_signature',
+        });
+        toast.success('Payment successful (demo mode)');
+        loadLedger(); // Reload ledger to show updated status
+        return;
+      }
+
+      // Real Razorpay checkout
+      const options = {
+        key: keyId,
+        amount: order.amount,
+        currency: order.currency,
+        name: 'NestSecure PG',
+        description: `Rent Payment - ${invoice.periodLabel}`,
+        order_id: order.id,
+        handler: async (response) => {
+          try {
+            await verifyPayment({
+              paymentId,
+              razorpayOrderId: response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature,
+            });
+            toast.success('Rent payment successful');
+            loadLedger(); // Reload ledger to show updated status
+          } catch (err) {
+            toast.error(err.message);
+          } finally {
+            // Clear lock on completion
+            const lockKey = getPaymentLockKey(bookingId);
+            localStorage.removeItem(lockKey);
+            setPaymentLock(false);
+          }
+        },
+        theme: { color: '#4F46E5' },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setPaymentLoading(null);
+      // Clear lock if there was an error before payment opened
+      if (paymentLoading) {
+        const lockKey = getPaymentLockKey(bookingId);
+        localStorage.removeItem(lockKey);
+        setPaymentLock(false);
+      }
     }
   };
 
@@ -146,7 +264,7 @@ export default function RentLedger() {
                   <th className="px-5 py-3 font-semibold">Due</th>
                   <th className="px-5 py-3 font-semibold">Amount</th>
                   <th className="px-5 py-3 font-semibold">Status</th>
-                  <th className="px-5 py-3 font-semibold text-right">Receipt</th>
+                  <th className="px-5 py-3 font-semibold text-right">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -179,7 +297,14 @@ export default function RentLedger() {
                           View
                         </button>
                       ) : (
-                        <span className="text-ink/30">—</span>
+                        <Button
+                          size="sm"
+                          onClick={() => handlePayRent(inv)}
+                          loading={paymentLoading === inv._id}
+                          disabled={!!paymentLoading && paymentLoading !== inv._id}
+                        >
+                          Pay Now
+                        </Button>
                       )}
                     </td>
                   </tr>
@@ -207,7 +332,7 @@ export default function RentLedger() {
                     {inv.status}
                   </span>
                 </div>
-                <div className="mt-3 flex items-center justify-between">
+                <div className="mt-3 flex items-center justify-between gap-3">
                   <p className="font-mono font-bold text-lg text-ink tabular-nums">
                     ₹{inv.amount.toLocaleString('en-IN')}
                   </p>
@@ -219,7 +344,14 @@ export default function RentLedger() {
                       View receipt
                     </button>
                   ) : (
-                    <span className="text-ink/30 text-sm">No receipt</span>
+                    <Button
+                      size="sm"
+                      onClick={() => handlePayRent(inv)}
+                      loading={paymentLoading === inv._id}
+                      disabled={!!paymentLoading && paymentLoading !== inv._id}
+                    >
+                      Pay Now
+                    </Button>
                   )}
                 </div>
               </li>

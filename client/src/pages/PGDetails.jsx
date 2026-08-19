@@ -561,7 +561,7 @@ export default function PGDetails() {
       {/* Directions modal */}
       {directionsOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/60 backdrop-blur-sm">
-          <div className="relative w-full h-full sm:max-w-3xl sm:max-h-[85vh] sm:rounded-xl2 bg-white shadow-lift overflow-hidden flex flex-col">
+          <div className="relative w-full h-full sm:max-w-3xl sm:max-h-[85vh] sm:rounded-xl2 bg-white shadow-lift overflow-hidden flex flex-col map-modal">
             <DirectionsMap pg={pg} onClose={() => setDirectionsOpen(false)} />
           </div>
         </div>

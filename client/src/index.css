@@ -99,6 +99,11 @@
   animation: pin-drop 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/* Ensure marker icons are visible */
+.leaflet-marker-icon svg {
+  display: block;
+}
+
 /*
  * Leaflet's internal panes default to z-indexes 400–700, which escape the card
  * and float above the sticky Navbar (z-50 = 500). Cap every pane below the
@@ -106,6 +111,7 @@
  * ordering is preserved because each pane only drops by a constant offset.
  */
 .leaflet-map-pane      { z-index: 1   !important; } /* 400 -> below navbar    */
+.leaflet-tile-pane     { z-index: 1   !important; } /* 200 tiles at the bottom */
 .leaflet-overlay-pane  { z-index: 2   !important; } /* 400 tiles/overlays     */
 .leaflet-shadow-pane   { z-index: 3   !important; } /* 500 shadows            */
 .leaflet-marker-pane   { z-index: 4   !important; } /* 600 markers            */
@@ -122,6 +128,75 @@
 .pg-picker-marker .pg-picker-pin:active {
   cursor: grabbing;
   transform: scale(1.08);
+}
+
+/* Ensure house markers are visible and clickable */
+.pg-home-marker,
+.location-picker-marker,
+.origin-marker,
+.dest-marker {
+  z-index: 10 !important;
+  background: transparent !important;
+  border: none !important;
+  display: block !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+.pg-home-marker span,
+.location-picker-marker span {
+  display: block !important;
+  line-height: 0 !important;
+}
+
+.pg-home-marker svg,
+.location-picker-marker svg,
+.origin-marker svg,
+.dest-marker svg {
+  display: block !important;
+  pointer-events: auto !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* Fix for Leaflet divIcon visibility */
+.leaflet-div-icon {
+  background: transparent !important;
+  border: none !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* Ensure divIcon icons are visible */
+.leaflet-div-icon svg {
+  pointer-events: auto !important;
+  display: block !important;
+}
+
+/* Ensure map in modal is fully visible */
+.map-modal .leaflet-map-pane,
+.map-modal .leaflet-tile-pane,
+.map-modal .leaflet-overlay-pane,
+.map-modal .leaflet-shadow-pane,
+.map-modal .leaflet-marker-pane,
+.map-modal .leaflet-tooltip-pane,
+.map-modal .leaflet-popup-pane {
+  z-index: 10 !important;
+}
+
+/* Ensure map markers are visible in modals with z-index fix */
+.map-modal .leaflet-marker-icon,
+.map-modal .leaflet-div-icon,
+.map-modal .origin-marker,
+.map-modal .dest-marker {
+  z-index: 11 !important;
+}
+
+.map-modal .leaflet-marker-icon svg,
+.map-modal .leaflet-div-icon svg,
+.map-modal .origin-marker svg,
+.map-modal .dest-marker svg {
+  pointer-events: auto !important;
 }
 
 
