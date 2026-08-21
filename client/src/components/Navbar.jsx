@@ -105,6 +105,7 @@ export default function Navbar() {
   }
   if (user?.role === 'USER') {
     links.push({ to: '/bookings', label: 'My Bookings' });
+    links.push({ to: '/waitlist', label: 'Waitlist' });
     if (showWishlist) {
       links.push({ to: '/wishlist', label: 'Wishlist', badge: wishlist?.count, heart: true });
     }
