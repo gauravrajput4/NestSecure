@@ -18,6 +18,9 @@ const bookingSchema = new mongoose.Schema(
     room: { type: mongoose.Schema.Types.ObjectId, default: null },
     sharingType: { type: String, default: '' },
 
+    // Number of occupants staying in the room (1 to room capacity)
+    occupants: { type: Number, default: 1, min: 1 },
+
     startDate: { type: Date, required: true },
     nextDueDate: { type: Date, required: true }, // next rent due date
 

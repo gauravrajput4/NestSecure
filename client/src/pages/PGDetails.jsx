@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchPGById, fetchReviews, addReview } from '../services/pgService.js';
 import { createBooking } from '../services/bookingService.js';
+import { joinWaitlist } from '../services/waitlistService.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import Button from '../components/Button.jsx';
@@ -21,6 +22,7 @@ const sharingLabels = {
   SINGLE: 'Single sharing',
   DOUBLE: 'Double sharing',
   TRIPLE: 'Triple sharing',
+  QUAD: '4 sharing',
 };
 
 export default function PGDetails() {
@@ -40,6 +42,7 @@ export default function PGDetails() {
 
   // Selected room for room-level PGs
   const [selectedRoom, setSelectedRoom] = useState(null);
+  const [occupants, setOccupants] = useState(1);
 
   // Directions modal state
   const [directionsOpen, setDirectionsOpen] = useState(false);
@@ -85,7 +88,7 @@ export default function PGDetails() {
       setBookingLoading(true);
       await createBooking({
         pgId: id,
-        ...(selectedRoom ? { roomId: selectedRoom } : {}),
+        ...(selectedRoom ? { roomId: selectedRoom, occupants } : {}),
       });
       toast.success('Request sent! The owner will review your booking.');
       navigate('/bookings');
@@ -114,6 +117,25 @@ export default function PGDetails() {
       toast.error(err.message);
     } finally {
       setReviewLoading(false);
+    }
+  };
+
+  // Join the waitlist for this PG (or specific room if selected)
+  const handleJoinWaitlist = async () => {
+    if (!user) {
+      toast.info('Please log in to join waitlist');
+      navigate('/login');
+      return;
+    }
+    try {
+      await joinWaitlist({
+        pgId: id,
+        ...(selectedRoom ? { roomId: selectedRoom } : {}),
+        ...(selectedRoomData ? { sharingType: selectedRoomData.sharingType } : {}),
+      });
+      toast.success('Joined waitlist! You will be notified when a room becomes available.');
+    } catch (err) {
+      toast.error(err.message);
     }
   };
 
@@ -147,11 +169,15 @@ export default function PGDetails() {
     ? selectedRoomData.deposit
     : pg.securityDeposit;
   const totalPayable = displayRent + (displayDeposit || 0);
+  
+  // Check if selected room is available (not booked)
+  const selectedRoomAvailable = selectedRoomData ? !selectedRoomData.isBooked : true;
+  
   const canBook =
     user &&
     user.role === 'USER' &&
     pg.availableRooms > 0 &&
-    (!hasRooms || selectedRoom);
+    (!hasRooms || (selectedRoom && selectedRoomAvailable));
 
   const bookLabel = !user
     ? 'Log in to book'
@@ -159,7 +185,9 @@ export default function PGDetails() {
       ? 'No rooms available'
       : hasRooms && !selectedRoom
         ? 'Select a room to book'
-        : 'Request to Book';
+        : hasRooms && selectedRoom && !selectedRoomAvailable
+          ? 'Room already booked'
+          : 'Request to Book';
 
   return (
     <div className="page-shell pb-28 lg:pb-12 bg-stone">
@@ -274,23 +302,26 @@ export default function PGDetails() {
                   Choose a room
                 </h2>
                 <p className="text-sm text-ink/60 mb-4">
-                  Each room has its own sharing type and rent.
+                  Each room has its own sharing type and rent. The entire room is booked as one unit.
                 </p>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {pg.rooms.map((room) => {
-                    const soldOut = room.availableBeds <= 0;
+                    const isBooked = room.isBooked;
                     const selected = selectedRoom === room._id;
                     return (
                       <button
                         key={room._id}
                         type="button"
-                        disabled={soldOut}
+                        disabled={isBooked}
                         aria-pressed={selected}
-                        onClick={() => setSelectedRoom(room._id)}
+                        onClick={() => {
+                          setSelectedRoom(room._id);
+                          setOccupants(1); // reset occupants when room changes
+                        }}
                         className={`text-left rounded-xl border-2 p-4 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/50 ${
                           selected
                             ? 'border-indigo-600 bg-indigo-50 shadow-sm'
-                            : soldOut
+                            : isBooked
                               ? 'border-neutral-200 bg-neutral-50 opacity-60 cursor-not-allowed'
                               : 'border-neutral-200 hover:border-indigo-300'
                         }`}
@@ -326,29 +357,72 @@ export default function PGDetails() {
                               ₹{room.rent.toLocaleString('en-IN')}
                               <span className="text-xs text-ink/50 font-semibold">
                                 /mo
-                              </span>
-                            </p>
+                             </span>
+                           </p>
                             {room.deposit > 0 && (
                               <p className="text-[11px] text-ink/50">
                                 + ₹{room.deposit.toLocaleString('en-IN')} deposit
-                              </p>
+                             </p>
                             )}
-                          </div>
+                         </div>
                           <span
                             className={`text-xs font-semibold inline-flex items-center gap-1 ${
-                              soldOut ? 'text-danger' : 'text-success'
+                              isBooked ? 'text-danger' : 'text-success'
                             }`}
                           >
                             <span aria-hidden="true">●</span>
-                            {soldOut
-                              ? 'Full'
-                              : `${room.availableBeds}/${room.totalBeds} beds`}
-                          </span>
-                        </div>
-                      </button>
+                            {isBooked ? 'Room Booked' : 'Room Available'}
+                         </span>
+                       </div>
+                     </button>
                     );
                   })}
-                </div>
+               </div>
+
+                {/* Join Waitlist - shown when ALL rooms are booked */}
+                {pg.rooms.length > 0 && pg.rooms.every((r) => r.isBooked) && (
+                  <div className="mt-6 p-4 bg-warning/5 border border-warning/30 rounded-xl">
+                    <h3 className="font-semibold text-ink mb-2">All rooms are booked</h3>
+                    <p className="text-sm text-ink/60 mb-3">
+                      Join the waitlist and we will notify you when a room becomes available.
+                   </p>
+                    <Button
+                      variant="outline"
+                      onClick={() => handleJoinWaitlist()}
+                      disabled={!user}
+                    >
+                      Join Waitlist
+                   </Button>
+                 </div>
+                )}
+
+                {/* Occupants selector when a room is selected */}
+                {selectedRoom && (
+                  <div className="mt-6 pt-6 border-t border-stone-line">
+                    <h3 className="font-semibold text-ink mb-3">Number of occupants</h3>
+                    <p className="text-sm text-ink/60 mb-3">
+                      Select how many people will stay in this room (max {selectedRoomData.totalBeds}).
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {Array.from({ length: selectedRoomData.totalBeds }, (_, i) => i + 1).map(
+                        (num) => (
+                          <button
+                            key={num}
+                            type="button"
+                            onClick={() => setOccupants(num)}
+                            className={`px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all ${
+                              occupants === num
+                                ? 'border-indigo-600 bg-indigo-50 text-indigo-700'
+                                : 'border-neutral-200 hover:border-indigo-300 text-ink'
+                            }`}
+                          >
+                            {num} {num === 1 ? 'Person' : 'People'}
+                          </button>
+                        )
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -483,15 +557,32 @@ export default function PGDetails() {
 
               <div className="rounded-xl bg-paper p-4 mb-4">
                 <p className="text-sm text-ink/60 mb-0.5">Availability</p>
-                <p className="font-bold text-ink">
-                  {hasRooms
-                    ? `${pg.availableRooms} / ${pg.totalRooms} beds available`
-                    : `${pg.availableRooms} / ${pg.totalRooms} rooms available`}
-                </p>
-                {hasRooms && !selectedRoom && pg.availableRooms > 0 && (
-                  <p className="text-xs text-indigo-brand font-semibold mt-1">
-                    Select a room below to continue
-                  </p>
+                {hasRooms && selectedRoom ? (
+                  <>
+                    <p className="font-bold text-ink">
+                      {selectedRoomData.isBooked ? 'Room Booked' : 'Room Available'}
+                    </p>
+                    <p className="text-xs text-ink/60 mt-1">
+                      Capacity: {selectedRoomData.totalBeds} people
+                    </p>
+                  </>
+                ) : hasRooms ? (
+                  <>
+                    <p className="font-bold text-ink">
+                      {pg.availableRooms} / {pg.totalRooms} rooms available
+                    </p>
+                    {!selectedRoom && pg.availableRooms > 0 && (
+                      <p className="text-xs text-indigo-brand font-semibold mt-1">
+                        Select a room below to continue
+                      </p>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <p className="font-bold text-ink">
+                      {pg.availableRooms} / {pg.totalRooms} rooms available
+                    </p>
+                  </>
                 )}
               </div>
 
@@ -544,11 +635,17 @@ export default function PGDetails() {
             <p className="font-display text-xl font-extrabold text-ink leading-none">
               ₹{displayRent.toLocaleString('en-IN')}
             </p>
-            <p className="text-[11px] text-ink/50">
-              {pg.availableRooms > 0
-                ? `${pg.availableRooms} available`
-                : 'Fully booked'}
-            </p>
+            {hasRooms && selectedRoom ? (
+              <p className="text-[11px] text-ink/50">
+                {selectedRoomData.isBooked ? 'Room Booked' : 'Room Available'} • Capacity: {selectedRoomData.totalBeds} people
+              </p>
+            ) : (
+              <p className="text-[11px] text-ink/50">
+                {pg.availableRooms > 0
+                  ? `${pg.availableRooms} rooms available`
+                  : 'Fully booked'}
+              </p>
+            )}
           </div>
           <Button
             onClick={handleBook}
@@ -559,6 +656,32 @@ export default function PGDetails() {
             {bookLabel}
           </Button>
         </div>
+
+        {/* Occupants selector on mobile when room is selected */}
+        {hasRooms && selectedRoom && !selectedRoomData.isBooked && (
+          <div className="mb-2">
+            <p className="text-xs text-ink/60 mb-1">Occupants (max {selectedRoomData.totalBeds})</p>
+            <div className="flex gap-2">
+              {Array.from({ length: selectedRoomData.totalBeds }, (_, i) => i + 1).map(
+                (num) => (
+                  <button
+                    key={num}
+                    type="button"
+                    onClick={() => setOccupants(num)}
+                    className={`flex-1 py-2 px-3 text-center text-sm font-medium rounded-lg border-2 transition-all ${
+                      occupants === num
+                        ? 'border-indigo-600 bg-indigo-50 text-indigo-700'
+                        : 'border-neutral-200 hover:border-indigo-300 text-ink'
+                    }`}
+                  >
+                    {num} {num === 1 ? 'Person' : 'People'}
+                  </button>
+                )
+              )}
+            </div>
+          </div>
+        )}
+
         <Button variant="outline" fullWidth onClick={getDirections} size="sm">
           <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" />

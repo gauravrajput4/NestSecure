@@ -109,7 +109,7 @@ export default function OwnerPGs() {
 
   // Save uses the existing updatePG (PUT /pg/:id, partial body). For room-level
   // PGs we deliberately do NOT send the rooms[] array or bed counts, so live
-  // occupancy (availableBeds) is never clobbered by syncRoomAggregates.
+  // occupancy (isBooked) is never clobbered by syncRoomAggregates.
   const saveEdit = async (pg) => {
     const isRoomLevel = (pg.rooms?.length || 0) > 0;
     try {

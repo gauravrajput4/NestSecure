@@ -126,25 +126,26 @@ async function settlePayment(payment, { razorpayPaymentId }) {
   await routeOwnerPayout(payment, booking);
 
   if (payment.type === 'BOOKING') {
-    // ATOMIC availability decrement — only succeeds if a bed/room is free.
+    // ATOMIC availability decrement — only succeeds if a room is free.
     // Prevents overbooking under concurrent requests.
     let updated;
     if (booking.room) {
-      // Room-level PG: decrement the specific room's beds AND the aggregate,
-      // guarded by availableBeds > 0 via arrayFilters.
+      // Room-level PG: mark the specific room as booked AND decrement aggregate,
+      // guarded by isBooked === false via arrayFilters.
       updated = await PG.findOneAndUpdate(
         { _id: booking.pg._id, 'rooms._id': booking.room },
         {
-          $inc: { 'rooms.$[r].availableBeds': -1, availableRooms: -1 },
+          $set: { 'rooms.$[r].isBooked': true },
+          $inc: { availableRooms: -1 },
         },
         {
           new: true,
-          arrayFilters: [{ 'r._id': booking.room, 'r.availableBeds': { $gt: 0 } }],
+          arrayFilters: [{ 'r._id': booking.room, 'r.isBooked': false }],
         }
       );
-      // arrayFilters no-match still returns the doc; confirm a bed actually moved.
+      // arrayFilters no-match still returns the doc; confirm room actually got booked.
       const room = updated?.rooms?.id(booking.room);
-      if (!updated || !room || room.availableBeds < 0) {
+      if (!updated || !room || room.isBooked !== true) {
         updated = null;
       }
     } else {
@@ -159,7 +160,7 @@ async function settlePayment(payment, { razorpayPaymentId }) {
       // Room got taken between order + verify — mark for refund path
       payment.status = 'FAILED';
       await payment.save();
-      const err = new Error('Rooms sold out during payment. A refund will be issued.');
+      const err = new Error('Room sold out during payment. A refund will be issued.');
       err.status = 409;
       throw err;
     }

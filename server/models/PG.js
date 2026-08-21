@@ -7,13 +7,13 @@ const roomSchema = new mongoose.Schema({
   label: { type: String, required: true }, // e.g. "Room 2B"
   sharingType: {
     type: String,
-    enum: ['SINGLE', 'DOUBLE', 'TRIPLE'],
+    enum: ['SINGLE', 'DOUBLE', 'TRIPLE', 'QUAD'],
     default: 'SINGLE',
   },
   rent: { type: Number, required: true, min: 0 },
   deposit: { type: Number, default: 0, min: 0 },
-  totalBeds: { type: Number, required: true, min: 1 },
-  availableBeds: { type: Number, required: true, min: 0 },
+  totalBeds: { type: Number, required: true, min: 1 }, // maximum occupancy capacity
+  isBooked: { type: Boolean, default: false }, // room is booked as a whole unit
   images: [{ type: String }],
   imageIds: [{ type: String }],
 });
@@ -46,7 +46,7 @@ const pgSchema = new mongoose.Schema(
     },
 
     // Room availability (aggregate). When `rooms` is populated these are kept in
-    // sync as the sum of bed counts; legacy PGs use them directly.
+    // sync as the count of physical rooms; legacy PGs use them directly.
     totalRooms: { type: Number, required: true, min: 1 },
     availableRooms: { type: Number, required: true, min: 0 },
 
@@ -65,12 +65,14 @@ const pgSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Recompute aggregate room/bed counts + "from" price from the rooms array.
+// Recompute aggregate room counts + "from" price from the rooms array.
 // Call before saving a PG whose rooms changed.
+// totalRooms = number of physical rooms
+// availableRooms = number of rooms where isBooked === false
 pgSchema.methods.syncRoomAggregates = function () {
   if (this.rooms && this.rooms.length > 0) {
-    this.totalRooms = this.rooms.reduce((s, r) => s + r.totalBeds, 0);
-    this.availableRooms = this.rooms.reduce((s, r) => s + r.availableBeds, 0);
+    this.totalRooms = this.rooms.length;
+    this.availableRooms = this.rooms.filter((r) => !r.isBooked).length;
     this.price = Math.min(...this.rooms.map((r) => r.rent));
     this.securityDeposit = Math.min(...this.rooms.map((r) => r.deposit));
   }

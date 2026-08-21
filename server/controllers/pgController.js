@@ -94,16 +94,13 @@ export async function getPGById(req, res, next) {
   }
 }
 
-// Normalize an incoming rooms array: default availableBeds to totalBeds for
+// Normalize an incoming rooms array: default isBooked to false for
 // rooms that don't specify it (i.e. brand-new rooms).
 function normalizeRooms(rooms) {
   if (!Array.isArray(rooms)) return rooms;
   return rooms.map((r) => ({
     ...r,
-    availableBeds:
-      r.availableBeds === undefined || r.availableBeds === null
-        ? r.totalBeds
-        : r.availableBeds,
+    isBooked: r.isBooked === undefined || r.isBooked === null ? false : r.isBooked,
   }));
 }
 

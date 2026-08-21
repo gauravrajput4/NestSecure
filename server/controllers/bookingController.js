@@ -4,6 +4,7 @@ import Payment from '../models/Payment.js';
 import User from '../models/User.js';
 import { calculateRefund } from '../utils/refund.js';
 import { createRefund, reverseTransfer } from '../utils/razorpay.js';
+import { notifyWaitlist } from './waitlistController.js';
 import {
   createInteractiveEmail,
   createWhatsAppMessage,
@@ -31,7 +32,7 @@ function addMonth(date) {
 // POST /api/booking — create a booking request (owner approval + payment confirm)
 export async function createBooking(req, res, next) {
   try {
-    const { pgId, startDate, roomLabel, roomId } = req.body;
+    const { pgId, startDate, roomLabel, roomId, occupants = 1 } = req.body;
     const pg = await PG.findById(pgId);
     if (!pg) {
       return res.status(404).json({ success: false, message: 'PG not found' });
@@ -65,7 +66,7 @@ export async function createBooking(req, res, next) {
       }
     }
 
-    // Room-level PG: a specific room must be chosen and have a free bed.
+    // Room-level PG: a specific room must be chosen and must not be booked.
     let room = null;
     if (pg.rooms && pg.rooms.length > 0) {
       if (!roomId) {
@@ -79,10 +80,17 @@ export async function createBooking(req, res, next) {
           .status(404)
           .json({ success: false, message: 'Room not found' });
       }
-      if (room.availableBeds <= 0) {
+      // Room is booked as a whole unit - check isBooked flag
+      if (room.isBooked) {
         return res
           .status(409)
-          .json({ success: false, message: 'No beds available in this room' });
+          .json({ success: false, message: 'This room is already booked' });
+      }
+      // Validate occupants against room capacity (totalBeds)
+      if (occupants < 1 || occupants > room.totalBeds) {
+        return res
+          .status(400)
+          .json({ success: false, message: `Occupants must be between 1 and ${room.totalBeds}` });
       }
     } else if (pg.availableRooms <= 0) {
       // Legacy count-based PG
@@ -101,6 +109,7 @@ export async function createBooking(req, res, next) {
       room: room ? room._id : null,
       sharingType: room ? room.sharingType : '',
       roomLabel: room ? room.label : roomLabel || '',
+      occupants: room ? occupants : 1,
       startDate: start,
       nextDueDate: addMonth(start),
       monthlyRent,
@@ -248,45 +257,68 @@ export async function cancelBooking(req, res, next) {
       refund = calculateRefund(payment.amount, booking.startDate);
       if (refund.amount > 0) {
         try {
-          const rz = await createRefund(payment.razorpayPaymentId, refund.amount);
-          payment.status = 'REFUNDED';
-          payment.refundId = rz.id;
-          payment.refundAmount = refund.amount;
-          payment.refundedAt = new Date();
-
-          // Claw back the owner's payout so the refund isn't funded by the
-          // platform. Non-fatal: the tenant refund already succeeded, so a
-          // reversal problem is logged for reconciliation rather than failing.
+          // FIRST: Try to reverse the owner's transfer (claw back owner's share)
+          // This ensures the refund is funded by the owner, not the platform
+          let transferReversed = false;
           if (payment.transferId && payment.payoutStatus === 'PROCESSED') {
             try {
               await reverseTransfer(payment.transferId);
               payment.payoutStatus = 'REVERSED';
+              payment.transferId = null; // Clear transfer ID since it's reversed
+              transferReversed = true;
             } catch (revErr) {
               console.error('Transfer reversal failed:', revErr);
+              // If reversal fails, we cannot safely refund from owner's funds
+              // The refund should not proceed automatically
+              throw new Error('Owner payout reversal failed. Please contact support to process refund manually.');
             }
+          } else if (payment.payoutStatus === 'PENDING') {
+            // Payout hasn't been processed yet - mark as cancelled so it won't be paid out
+            payment.payoutStatus = 'CANCELLED';
+            transferReversed = true; // No actual transfer to reverse
+          } else if (!payment.transferId && payment.payoutStatus === 'NONE') {
+            // No payout was initiated (owner hasn't set up payout details)
+            // The platform holds the funds, so we can refund directly
+            transferReversed = true;
           }
 
-          await payment.save();
+          if (transferReversed) {
+            // NOW: Refund the customer (money comes from platform, but owner's share was clawed back)
+            const rz = await createRefund(payment.razorpayPaymentId, refund.amount);
+            payment.status = 'REFUNDED';
+            payment.refundId = rz.id;
+            payment.refundAmount = refund.amount;
+            payment.refundedAt = new Date();
+            await payment.save();
+          }
         } catch (refundErr) {
           console.error('Refund failed:', refundErr);
           return res.status(502).json({
             success: false,
-            message: 'Refund could not be processed. Please contact support.',
+            message: refundErr.message || 'Refund could not be processed. Please contact support.',
           });
         }
       }
     }
 
-    // Release the room/bed ONLY if this booking had reserved one (CONFIRMED).
+    // Release the room ONLY if this booking had reserved one (CONFIRMED).
     if (booking.bookingStatus === 'CONFIRMED') {
       if (booking.room) {
-        // Room-level: increment that room's beds + aggregate.
+        // Room-level: mark room as not booked + increment aggregate availableRooms.
         await PG.updateOne(
           { _id: booking.pg._id, 'rooms._id': booking.room },
-          { $inc: { 'rooms.$.availableBeds': 1, availableRooms: 1 } }
+          { $set: { 'rooms.$.isBooked': false }, $inc: { availableRooms: 1 } }
+        );
+        // Notify next person on waitlist for this room
+        notifyWaitlist(booking.room, booking.pg._id).catch((err) =>
+          console.error('Waitlist notify failed:', err)
         );
       } else {
         await PG.updateOne({ _id: booking.pg._id }, { $inc: { availableRooms: 1 } });
+        // Notify waitlist for any room in this PG
+        notifyWaitlist(null, booking.pg._id).catch((err) =>
+          console.error('Waitlist notify failed:', err)
+        );
       }
     }
 

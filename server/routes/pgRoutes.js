@@ -53,7 +53,7 @@ router.post(
       .withMessage('Each room needs a label'),
     body('rooms.*.sharingType')
       .if(hasRooms)
-      .isIn(['SINGLE', 'DOUBLE', 'TRIPLE'])
+      .isIn(['SINGLE', 'DOUBLE', 'TRIPLE', 'QUAD'])
       .withMessage('Invalid sharing type'),
     body('rooms.*.rent')
       .if(hasRooms)
