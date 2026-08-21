@@ -43,7 +43,7 @@ const paymentSchema = new mongoose.Schema(
     platformFee: { type: Number, default: 0 }, // rupees kept by platform
     payoutStatus: {
       type: String,
-      enum: ['NONE', 'PENDING', 'PROCESSED', 'FAILED', 'REVERSED'],
+      enum: ['NONE', 'PENDING', 'PROCESSED', 'FAILED', 'REVERSED', 'CANCELLED'],
       default: 'NONE',
     },
   },
