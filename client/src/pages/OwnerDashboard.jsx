@@ -92,11 +92,16 @@ export default function OwnerDashboard() {
             </p>
           </div>
           <div className="flex gap-2">
+            <Link to="/owner/analytics">
+              <button className="h-control-sm rounded-xl border border-outline-soft bg-white px-3.5 text-sm font-semibold text-ink/70 transition hover:border-indigo-brand/40 hover:text-indigo-deep">
+                Analytics
+             </button>
+           </Link>
             <Link to="/owner/requests">
               <button className="h-control-sm rounded-xl border border-outline-soft bg-white px-3.5 text-sm font-semibold text-ink/70 transition hover:border-indigo-brand/40 hover:text-indigo-deep">
                 Review Requests
-              </button>
-            </Link>
+             </button>
+           </Link>
             <Link to="/owner/financials">
               <button className="h-control-sm rounded-xl bg-indigo-brand px-3.5 text-sm font-semibold text-white transition hover:bg-indigo-deep">
                 Open Financials

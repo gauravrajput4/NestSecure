@@ -20,8 +20,10 @@ const PGDetails = lazy(() => import('./pages/PGDetails.jsx'));
 const MyBookings = lazy(() => import('./pages/MyBookings.jsx'));
 const RentLedger = lazy(() => import('./pages/RentLedger.jsx'));
 const Wishlist = lazy(() => import('./pages/Wishlist.jsx'));
+const MyWaitlist = lazy(() => import('./pages/MyWaitlist.jsx'));
 const Profile = lazy(() => import('./pages/Profile.jsx'));
 const OwnerDashboard = lazy(() => import('./pages/OwnerDashboard.jsx'));
+const OwnerAnalytics = lazy(() => import('./pages/OwnerAnalytics.jsx'));
 const OwnerPGs = lazy(() => import('./pages/OwnerPGs.jsx'));
 const AddListing = lazy(() => import('./pages/AddListing.jsx'));
 const OwnerRequests = lazy(() => import('./pages/OwnerRequests.jsx'));
@@ -101,7 +103,15 @@ export default function App() {
               element={
                 <ProtectedRoute role="USER">
                   <Wishlist />
-                </ProtectedRoute>
+               </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/waitlist"
+              element={
+                <ProtectedRoute role="USER">
+                  <MyWaitlist />
+               </ProtectedRoute>
               }
             />
 
@@ -111,7 +121,15 @@ export default function App() {
               element={
                 <ProtectedRoute role="OWNER">
                   <OwnerDashboard />
-                </ProtectedRoute>
+               </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/owner/analytics"
+              element={
+                <ProtectedRoute role="OWNER">
+                  <OwnerAnalytics />
+               </ProtectedRoute>
               }
             />
             <Route

@@ -14,9 +14,13 @@ import rentRoutes from './routes/rentRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import settingsRoutes from './routes/settingsRoutes.js';
 import userSettingsRoutes from './routes/userSettingsRoutes.js';
+import waitlistRoutes from './routes/waitlistRoutes.js';
+import analyticsRoutes from './routes/analyticsRoutes.js';
+import pricingRoutes from './routes/pricingRoutes.js';
 import { apiLimiter, authLimiter } from './middleware/rateLimit.js';
 import maintenanceMiddleware from './middleware/maintenanceMiddleware.js';
 import { startRentReminderJob } from './utils/rentReminder.js';
+import { startWaitlistExpiryJob } from './utils/waitlistReminder.js';
 
 dotenv.config();
 
@@ -49,6 +53,9 @@ app.use('/api/rent', rentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/settings/account', userSettingsRoutes);
+app.use('/api/waitlist', waitlistRoutes);
+app.use('/api/owner/analytics', analyticsRoutes);
+app.use('/api/pricing', pricingRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -64,6 +71,8 @@ mongoose
       console.log(`✓ Server running on port ${PORT}`);
       // Start rent reminder cron job
       startRentReminderJob();
+      // Start waitlist expiry cron job
+      startWaitlistExpiryJob();
     });
   })
   .catch((err) => {
