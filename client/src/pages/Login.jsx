@@ -72,7 +72,7 @@ export default function Login() {
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
               required
-              className="h-control w-full rounded-xl border-2 border-ink/20 pl-4 pr-11 text-ink placeholder:text-ink/40 transition-colors hover:border-ink/30 focus:border-indigo-brand/60 focus:outline-none focus:ring-2 focus:ring-indigo-brand/50"
+              className="h-11 w-full rounded-[var(--radius-control)] border border-neutral-300 bg-white pl-4 pr-11 text-neutral-900 placeholder:text-neutral-400 shadow-sm transition-all hover:border-neutral-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
             />
             <button
               type="button"

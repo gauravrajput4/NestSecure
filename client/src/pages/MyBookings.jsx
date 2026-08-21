@@ -68,20 +68,7 @@ export default function MyBookings() {
 
       // Create order
       const orderRes = await createOrder({ bookingId: booking._id, type });
-      const { order, paymentId, keyId, demo } = orderRes;
-
-      if (demo) {
-        // Demo mode — auto-verify with mock signature
-        await verifyPayment({
-          paymentId,
-          razorpayOrderId: order.id,
-          razorpayPaymentId: 'pay_demo_' + Date.now(),
-          razorpaySignature: 'demo_signature',
-        });
-        toast.success('Payment successful (demo mode)');
-        loadBookings();
-        return;
-      }
+      const { order, paymentId, keyId, customerId } = orderRes;
 
       // Real Razorpay checkout
       const options = {
@@ -91,6 +78,19 @@ export default function MyBookings() {
         name: 'NestSecure PG',
         description: `${type} Payment`,
         order_id: order.id,
+        ...(customerId
+          ? {
+              customer_id: customerId,
+              remember_customer: true,
+              save_card: true,
+            }
+          : {}),
+        prefill: {
+          name: user?.name || '',
+          email: user?.email || '',
+          contact: user?.phone || '',
+        },
+        theme: { color: '#4F46E5' },
         handler: async (response) => {
           try {
             await verifyPayment({
@@ -477,16 +477,22 @@ export default function MyBookings() {
 
                 {preview.refund.unpaidRent > 0 && (
                   <div className="rounded-lg bg-warning/10 border border-warning/20 p-3">
-                    <p className="text-xs text-warning font-semibold mb-1">
-                      ⚠️ Unpaid Rent Notice
+                    <p className="text-xs text-warning font-semibold mb-1 flex items-center gap-1">
+                      <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fillRule="evenodd" d="M8.5 2.9a1.5 1.5 0 013 0l5.6 10.2a1.5 1.5 0 01-1.3 2.2H4.2a1.5 1.5 0 01-1.3-2.2L8.5 2.9zm1.5 4a.75.75 0 01.75.75v2.7a.75.75 0 01-1.5 0v-2.7a.75.75 0 01.75-.75zM10 12.5a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                      </svg>
+                      Unpaid Rent Notice
                     </p>
                     <p className="text-xs text-ink/70">
                       You have ₹{preview.refund.unpaidRent.toLocaleString('en-IN')} in unpaid rent. 
                       This will be deducted from your security deposit before refund.
                     </p>
                     {preview.refund.outstandingBalance > 0 && (
-                      <p className="text-xs text-danger font-semibold mt-2">
-                        🚨 Outstanding Balance: ₹{preview.refund.outstandingBalance.toLocaleString('en-IN')}
+                      <p className="text-xs text-danger font-semibold mt-2 flex items-center gap-1">
+                        <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                          <path fillRule="evenodd" d="M8.5 2.9a1.5 1.5 0 013 0l5.6 10.2a1.5 1.5 0 01-1.3 2.2H4.2a1.5 1.5 0 01-1.3-2.2L8.5 2.9zm1.5 4a.75.75 0 01.75.75v2.7a.75.75 0 01-1.5 0v-2.7a.75.75 0 01.75-.75zM10 12.5a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                        </svg>
+                        Outstanding Balance: ₹{preview.refund.outstandingBalance.toLocaleString('en-IN')}
                         <br />
                         Your security deposit is insufficient. You will still owe this amount after cancellation.
                       </p>

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -27,8 +27,18 @@
     /* Layout knobs — defaults reproduce the current look exactly. */
     --radius-control: 0.5rem; /* = rounded-lg */
     --container-max: 80rem; /* = max-w-7xl */
-    --font-heading: 'Inter', system-ui, sans-serif;
-    --font-body: 'Inter', system-ui, sans-serif;
+    --font-heading: 'Bricolage Grotesque', 'Inter', system-ui, sans-serif;
+    --font-body: 'Manrope', 'Inter', system-ui, sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
 
   html,
@@ -38,7 +48,9 @@
   }
 
   body {
-    @apply bg-neutral-50 text-neutral-900 font-sans antialiased;
+    @apply bg-stone text-ink font-sans antialiased;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'ss01', 'cv11';
   }
 
   ::selection {
@@ -50,7 +62,7 @@
   input,
   select,
   textarea {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-50;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60 focus-visible:ring-offset-2 focus-visible:ring-offset-stone;
   }
 
   * {
@@ -75,7 +87,7 @@
 
 @layer components {
   .page-shell {
-    @apply min-h-screen bg-neutral-50;
+    @apply min-h-screen bg-stone;
   }
 
   .page-container {
@@ -84,13 +96,132 @@
   }
 
   .surface-card {
-    @apply rounded-2xl border border-neutral-200 bg-white shadow-sm;
+    @apply rounded-2xl border border-stone-line bg-white shadow-card-soft;
   }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  /* Mono instrument label — city codes, coordinates, metadata. The voice of
+     the map: small, uppercase, spaced, precise. */
+  .eyebrow {
+    @apply font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-500;
+  }
+
+  .eyebrow-on-ink {
+    @apply font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-white/50;
+  }
+
+  /* Warm hairline rule used to structure the dusk surfaces. */
+  .hairline {
+    @apply border-t border-stone-line;
+  }
+
+  .hairline-on-ink {
+    @apply border-t border-white/10;
+  }
+
+  /* Frosted glass panel for the hero search card / floating controls. */
+  .glass {
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(14px) saturate(1.4);
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  }
+
+  /* ── Hero background system ────────────────────────────────────────────────
+     Quiet instrument-panel treatment for the dusk band. Layers are stacked as
+     absolutely-positioned, pointer-events-none siblings inside the hero so the
+     content above them always owns the focus. No particles, no floating shapes:
+     depth comes from a single feathered halo, a faint surveyor dot-grid that
+     dissolves before the content, and one hairline horizon. */
+  .hero-band {
+    background: linear-gradient(180deg, #131b30 0%, #0e1627 52%, #0a111e 100%);
+  }
+
+  .hero-grid {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px);
+    background-size: 28px 28px;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.9) 0%,
+      rgba(0, 0, 0, 0.35) 38%,
+      transparent 78%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.9) 0%,
+      rgba(0, 0, 0, 0.35) 38%,
+      transparent 78%
+    );
+  }
+
+  .hero-halo {
+    background: radial-gradient(
+      58% 42% at 50% -8%,
+      rgba(99, 102, 241, 0.26),
+      transparent 70%
+    );
+  }
+
+  .hero-accent {
+    background: radial-gradient(
+      34% 26% at 88% 100%,
+      rgba(245, 158, 11, 0.1),
+      transparent 70%
+    );
+  }
+
+  .hero-horizon {
+    background: linear-gradient(
+      90deg,
+      transparent 5%,
+      rgba(255, 255, 255, 0.18) 50%,
+      transparent 95%
+    );
+  }
+
+  /* Scroll-reveal: elements start below + hidden, then slide up once the
+     IntersectionObserver adds `.is-visible`. Driven purely by CSS so reduced
+     motion can switch it off globally. */
+  .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+      opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Page-entry sweep for route content. */
+  .page-in {
+    animation: fade-up 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+/* Motion safety: kill ambient + scroll animations for reduced-motion users. */
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .leaflet-marker-icon,
+  .leaflet-marker-icon * {
+    animation: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001s !important;
   }
 }
 
@@ -102,6 +233,54 @@
 /* Ensure marker icons are visible */
 .leaflet-marker-icon svg {
   display: block;
+}
+
+/* Map container framing — the dusk hero stages the live map in a warm frame. */
+.leaflet-container {
+  font-family: var(--font-body);
+  outline: none;
+}
+
+.leaflet-container:focus {
+  box-shadow: 0 0 0 2px rgb(var(--c-primary-600) / 0.5);
+}
+
+/* Warm product popup — matches the stone card language used elsewhere. */
+.leaflet-popup-content-wrapper {
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 24px rgba(13, 21, 38, 0.12);
+  border: 1px solid var(--c-primary-50, #eef2ff);
+}
+.leaflet-popup-content {
+  margin: 0.75rem 0.875rem;
+  font-family: var(--font-body);
+}
+.leaflet-popup-tip {
+  box-shadow: none;
+}
+.leaflet-popup-close-button {
+  color: rgba(13, 21, 38, 0.4);
+}
+
+/* Zoom control — quiet, rounded, matches the panel. */
+.leaflet-bar a {
+  color: #0d1526;
+  border-color: #e7e3d9;
+}
+.leaflet-bar a:hover {
+  background-color: #f3f0ea;
+}
+
+/* House pin markers should not re-run the drop on hover, and the active pin
+   gets a soft glow so the highlighted property reads clearly. */
+.pg-home-marker .pg-home-pin {
+  transition: transform 0.18s ease, filter 0.18s ease;
+}
+.pg-home-marker .pg-home-pin:hover {
+  transform: translateY(-2px) scale(1.04);
+}
+.pg-home-marker .pg-home-pin.is-active {
+  filter: drop-shadow(0 6px 12px rgba(245, 158, 11, 0.45));
 }
 
 /*

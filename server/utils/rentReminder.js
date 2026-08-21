@@ -8,6 +8,7 @@ import {
   createWhatsAppMessage,
   sendEmail,
   sendWhatsApp,
+  notifyChannels,
 } from './notify.js';
 
 /**
@@ -85,24 +86,29 @@ async function sendRentReminder(booking, type) {
       ? `Hi ${user.name}, your rent for ${pg.name} was due on ${dueDate} and is now overdue. Please pay at the earliest to avoid late fees.`
       : `Hi ${user.name}, your rent for ${pg.name} is due on ${dueDate}. Please ensure timely payment.`;
 
-  await sendEmail(
-    user.email,
-    subject,
-    createInteractiveEmail({
-      userName: user.name,
+  const channels = notifyChannels(user, 'rentReminders');
+  if (!channels.email && !channels.whatsapp) return;
+
+  if (channels.email) {
+    await sendEmail(
+      user.email,
       subject,
-      title: type === 'overdue' ? 'Rent Payment Overdue' : 'Rent Due Reminder',
-      message,
-      details: [
-        { label: 'PG', value: pg.name },
-        { label: 'Monthly Rent', value: `₹${booking.monthlyRent}` },
-        { label: 'Due Date', value: dueDate },
-      ],
-      ctaText: 'View My Booking',
-      ctaUrl: `${process.env.CLIENT_URL || 'http://localhost:5173'}/my-bookings`,
-    })
-  );
-  if (user.phone) {
+      createInteractiveEmail({
+        userName: user.name,
+        subject,
+        title: type === 'overdue' ? 'Rent Payment Overdue' : 'Rent Due Reminder',
+        message,
+        details: [
+          { label: 'PG', value: pg.name },
+          { label: 'Monthly Rent', value: `₹${booking.monthlyRent}` },
+          { label: 'Due Date', value: dueDate },
+        ],
+        ctaText: 'View My Booking',
+        ctaUrl: `${process.env.CLIENT_URL || 'http://localhost:5173'}/my-bookings`,
+      })
+    );
+  }
+  if (channels.whatsapp && user.phone) {
     await sendWhatsApp(
       user.phone,
       createWhatsAppMessage({

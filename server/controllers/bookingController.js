@@ -9,6 +9,7 @@ import {
   createWhatsAppMessage,
   sendEmail,
   sendWhatsApp,
+  notifyChannels,
 } from '../utils/notify.js';
 
 const GENDER_MAP = { MALE: 'BOYS_ONLY', FEMALE: 'GIRLS_ONLY' };
@@ -34,6 +35,23 @@ export async function createBooking(req, res, next) {
     const pg = await PG.findById(pgId);
     if (!pg) {
       return res.status(404).json({ success: false, message: 'PG not found' });
+    }
+
+    // One active booking per user — a tenant can hold a single allocation.
+    // REQUESTED (awaiting owner approval) and PENDING (awaiting payment) count
+    // as active, so a user can't stack up multiple requests on the same or
+    // different PGs. They must cancel their current booking first.
+    const activeBooking = await Booking.findOne({
+      user: req.user._id,
+      bookingStatus: { $in: ['REQUESTED', 'PENDING', 'CONFIRMED'] },
+    }).populate('pg', 'name');
+    if (activeBooking) {
+      return res.status(409).json({
+        success: false,
+        message: `You already have an active booking at ${
+          activeBooking.pg?.name || 'a PG'
+        }. Please cancel it before booking another PG.`,
+      });
     }
 
     // Gender restriction check
@@ -90,32 +108,36 @@ export async function createBooking(req, res, next) {
       bookingStatus: 'REQUESTED',
     });
 
-    // Let the owner know a request is waiting for approval.
+    // Let the owner know a request is waiting for approval (respecting their
+    // notification preferences).
     try {
       const owner = await User.findById(pg.owner);
-      if (owner?.email) {
+      if (owner?.email || owner?.phone) {
+        const channels = notifyChannels(owner, 'bookingUpdates');
         const info = room
           ? `${room.label}, ${room.sharingType.toLowerCase()} sharing`
           : 'Room details available in dashboard';
         const ownerMessage = `${req.user.name} has requested to book ${pg.name}. Please review the request and approve or reject it from your dashboard.`;
-        await sendEmail(
-          owner.email,
-          'New booking request',
-          createInteractiveEmail({
-            userName: owner.name || 'Owner',
-            subject: 'New booking request',
-            title: 'New Booking Request',
-            message: ownerMessage,
-            details: [
-              { label: 'Tenant', value: req.user.name },
-              { label: 'PG', value: pg.name },
-              { label: 'Room', value: info },
-            ],
-            ctaText: 'Review Request',
-            ctaUrl: `${process.env.CLIENT_URL || 'http://localhost:5173'}/owner/requests`,
-          })
-        );
-        if (owner.phone) {
+        if (channels.email) {
+          await sendEmail(
+            owner.email,
+            'New booking request',
+            createInteractiveEmail({
+              userName: owner.name || 'Owner',
+              subject: 'New booking request',
+              title: 'New Booking Request',
+              message: ownerMessage,
+              details: [
+                { label: 'Tenant', value: req.user.name },
+                { label: 'PG', value: pg.name },
+                { label: 'Room', value: info },
+              ],
+              ctaText: 'Review Request',
+              ctaUrl: `${process.env.CLIENT_URL || 'http://localhost:5173'}/owner/requests`,
+            })
+          );
+        }
+        if (channels.whatsapp && owner.phone) {
           await sendWhatsApp(
             owner.phone,
             createWhatsAppMessage({
@@ -273,26 +295,29 @@ export async function cancelBooking(req, res, next) {
     booking.refundAmount = refund.amount;
     await booking.save();
 
-    // Notify
+    // Notify (respecting the tenant's notification preferences)
+    const channels = notifyChannels(booking.user, 'bookingUpdates');
     const msg = `Your booking at ${booking.pg.name} is cancelled. Refund amount: ₹${refund.amount} (${refund.percent}%).`;
-    await sendEmail(
-      booking.user.email,
-      'Booking Cancelled',
-      createInteractiveEmail({
-        userName: booking.user.name,
-        subject: 'Booking Cancelled',
-        title: 'Booking Cancellation Confirmed',
-        message: msg,
-        details: [
-          { label: 'PG', value: booking.pg.name },
-          { label: 'Refund', value: `₹${refund.amount}` },
-          { label: 'Refund Percent', value: `${refund.percent}%` },
-        ],
-        ctaText: 'View My Bookings',
-        ctaUrl: `${process.env.CLIENT_URL || 'http://localhost:5173'}/bookings`,
-      })
-    );
-    if (booking.user.phone) {
+    if (channels.email) {
+      await sendEmail(
+        booking.user.email,
+        'Booking Cancelled',
+        createInteractiveEmail({
+          userName: booking.user.name,
+          subject: 'Booking Cancelled',
+          title: 'Booking Cancellation Confirmed',
+          message: msg,
+          details: [
+            { label: 'PG', value: booking.pg.name },
+            { label: 'Refund', value: `₹${refund.amount}` },
+            { label: 'Refund Percent', value: `${refund.percent}%` },
+          ],
+          ctaText: 'View My Bookings',
+          ctaUrl: `${process.env.CLIENT_URL || 'http://localhost:5173'}/bookings`,
+        })
+      );
+    }
+    if (channels.whatsapp && booking.user.phone) {
       await sendWhatsApp(
         booking.user.phone,
         createWhatsAppMessage({

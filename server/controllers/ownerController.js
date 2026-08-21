@@ -5,6 +5,7 @@ import {
   createWhatsAppMessage,
   sendEmail,
   sendWhatsApp,
+  notifyChannels,
 } from '../utils/notify.js';
 
 // GET /api/owner/dashboard — aggregate stats for the logged-in owner
@@ -90,7 +91,7 @@ export async function getOwnerPGs(req, res, next) {
 // or null.
 async function ownerBooking(bookingId, ownerId) {
   const booking = await Booking.findById(bookingId)
-    .populate('user', 'name email phone gender verificationStatus verificationPhoto verifiedAt')
+    .populate('user', 'name email phone gender verificationStatus verificationPhoto verifiedAt notifications')
     .populate('pg', 'name city owner availableRooms');
   if (!booking) return { error: 'notfound' };
   if (booking.pg.owner.toString() !== ownerId.toString())
@@ -138,20 +139,23 @@ export async function approveBooking(req, res, next) {
     await booking.save();
 
     const msg = `Good news! Your booking request at ${booking.pg.name} was approved. Log in to pay and reserve your room.`;
-    await sendEmail(
-      booking.user.email,
-      'Booking approved',
-      createInteractiveEmail({
-        userName: booking.user.name,
-        subject: 'Booking approved',
-        title: 'Booking Request Approved',
-        message: msg,
-        details: [{ label: 'PG', value: booking.pg.name }],
-        ctaText: 'Pay & Reserve Room',
-        ctaUrl: `${process.env.CLIENT_URL || 'http://localhost:5173'}/bookings`,
-      })
-    );
-    if (booking.user.phone) {
+    const channels = notifyChannels(booking.user, 'bookingUpdates');
+    if (channels.email) {
+      await sendEmail(
+        booking.user.email,
+        'Booking approved',
+        createInteractiveEmail({
+          userName: booking.user.name,
+          subject: 'Booking approved',
+          title: 'Booking Request Approved',
+          message: msg,
+          details: [{ label: 'PG', value: booking.pg.name }],
+          ctaText: 'Pay & Reserve Room',
+          ctaUrl: `${process.env.CLIENT_URL || 'http://localhost:5173'}/bookings`,
+        })
+      );
+    }
+    if (channels.whatsapp && booking.user.phone) {
       await sendWhatsApp(
         booking.user.phone,
         createWhatsAppMessage({
@@ -192,23 +196,26 @@ export async function rejectBooking(req, res, next) {
     const msg = `Your booking request at ${booking.pg.name} was declined${
       reason ? `: ${reason}` : '.'
     }`;
-    await sendEmail(
-      booking.user.email,
-      'Booking request declined',
-      createInteractiveEmail({
-        userName: booking.user.name,
-        subject: 'Booking request declined',
-        title: 'Booking Request Declined',
-        message: msg,
-        details: [
-          { label: 'PG', value: booking.pg.name },
-          { label: 'Reason', value: reason || 'Not specified by owner' },
-        ],
-        ctaText: 'Find Other PGs',
-        ctaUrl: `${process.env.CLIENT_URL || 'http://localhost:5173'}/`,
-      })
-    );
-    if (booking.user.phone) {
+    const channels = notifyChannels(booking.user, 'bookingUpdates');
+    if (channels.email) {
+      await sendEmail(
+        booking.user.email,
+        'Booking request declined',
+        createInteractiveEmail({
+          userName: booking.user.name,
+          subject: 'Booking request declined',
+          title: 'Booking Request Declined',
+          message: msg,
+          details: [
+            { label: 'PG', value: booking.pg.name },
+            { label: 'Reason', value: reason || 'Not specified by owner' },
+          ],
+          ctaText: 'Find Other PGs',
+          ctaUrl: `${process.env.CLIENT_URL || 'http://localhost:5173'}/`,
+        })
+      );
+    }
+    if (channels.whatsapp && booking.user.phone) {
       await sendWhatsApp(
         booking.user.phone,
         createWhatsAppMessage({

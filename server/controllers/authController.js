@@ -29,6 +29,19 @@ export async function register(req, res, next) {
         .json({ success: false, message: 'Email already registered' });
     }
 
+    // One account per phone number — stops the same person from registering a
+    // second profile (different email) to bypass the one-active-booking rule.
+    // Skipped when no phone is provided, so optional registration still works.
+    if (phone && phone.trim()) {
+      const phoneExists = await User.findOne({ phone });
+      if (phoneExists) {
+        return res.status(409).json({
+          success: false,
+          message: 'This phone number is already registered',
+        });
+      }
+    }
+
     const user = await User.create({
       name,
       email,
@@ -208,7 +221,6 @@ export async function provisionPayout(req, res, next) {
         message: 'Payout account already active.',
         accountId: user.payout.razorpayAccountId,
         fundAccountId: user.payout.razorpayFundAccountId,
-        demo: user.payout.razorpayAccountId.startsWith('acc_demo_'),
       });
     }
 
@@ -231,7 +243,6 @@ export async function provisionPayout(req, res, next) {
       message: 'Payout account created. You can now receive transfers.',
       accountId: result.accountId,
       fundAccountId: result.fundAccountId,
-      demo: result.demo,
     });
   } catch (err) {
     next(err);

@@ -37,6 +37,58 @@ const userSchema = new mongoose.Schema(
     // Saved PGs (wishlist / favorites)
     wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'PG' }],
 
+    // ── User settings ─────────────────────────────────────────────────────
+    // Notification preferences. Every key is an on/off switch for one kind of
+    // message; `channel` picks EMAIL and/or WHATSAPP delivery. These gate the
+    // send sites in notify.js (see utils/notify.js `notifyChannels`).
+    notifications: {
+      bookingUpdates: { type: Boolean, default: true }, // request / approval / cancel
+      rentReminders: { type: Boolean, default: true }, // rent due + overdue alerts
+      promotions: { type: Boolean, default: false }, // offers & news
+      newRequests: { type: Boolean, default: true }, // owners: a tenant requested a booking
+      channel: {
+        type: String,
+        enum: ['EMAIL', 'WHATSAPP', 'BOTH'],
+        default: 'EMAIL',
+      },
+    },
+
+    // Privacy preferences — what other users can see about this account.
+    privacy: {
+      // Share phone with the owner after a booking is approved (needed for
+      // move-in coordination). Off = owner sees only the in-app messages.
+      showContact: { type: Boolean, default: true },
+      // Whether the profile is listed in owner views of applicants.
+      profileVisibility: {
+        type: String,
+        enum: ['PRIVATE', 'PUBLIC'],
+        default: 'PRIVATE',
+      },
+    },
+
+    // Saved payment methods — METADATA ONLY. Full credentials are never stored
+    // here; card details are tokenized by the payment gateway, and the token is
+    // what we keep so checkout can be prefilled securely.
+    paymentMethods: [
+      {
+        type: {
+          type: String,
+          enum: ['CARD', 'UPI'],
+          required: true,
+        },
+        label: { type: String, trim: true, default: '' },
+        // UPI
+        upiId: { type: String, trim: true, default: '' },
+        // Card metadata (network + last4 only)
+        network: { type: String, default: '' },
+        last4: { type: String, default: '' },
+        // Gateway token id for real payments (empty in demo mode)
+        token: { type: String, default: '' },
+        isDefault: { type: Boolean, default: false },
+        createdAt: { type: Date, default: Date.now },
+      },
+    ],
+
     // ── Owner payout details ──────────────────────────────────────────────
     // Where rent/booking money is settled for OWNER accounts. Captured once on
     // the owner's profile and reused for every PG they list. Razorpay Route
@@ -65,6 +117,9 @@ const userSchema = new mongoose.Schema(
 
     // Admin moderation
     isBanned: { type: Boolean, default: false },
+
+    // Razorpay customer id — enables remembered cards / one-tap checkout.
+    razorpayCustomerId: { type: String, default: '' },
 
     // Password reset (hashed token + expiry)
     resetPasswordToken: { type: String, select: false },

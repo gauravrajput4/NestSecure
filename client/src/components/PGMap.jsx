@@ -123,7 +123,7 @@ export default function PGMap({
   );
 
   return (
-    <div className={`rounded-xl2 overflow-hidden shadow-card relative z-10 ${className}`}>
+    <div className={`relative z-10 overflow-hidden ${className}`}>
       <MapContainer
         center={mapCenter}
         zoom={zoom}
@@ -156,7 +156,7 @@ export default function PGMap({
                   <span className="text-xs font-semibold text-ink/50">/mo</span>
                 </p>
                 <div className="flex items-center gap-1 mt-1 text-xs text-ink/70">
-                  <span>⭐</span>
+                  <span className="text-marigold" aria-hidden="true">★</span>
                   <span>{pg.rating != null ? pg.rating.toFixed(1) : '—'}</span>
                   <span>·</span>
                   <span>{pg.reviewCount ?? 0} reviews</span>

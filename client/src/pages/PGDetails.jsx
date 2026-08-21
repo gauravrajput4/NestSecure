@@ -162,7 +162,7 @@ export default function PGDetails() {
         : 'Request to Book';
 
   return (
-    <div className="page-shell pb-28 lg:pb-12 bg-neutral-50">
+    <div className="page-shell pb-28 lg:pb-12 bg-stone">
       <div className="page-container max-w-6xl pt-6 sm:pt-8">
         <div className="mb-4 sm:mb-6 flex items-center justify-between gap-3">
           <button
@@ -178,7 +178,7 @@ export default function PGDetails() {
         </div>
 
         {/* Product-style gallery (signature magnifier) */}
-        <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-3 sm:p-6 mb-6 sm:mb-8 relative">
+        <div className="bg-white rounded-2xl border border-stone-line shadow-card-soft p-3 sm:p-6 mb-6 sm:mb-8 relative">
           {pg.availableRooms === 0 && (
             <div className="absolute top-5 right-5 sm:top-6 sm:right-6 z-10 bg-error-600 text-white text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-sm">
               Fully booked
@@ -195,13 +195,15 @@ export default function PGDetails() {
           {/* ---- Left: details ---- */}
           <div className="min-w-0 space-y-6 sm:space-y-8">
             {/* Header + description */}
-            <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-5 sm:p-8">
+            <div className="bg-white rounded-2xl border border-stone-line shadow-card-soft p-5 sm:p-8">
               <div className="mb-5">
-                <h1 className="font-display font-bold text-3xl sm:text-4xl text-neutral-900 mb-2 text-balance">
+                <h1 className="font-display font-bold text-3xl sm:text-4xl text-ink mb-2 text-balance">
                   {pg.name}
                 </h1>
-                <p className="text-base sm:text-lg text-neutral-500 flex items-start gap-1.5">
-                  <span aria-hidden="true">📍</span>
+                <p className="text-base sm:text-lg text-ink/60 flex items-start gap-1.5">
+                  <svg className="h-5 w-5 shrink-0 mt-0.5 text-indigo-brand" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fillRule="evenodd" d="M10 2a5 5 0 00-5 5c0 3.5 5 11 5 11s5-7.5 5-11a5 5 0 00-5-5zm0 7a2 2 0 110-4 2 2 0 010 4z" clipRule="evenodd" />
+                  </svg>
                   <span>
                     {pg.address}, {pg.city}
                   </span>
@@ -209,12 +211,12 @@ export default function PGDetails() {
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-4">
                   <div className="flex items-center gap-1.5">
                     <span className="text-marigold text-xl" aria-hidden="true">
-                      ⭐
+                      ★
                     </span>
-                    <span className="font-bold text-neutral-900">
+                    <span className="font-bold text-ink">
                       {pg.rating.toFixed(1)}
                     </span>
-                    <span className="text-neutral-400 text-sm">
+                    <span className="text-ink/40 text-sm">
                       ({pg.reviewCount} reviews)
                     </span>
                   </div>
@@ -236,7 +238,7 @@ export default function PGDetails() {
               {/* Facilities */}
               {pg.facilities?.length > 0 && (
                 <div>
-                  <h2 className="font-display font-bold text-lg text-neutral-900 mb-3">
+                  <h2 className="font-display font-bold text-lg text-ink mb-3">
                     Amenities
                   </h2>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
@@ -267,11 +269,11 @@ export default function PGDetails() {
 
             {/* Room picker (room-level PGs) */}
             {hasRooms && (
-              <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-5 sm:p-8">
-                <h2 className="font-display font-bold text-lg text-neutral-900 mb-1">
+              <div className="bg-white rounded-2xl border border-stone-line shadow-card-soft p-5 sm:p-8">
+                <h2 className="font-display font-bold text-lg text-ink mb-1">
                   Choose a room
                 </h2>
-                <p className="text-sm text-neutral-500 mb-4">
+                <p className="text-sm text-ink/60 mb-4">
                   Each room has its own sharing type and rent.
                 </p>
                 <div className="grid sm:grid-cols-2 gap-3">
@@ -407,7 +409,7 @@ export default function PGDetails() {
                           n <= rating ? 'text-marigold' : 'text-ink/20'
                         }`}
                       >
-                        ⭐
+                        ★
                       </button>
                     ))}
                   </div>
@@ -449,7 +451,7 @@ export default function PGDetails() {
                             className="text-marigold"
                             aria-hidden="true"
                           >
-                            ⭐
+                            ★
                           </span>
                         ))}
                       </div>
@@ -524,7 +526,11 @@ export default function PGDetails() {
                 {bookLabel}
               </Button>
               <Button variant="outline" fullWidth onClick={getDirections}>
-                📍 Get Directions
+                <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 11l2 2 4-4" />
+                </svg>
+                Get Directions
               </Button>
             </div>
           </aside>
@@ -554,14 +560,18 @@ export default function PGDetails() {
           </Button>
         </div>
         <Button variant="outline" fullWidth onClick={getDirections} size="sm">
-          📍 Get Directions
+          <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 11l2 2 4-4" />
+          </svg>
+          Get Directions
         </Button>
       </div>
 
       {/* Directions modal */}
       {directionsOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/60 backdrop-blur-sm">
-          <div className="relative w-full h-full sm:max-w-3xl sm:max-h-[85vh] sm:rounded-xl2 bg-white shadow-lift overflow-hidden flex flex-col map-modal">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/60 backdrop-blur-sm motion-safe:animate-fade-in">
+          <div className="relative w-full h-full sm:max-w-3xl sm:max-h-[85vh] sm:rounded-xl2 bg-white shadow-lift overflow-hidden flex flex-col map-modal motion-safe:animate-modal-pop">
             <DirectionsMap pg={pg} onClose={() => setDirectionsOpen(false)} />
           </div>
         </div>

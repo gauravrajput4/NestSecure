@@ -21,7 +21,7 @@ export default function Input({
       {label && (
         <label
           htmlFor={inputId}
-          className="block text-sm font-medium text-neutral-700 mb-1.5"
+          className="block text-sm font-semibold text-neutral-800 mb-1.5"
         >
           {label}
         </label>
@@ -31,8 +31,8 @@ export default function Input({
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy}
         className={`w-full h-11 px-4 rounded-[var(--radius-control)] border bg-white text-neutral-900 placeholder:text-neutral-400
-          focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-colors shadow-sm
-          ${error ? 'border-error-500 focus:border-error-500 focus:ring-error-500/50' : 'border-neutral-300 hover:border-neutral-400'}`}
+          focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 transition-all shadow-sm
+          ${error ? 'border-error-500 focus:border-error-500 focus:ring-error-500/40' : 'border-neutral-300 hover:border-neutral-400'}`}
         {...props}
       />
       {error && (

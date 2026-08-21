@@ -121,6 +121,7 @@ export function getPredefinedTheme(key) {
 
 // Font families offered in Typography settings (no arbitrary font injection).
 export const FONT_OPTIONS = [
+  'Bricolage Grotesque',
   'Inter',
   'Manrope',
   'DM Sans',

@@ -26,8 +26,11 @@ export default function PGGallery({ images = [], name = 'PG' }) {
   // Empty state — no photos uploaded yet
   if (images.length === 0) {
     return (
-      <div className="flex aspect-[4/3] items-center justify-center rounded-xl2 bg-ink/5 text-7xl text-ink/15">
-        🏠
+      <div className="flex aspect-[4/3] items-center justify-center rounded-xl2 bg-ink/5 text-ink/15">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" className="h-24 w-24" aria-hidden="true">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 11l9-7 9 7M5 10v9a1 1 0 001 1h12a1 1 0 001-1v-9" />
+          <path strokeLinecap="round" d="M9 20v-5h6v5" />
+        </svg>
       </div>
     );
   }

@@ -37,13 +37,13 @@ export default function Modal({ open, onClose, title, children, footer, size = '
       aria-label={title ? undefined : 'Dialog'}
     >
       <div
-        className="absolute inset-0 bg-ink/60 backdrop-blur-sm motion-safe:animate-[fade-up_0.15s_ease-out]"
+        className="absolute inset-0 bg-ink/60 backdrop-blur-sm motion-safe:animate-fade-in"
         onClick={onClose}
       />
-      <div className={`relative w-full ${SIZES[size] || SIZES.md} max-h-[90vh] flex flex-col bg-white rounded-t-xl2 sm:rounded-xl2 shadow-lift overflow-hidden motion-safe:animate-fade-up`}>
+      <div className={`relative w-full ${SIZES[size] || SIZES.md} max-h-[90vh] flex flex-col bg-white rounded-t-xl2 sm:rounded-xl2 shadow-lift overflow-hidden motion-safe:animate-modal-pop`}>
         {title && (
-          <div className="flex items-start justify-between gap-4 px-6 pt-6 pb-3 border-b border-ink/10">
-            <h2 id={titleId} className="font-display font-bold text-xl text-ink">
+          <div className="flex items-start justify-between gap-4 px-6 pt-6 pb-3 border-b border-stone-line">
+            <h2 id={titleId} className="font-display font-bold text-xl text-ink tracking-tight">
               {title}
             </h2>
             <button
@@ -65,7 +65,7 @@ export default function Modal({ open, onClose, title, children, footer, size = '
         )}
         <div className="px-6 py-5 overflow-y-auto">{children}</div>
         {footer && (
-          <div className="px-6 py-4 bg-paper border-t border-ink/10 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
+          <div className="px-6 py-4 bg-paper border-t border-stone-line flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
             {footer}
           </div>
         )}

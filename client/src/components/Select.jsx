@@ -16,7 +16,7 @@ export default function Select({
       {label && (
         <label
           htmlFor={selectId}
-          className="block text-sm font-medium text-neutral-700 mb-1.5"
+          className="block text-sm font-semibold text-neutral-800 mb-1.5"
         >
           {label}
         </label>
@@ -26,10 +26,10 @@ export default function Select({
           id={selectId}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? `${selectId}-error` : undefined}
-          className={`w-full h-11 pl-4 pr-10 rounded-lg border appearance-none
-            focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-colors shadow-sm
+          className={`w-full h-11 pl-4 pr-10 rounded-[var(--radius-control)] border appearance-none
+            focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 transition-all shadow-sm
             bg-white cursor-pointer text-neutral-900
-            ${error ? 'border-error-500 focus:border-error-500 focus:ring-error-500/50' : 'border-neutral-300 hover:border-neutral-400'}`}
+            ${error ? 'border-error-500 focus:border-error-500 focus:ring-error-500/40' : 'border-neutral-300 hover:border-neutral-400'}`}
           {...props}
         >
           {options.map((opt) => (

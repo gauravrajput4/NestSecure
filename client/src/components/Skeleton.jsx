@@ -6,7 +6,7 @@ function Shimmer({ className = '' }) {
       className={`animate-shimmer bg-ink/5 ${className}`}
       style={{
         backgroundImage:
-          'linear-gradient(90deg, rgba(30,27,75,0.04) 0%, rgba(30,27,75,0.10) 50%, rgba(30,27,75,0.04) 100%)',
+          'linear-gradient(90deg, rgba(13,21,38,0.04) 0%, rgba(13,21,38,0.09) 50%, rgba(13,21,38,0.04) 100%)',
         backgroundSize: '800px 100%',
         backgroundRepeat: 'no-repeat',
       }}
@@ -17,7 +17,7 @@ function Shimmer({ className = '' }) {
 // Mirrors PGCard: image band + title/price/meta rows.
 export function PGCardSkeleton() {
   return (
-    <div className="bg-white rounded-xl2 overflow-hidden shadow-card">
+    <div className="bg-white rounded-xl2 overflow-hidden shadow-card-soft border border-stone-line">
       <Shimmer className="h-48 w-full" />
       <div className="p-4 space-y-3">
         <Shimmer className="h-5 w-3/5 rounded" />

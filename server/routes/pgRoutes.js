@@ -17,6 +17,11 @@ const router = Router();
 router.get('/', listPGs);
 router.get('/:id', getPGById);
 
+// Room-level listings send rooms[] and derive aggregates server-side; legacy
+// listings still require totalRooms / availableRooms on the body.
+const hasRooms = (_value, { req }) =>
+  Array.isArray(req.body.rooms) && req.body.rooms.length > 0;
+
 // Owner only
 router.post(
   '/',
@@ -29,8 +34,39 @@ router.post(
     body('city').notEmpty().withMessage('City required'),
     body('latitude').isFloat().withMessage('Latitude required'),
     body('longitude').isFloat().withMessage('Longitude required'),
-    body('totalRooms').isInt({ min: 1 }).withMessage('Total rooms >= 1'),
-    body('availableRooms').isInt({ min: 0 }).withMessage('Available rooms >= 0'),
+    body('totalRooms')
+      .if((value, meta) => !hasRooms(value, meta))
+      .isInt({ min: 1 })
+      .withMessage('Total rooms >= 1'),
+    body('availableRooms')
+      .if((value, meta) => !hasRooms(value, meta))
+      .isInt({ min: 0 })
+      .withMessage('Available rooms >= 0'),
+    body('rooms')
+      .optional()
+      .isArray()
+      .withMessage('Rooms must be an array'),
+    body('rooms.*.label')
+      .if(hasRooms)
+      .trim()
+      .notEmpty()
+      .withMessage('Each room needs a label'),
+    body('rooms.*.sharingType')
+      .if(hasRooms)
+      .isIn(['SINGLE', 'DOUBLE', 'TRIPLE'])
+      .withMessage('Invalid sharing type'),
+    body('rooms.*.rent')
+      .if(hasRooms)
+      .isFloat({ min: 0 })
+      .withMessage('Each room needs a rent >= 0'),
+    body('rooms.*.deposit')
+      .optional({ values: 'null' })
+      .isFloat({ min: 0 })
+      .withMessage('Deposit must be >= 0'),
+    body('rooms.*.totalBeds')
+      .if(hasRooms)
+      .isInt({ min: 1 })
+      .withMessage('Each room needs at least 1 bed'),
     validate,
   ],
   createPG

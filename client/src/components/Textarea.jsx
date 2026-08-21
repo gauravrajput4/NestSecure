@@ -24,7 +24,7 @@ export default function Textarea({
       {label && (
         <label
           htmlFor={inputId}
-          className="block text-sm font-medium text-neutral-700 mb-1.5"
+          className="block text-sm font-semibold text-neutral-800 mb-1.5"
         >
           {label}
         </label>
@@ -34,9 +34,9 @@ export default function Textarea({
         rows={rows}
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy}
-        className={`w-full px-4 py-3 rounded-lg border bg-white text-neutral-900 placeholder:text-neutral-400 leading-relaxed
-          focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-colors shadow-sm resize-y
-          ${error ? 'border-error-500 focus:border-error-500 focus:ring-error-500/50' : 'border-neutral-300 hover:border-neutral-400'}`}
+        className={`w-full px-4 py-3 rounded-[var(--radius-control)] border bg-white text-neutral-900 placeholder:text-neutral-400 leading-relaxed
+          focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 transition-all shadow-sm resize-y
+          ${error ? 'border-error-500 focus:border-error-500 focus:ring-error-500/40' : 'border-neutral-300 hover:border-neutral-400'}`}
         {...props}
       />
       {error && (

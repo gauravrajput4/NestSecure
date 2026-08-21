@@ -52,8 +52,8 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="mt-auto border-t border-neutral-800 bg-neutral-950 text-neutral-300">
-      <div className="page-container py-10 grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+    <footer className="mt-auto border-t border-white/10 bg-ink text-neutral-300">
+      <div className="page-container py-12 grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
         <div className="flex flex-col gap-3 lg:col-span-1">
           {showLogo && (
             <div className="flex items-center gap-2">
@@ -64,7 +64,7 @@ export default function Footer() {
                   className="h-9 w-auto max-w-[9rem] object-contain"
                 />
               ) : (
-                <LogoMark className="h-9 w-9" />
+                <LogoMark className="h-9 w-9 rounded-lg" />
               )}
               <span className="font-display font-bold text-xl text-white tracking-tight">
                 {brandName}
@@ -110,12 +110,10 @@ export default function Footer() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 lg:col-span-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 lg:col-span-2">
           {showProductLinks && (
             <nav className="flex flex-col gap-3">
-              <h3 className="text-xs uppercase tracking-wider font-bold text-neutral-500">
-                Product
-              </h3>
+              <h3 className="eyebrow-on-ink">Product</h3>
               {links.map((l) => (
                 <Link
                   key={l.label}
@@ -129,9 +127,7 @@ export default function Footer() {
           )}
           {showTrust && (
             <div className="flex flex-col gap-3">
-              <h3 className="text-xs uppercase tracking-wider font-bold text-neutral-500">
-                Trust
-              </h3>
+              <h3 className="eyebrow-on-ink">Trust</h3>
               <p className="text-sm text-neutral-400">
                 Verified tenant onboarding, role-based approvals, and secure payment flow.
               </p>

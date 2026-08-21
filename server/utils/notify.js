@@ -140,6 +140,25 @@ export function createWhatsAppMessage({ userName = 'Customer', message, ctaUrl =
   return parts.join('\n');
 }
 
+/**
+ * Decide which channels a notification should use for a given user, honoring
+ * their saved notification preferences (User.notifications).
+ *
+ * @param {object} user  Mongoose User doc (or a plain object with `.notifications`)
+ * @param {string} pref  preference key, e.g. 'bookingUpdates' | 'rentReminders'
+ * @returns {{email: boolean, whatsapp: boolean}}
+ */
+export function notifyChannels(user, pref) {
+  const n = user?.notifications || {};
+  const enabled = n[pref] !== false;
+  if (!enabled) return { email: false, whatsapp: false };
+  const channel = n.channel || 'EMAIL';
+  return {
+    email: channel !== 'WHATSAPP',
+    whatsapp: channel !== 'EMAIL',
+  };
+}
+
 // ---------- Email ----------
 const smtpReady =
   process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS;

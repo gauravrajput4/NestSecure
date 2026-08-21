@@ -67,7 +67,12 @@ export default function Wishlist() {
           </div>
         ) : visible.length === 0 ? (
           <div className="flex flex-col items-center justify-center text-center py-20">
-            <div className="text-6xl mb-4">🏚️</div>
+            <div className="mb-4 flex justify-center text-indigo-brand/20" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-16 w-16">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 21s-7.5-4.6-10-9.2C.5 8.8 2.4 5 5.9 5c2 0 3.4 1.1 4.1 2.3C10.7 6.1 12.1 5 14.1 5c3.5 0 5.4 3.8 3.9 6.8C15.5 16.4 12 21 12 21z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8 11h8" />
+            </svg>
+          </div>
             <h2 className="font-display font-bold text-2xl text-ink mb-2">
               No saved rooms
             </h2>

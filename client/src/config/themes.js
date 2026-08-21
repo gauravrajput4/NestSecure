@@ -129,6 +129,7 @@ export const THEME_TOKEN_FIELDS = [
 
 // Option lists mirrored from the server so selects stay in sync.
 export const FONT_OPTIONS = [
+  'Bricolage Grotesque',
   'Inter',
   'Manrope',
   'DM Sans',

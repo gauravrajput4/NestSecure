@@ -13,6 +13,7 @@ import wishlistRoutes from './routes/wishlistRoutes.js';
 import rentRoutes from './routes/rentRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import settingsRoutes from './routes/settingsRoutes.js';
+import userSettingsRoutes from './routes/userSettingsRoutes.js';
 import { apiLimiter, authLimiter } from './middleware/rateLimit.js';
 import maintenanceMiddleware from './middleware/maintenanceMiddleware.js';
 import { startRentReminderJob } from './utils/rentReminder.js';
@@ -25,7 +26,7 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
-app.use(express.json());
+app.use(express.json({ verify: (req, _res, buf) => { req.rawBody = buf; } }));
 app.use(express.urlencoded({ extended: true }));
 
 // Baseline rate limit across the API surface
@@ -47,6 +48,7 @@ app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/rent', rentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/settings/account', userSettingsRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

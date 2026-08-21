@@ -130,7 +130,7 @@ export default function LocationPickerMap({
 
   return (
     <div
-      className={`relative rounded-xl2 overflow-hidden border-2 border-ink/10 ${className}`}
+      className={`relative rounded-xl2 overflow-hidden border border-stone-line shadow-card-soft ${className}`}
     >
       <MapContainer
         center={initial}

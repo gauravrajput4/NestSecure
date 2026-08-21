@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { rentLedger, rentReceipt, createOrder, verifyPayment } from '../services/bookingService.js';
+import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import Button from '../components/Button.jsx';
 import Loader from '../components/Loader.jsx';
@@ -70,6 +71,7 @@ export default function RentLedger() {
   const [receipt, setReceipt] = useState(null);
   const [paymentLoading, setPaymentLoading] = useState(null);
   const [paymentLock, setPaymentLock] = useState(false);
+  const { user } = useAuth();
   const toast = useToast();
 
   useEffect(() => {
@@ -138,20 +140,7 @@ export default function RentLedger() {
 
       // Create order for rent payment
       const orderRes = await createOrder({ bookingId, type: 'RENT' });
-      const { order, paymentId, keyId, demo } = orderRes;
-
-      if (demo) {
-        // Demo mode — auto-verify with mock signature
-        await verifyPayment({
-          paymentId,
-          razorpayOrderId: order.id,
-          razorpayPaymentId: 'pay_demo_' + Date.now(),
-          razorpaySignature: 'demo_signature',
-        });
-        toast.success('Payment successful (demo mode)');
-        loadLedger(); // Reload ledger to show updated status
-        return;
-      }
+      const { order, paymentId, keyId, customerId } = orderRes;
 
       // Real Razorpay checkout
       const options = {
@@ -161,6 +150,19 @@ export default function RentLedger() {
         name: 'NestSecure PG',
         description: `Rent Payment - ${invoice.periodLabel}`,
         order_id: order.id,
+        ...(customerId
+          ? {
+              customer_id: customerId,
+              remember_customer: true,
+              save_card: true,
+            }
+          : {}),
+        prefill: {
+          name: user?.name || '',
+          email: user?.email || '',
+          contact: user?.phone || '',
+        },
+        theme: { color: '#4F46E5' },
         handler: async (response) => {
           try {
             await verifyPayment({

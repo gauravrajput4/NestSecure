@@ -441,8 +441,11 @@ function Listings() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="flex items-center justify-center h-full text-2xl">
-                  🏠
+                <div className="flex items-center justify-center h-full text-ink/20">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-7 w-7" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 11l9-7 9 7M5 10v9a1 1 0 001 1h12a1 1 0 001-1v-9" />
+                    <path strokeLinecap="round" d="M9 20v-5h6v5" />
+                  </svg>
                 </div>
               )}
             </div>
@@ -463,7 +466,7 @@ function Listings() {
                 </span>
                 <span className="text-ink/40"> · </span>
                 <span className="text-ink/70">
-                  <span className="text-marigold">⭐</span> {pg.rating?.toFixed(1)} ({pg.reviewCount})
+                  <span className="text-marigold" aria-hidden="true">★</span> {pg.rating?.toFixed(1)} ({pg.reviewCount})
                 </span>
               </p>
             </div>
@@ -671,7 +674,7 @@ function Reviews() {
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-marigold text-sm">
-                  {'⭐'.repeat(r.rating)}
+                  {'★'.repeat(r.rating)}
                 </span>
                 <span className="font-semibold text-ink text-sm">
                   {r.user?.name || 'Anonymous'}

@@ -46,10 +46,10 @@ export default function PGCard({ pg, onHover, isHighlighted }) {
       aria-label={`${pg.name}, ${pg.city}. ₹${pg.price.toLocaleString(
         'en-IN'
       )} per month`}
-      className={`group flex flex-col bg-white rounded-xl2 overflow-hidden shadow-subtle hover:shadow-card transition-all cursor-pointer border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-brand ${
+      className={`group flex flex-col bg-white rounded-xl2 overflow-hidden shadow-card-soft border transition-all duration-300 cursor-pointer border-stone-line hover:shadow-lift hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-brand ${
         isHighlighted
-          ? 'border-indigo-brand ring-2 ring-indigo-brand/30 md:scale-[1.01]'
-          : 'border-outline-soft/70'
+          ? 'border-indigo-400 ring-2 ring-indigo-400/30 md:scale-[1.01]'
+          : ''
       }`}
       onClick={goToDetails}
       onKeyDown={(e) => {
@@ -74,8 +74,11 @@ export default function PGCard({ pg, onHover, isHighlighted }) {
             }`}
           />
         ) : (
-          <div className="flex items-center justify-center h-full text-indigo-brand/30 text-5xl">
-            🏠
+          <div className="flex items-center justify-center h-full text-indigo-brand/30">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-16 w-16" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 11l9-7 9 7M5 10v9a1 1 0 001 1h12a1 1 0 001-1v-9" />
+              <path strokeLinecap="round" d="M9 20v-5h6v5" />
+            </svg>
           </div>
         )}
 
@@ -150,15 +153,18 @@ export default function PGCard({ pg, onHover, isHighlighted }) {
         </div>
 
         {/* Price + CTA */}
-        <div className="mt-auto flex items-center justify-between gap-2 pt-3 border-t border-outline-soft/70">
+        <div className="mt-auto flex items-center justify-between gap-2 pt-3 border-t border-stone-line">
           <p className="leading-none">
             <span className="font-display text-xl font-extrabold text-ink">
               ₹{pg.price.toLocaleString('en-IN')}
             </span>
             <span className="text-xs text-ink/50 font-semibold">/mo</span>
           </p>
-          <span className="inline-flex items-center rounded-lg border border-indigo-brand px-4 py-1.5 text-sm font-semibold text-indigo-brand transition-colors group-hover:bg-indigo-brand group-hover:text-white">
+          <span className="inline-flex items-center gap-1 rounded-lg border border-indigo-brand/70 px-4 py-1.5 text-sm font-semibold text-indigo-brand transition-colors group-hover:bg-indigo-brand group-hover:text-white">
             View Details
+            <svg className="h-4 w-4 -translate-x-0.5 transition-transform group-hover:translate-x-0.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fillRule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.6L9.97 4.87a.75.75 0 011.06-1.06l5.5 5.5a.75.75 0 010 1.06l-5.5 5.5a.75.75 0 11-1.06-1.06l4.38-4.38H3.75A.75.75 0 013 10z" clipRule="evenodd" />
+            </svg>
           </span>
         </div>
       </div>

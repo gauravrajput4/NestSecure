@@ -280,11 +280,11 @@ export default function Profile() {
         <label className="block text-sm font-semibold text-ink mb-2">
           Payout Method
         </label>
-        <div className="flex gap-3">
+        <div className="grid grid-cols-2 gap-2 sm:gap-3">
           <button
             type="button"
             onClick={() => setPayoutMethod('BANK')}
-            className={`flex-1 h-control px-4 rounded-xl border-2 font-semibold transition-colors ${
+            className={`h-control px-3 sm:px-4 rounded-xl border-2 text-sm sm:text-base font-semibold transition-colors ${
               payoutMethod === 'BANK'
                 ? 'border-indigo-brand bg-indigo-brand/5 text-indigo-brand'
                 : 'border-ink/20 hover:border-ink/30 text-ink'
@@ -295,7 +295,7 @@ export default function Profile() {
           <button
             type="button"
             onClick={() => setPayoutMethod('UPI')}
-            className={`flex-1 h-control px-4 rounded-xl border-2 font-semibold transition-colors ${
+            className={`h-control px-3 sm:px-4 rounded-xl border-2 text-sm sm:text-base font-semibold transition-colors ${
               payoutMethod === 'UPI'
                 ? 'border-indigo-brand bg-indigo-brand/5 text-indigo-brand'
                 : 'border-ink/20 hover:border-ink/30 text-ink'
@@ -392,41 +392,42 @@ export default function Profile() {
       : { label: 'Not verified', tone: 'text-ink/50', dot: 'bg-ink/30' };
 
     const StatCard = ({ label, icon, children }) => (
-      <div className="bg-white rounded-xl2 shadow-card p-5 flex items-start justify-between gap-3">
+      <div className="bg-white rounded-xl2 shadow-card p-4 sm:p-5 flex items-start justify-between gap-2 sm:gap-3">
         <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase tracking-wide text-ink/40">
+          <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-wide text-ink/40">
             {label}
           </p>
           {children}
         </div>
-        <span className="h-10 w-10 shrink-0 rounded-xl bg-indigo-brand/10 text-indigo-brand flex items-center justify-center">
+        <span className="h-9 w-9 sm:h-10 sm:w-10 shrink-0 rounded-xl bg-indigo-brand/10 text-indigo-brand flex items-center justify-center">
           {icon}
         </span>
       </div>
     );
 
     return (
-      <div className="min-h-screen bg-paper py-10">
+      <div className="min-h-screen bg-paper py-6 sm:py-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
-            <div>
-              <h1 className="font-display font-extrabold text-3xl sm:text-4xl text-ink">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6 sm:mb-8">
+            <div className="min-w-0">
+              <h1 className="font-display font-extrabold text-2xl sm:text-4xl text-ink">
                 Owner Profile
               </h1>
-              <p className="text-ink/60 mt-2">
+              <p className="text-ink/60 mt-2 text-sm sm:text-base">
                 Manage your personal details, business metrics, and property
                 portfolio.
               </p>
             </div>
-            <div className="flex gap-3 shrink-0">
-              <Link to="/owner/financials">
-                <Button variant="outline" size="sm">
+            <div className="flex gap-2 sm:gap-3 shrink-0 w-full sm:w-auto">
+              <Link to="/owner/financials" className="flex-1 sm:flex-none">
+                <Button variant="outline" size="sm" className="w-full sm:w-auto">
                   Financials
                 </Button>
               </Link>
               <Button
                 size="sm"
+                className="flex-1 sm:flex-none"
                 onClick={() => setEditingInfo((v) => !v)}
               >
                 {editingInfo ? 'Close' : 'Edit Profile'}
@@ -434,16 +435,16 @@ export default function Profile() {
             </div>
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-3">
-            {/* Profile card */}
-            <div className="lg:col-span-2 bg-white rounded-xl2 shadow-card p-6 sm:p-8">
-              <div className="flex flex-col sm:flex-row sm:items-center gap-5">
-                <div className="w-20 h-20 shrink-0 rounded-full bg-indigo-brand text-white flex items-center justify-center text-3xl font-display font-bold">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+            {/* Profile card — full width until lg */}
+            <div className="lg:col-span-2 bg-white rounded-xl2 shadow-card p-5 sm:p-8">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-full bg-indigo-brand text-white flex items-center justify-center text-2xl sm:text-3xl font-display font-bold">
                   {initials}
                 </div>
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <h2 className="font-display font-bold text-2xl text-ink">
+                    <h2 className="font-display font-bold text-xl sm:text-2xl text-ink break-words">
                       {user.name}
                     </h2>
                     {verified && (
@@ -455,14 +456,14 @@ export default function Profile() {
                   {joined && (
                     <p className="text-sm text-ink/50 mt-1">Joined {joined}</p>
                   )}
-                  <div className="flex flex-wrap gap-x-6 gap-y-1 mt-3 text-sm text-ink/70">
-                    <span className="inline-flex items-center gap-1.5">
-                      <IconMail className="h-4 w-4 text-indigo-brand" />
-                      {user.email}
+                  <div className="flex flex-col sm:flex-row sm:flex-wrap gap-x-6 gap-y-1.5 mt-3 text-sm text-ink/70">
+                    <span className="inline-flex items-start gap-1.5 min-w-0">
+                      <IconMail className="h-4 w-4 text-indigo-brand shrink-0 mt-0.5" />
+                      <span className="break-all">{user.email}</span>
                     </span>
                     {!editingInfo && (
                       <span className="inline-flex items-center gap-1.5">
-                        <IconPhone className="h-4 w-4 text-indigo-brand" />
+                        <IconPhone className="h-4 w-4 text-indigo-brand shrink-0" />
                         {user.phone || 'No phone added'}
                       </span>
                     )}
@@ -482,7 +483,7 @@ export default function Profile() {
                       helperText="Name and email can't be changed here — contact support."
                     />
                   </div>
-                  <div className="flex gap-3 mt-4">
+                  <div className="flex flex-wrap gap-2 sm:gap-3 mt-4">
                     <Button size="sm" onClick={handleSaveInfo} loading={infoBusy}>
                       Save changes
                     </Button>
@@ -494,19 +495,19 @@ export default function Profile() {
               )}
             </div>
 
-            {/* Stat cards */}
-            <div className="space-y-6">
+            {/* Stat cards — row on tablet, column beside profile on desktop */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-3 sm:gap-4 lg:gap-6">
               <StatCard label="Total listings" icon={<IconBuilding />}>
-                <p className="mt-2 font-display font-extrabold text-3xl text-ink">
+                <p className="mt-2 font-display font-extrabold text-2xl sm:text-3xl text-ink">
                   {ownerPgs.length}
                 </p>
               </StatCard>
               <StatCard label="Average rating" icon={<IconStar className="h-5 w-5" />}>
                 {totalReviews > 0 ? (
                   <>
-                    <p className="mt-2 flex items-center gap-1.5 font-display font-extrabold text-3xl text-ink">
+                    <p className="mt-2 flex items-center gap-1.5 font-display font-extrabold text-2xl sm:text-3xl text-ink">
                       {avgRating.toFixed(1)}
-                      <IconStar className="h-5 w-5 text-marigold" />
+                      <IconStar className="h-4 w-4 sm:h-5 sm:w-5 text-marigold" />
                     </p>
                     <p className="text-xs text-ink/50 mt-1">
                       From {totalReviews} review{totalReviews === 1 ? '' : 's'}
@@ -517,7 +518,7 @@ export default function Profile() {
                 )}
               </StatCard>
               <StatCard label="Active tenants" icon={<IconUsers />}>
-                <p className="mt-2 font-display font-extrabold text-3xl text-ink">
+                <p className="mt-2 font-display font-extrabold text-2xl sm:text-3xl text-ink">
                   {activeTenants}
                 </p>
               </StatCard>
@@ -525,9 +526,9 @@ export default function Profile() {
           </div>
 
           {/* Professional Settings */}
-          <section className="mt-6 bg-white rounded-xl2 shadow-card p-6 sm:p-8">
-            <h2 className="flex items-center gap-2 font-display font-bold text-xl text-ink mb-5">
-              <IconShield className="h-5 w-5 text-indigo-brand" />
+          <section className="mt-4 sm:mt-6 bg-white rounded-xl2 shadow-card p-5 sm:p-8">
+            <h2 className="flex items-center gap-2 font-display font-bold text-lg sm:text-xl text-ink mb-4 sm:mb-5">
+              <IconShield className="h-5 w-5 text-indigo-brand shrink-0" />
               Professional Settings
             </h2>
 
@@ -536,15 +537,15 @@ export default function Profile() {
               <button
                 type="button"
                 onClick={() => setShowPayout((v) => !v)}
-                className="text-left rounded-xl2 border border-ink/10 p-5 hover:border-indigo-brand/50 hover:bg-indigo-brand/[0.03] transition"
+                className="text-left rounded-xl2 border border-ink/10 p-4 sm:p-5 hover:border-indigo-brand/50 hover:bg-indigo-brand/[0.03] transition"
                 aria-expanded={showPayout}
               >
                 <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-3 min-w-0">
                     <span className="h-10 w-10 rounded-xl bg-indigo-brand/10 text-indigo-brand flex items-center justify-center shrink-0">
                       <IconBank />
                     </span>
-                    <div>
+                    <div className="min-w-0">
                       <p className="font-semibold text-ink">Payout Details</p>
                       <p className="text-sm text-ink/60">
                         Manage bank account & UPI
@@ -552,20 +553,20 @@ export default function Profile() {
                     </div>
                   </div>
                   <IconChevron
-                    className={`h-4 w-4 text-ink/40 mt-1 transition-transform ${
+                    className={`h-4 w-4 text-ink/40 mt-1 shrink-0 transition-transform ${
                       showPayout ? 'rotate-90' : ''
                     }`}
                   />
                 </div>
-                <div className="mt-4 flex items-center gap-2 rounded-xl bg-paper px-3 py-2 text-sm">
+                <div className="mt-4 flex items-center gap-2 rounded-xl bg-paper px-3 py-2 text-sm min-w-0">
                   <span
-                    className={`h-2 w-2 rounded-full ${
+                    className={`h-2 w-2 shrink-0 rounded-full ${
                       payoutActive ? 'bg-success' : 'bg-ink/30'
                     }`}
                   />
                   <span className="text-ink/70 truncate">{payoutSummary}</span>
                   {payoutActive && (
-                    <span className="ml-auto text-xs font-semibold text-success">
+                    <span className="ml-auto shrink-0 text-xs font-semibold text-success">
                       Active
                     </span>
                   )}
@@ -573,19 +574,19 @@ export default function Profile() {
               </button>
 
               {/* Business Verification (status) */}
-              <div className="rounded-xl2 border border-ink/10 p-5">
+              <div className="rounded-xl2 border border-ink/10 p-4 sm:p-5">
                 <div className="flex items-start gap-3">
                   <span className="h-10 w-10 rounded-xl bg-indigo-brand/10 text-indigo-brand flex items-center justify-center shrink-0">
                     <IconIdCard />
                   </span>
-                  <div>
+                  <div className="min-w-0">
                     <p className="font-semibold text-ink">Business Verification</p>
                     <p className="text-sm text-ink/60">KYC & identity</p>
                   </div>
                 </div>
-                <div className="mt-4 flex items-center gap-2 rounded-xl bg-paper px-3 py-2 text-sm">
-                  <span className={`h-2 w-2 rounded-full ${kyc.dot}`} />
-                  <span className={`font-semibold ${kyc.tone}`}>
+                <div className="mt-4 flex items-center gap-2 rounded-xl bg-paper px-3 py-2 text-sm min-w-0">
+                  <span className={`h-2 w-2 shrink-0 rounded-full ${kyc.dot}`} />
+                  <span className={`font-semibold truncate ${kyc.tone}`}>
                     KYC status: {kyc.label}
                   </span>
                 </div>
@@ -605,14 +606,14 @@ export default function Profile() {
           </section>
 
           {/* Managed Properties */}
-          <section className="mt-8">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-display font-bold text-2xl text-ink">
+          <section className="mt-6 sm:mt-8">
+            <div className="flex items-center justify-between gap-3 mb-4">
+              <h2 className="font-display font-bold text-xl sm:text-2xl text-ink min-w-0">
                 Managed Properties
               </h2>
               <Link
                 to="/owner/pgs"
-                className="text-sm font-semibold text-indigo-brand hover:text-indigo-deep"
+                className="shrink-0 text-sm font-semibold text-indigo-brand hover:text-indigo-deep"
               >
                 View all ({ownerPgs.length})
               </Link>
@@ -731,16 +732,16 @@ export default function Profile() {
   );
 
   return (
-    <div className="min-h-screen bg-paper py-10">
+    <div className="min-h-screen bg-paper py-6 sm:py-10">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid gap-6 lg:grid-cols-[300px_1fr]">
-          {/* LEFT: summary + nav */}
-          <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
-            <div className="bg-white rounded-xl2 shadow-card p-6 text-center">
-              <div className="mx-auto w-24 h-24 rounded-full bg-indigo-brand text-white flex items-center justify-center text-4xl font-display font-bold">
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-[280px_1fr]">
+          {/* LEFT: summary + nav — horizontal rail on mobile */}
+          <aside className="space-y-4 sm:space-y-6 lg:sticky lg:top-24 lg:self-start min-w-0">
+            <div className="bg-white rounded-xl2 shadow-card p-5 sm:p-6 text-center">
+              <div className="mx-auto w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-indigo-brand text-white flex items-center justify-center text-3xl sm:text-4xl font-display font-bold">
                 {initials}
               </div>
-              <h2 className="mt-4 font-display font-bold text-xl text-ink">
+              <h2 className="mt-3 sm:mt-4 font-display font-bold text-lg sm:text-xl text-ink break-words px-1">
                 {user.name}
               </h2>
               {joined && (
@@ -758,16 +759,23 @@ export default function Profile() {
               </span>
             </div>
 
-            <nav className="bg-white rounded-xl2 shadow-card p-3">
+            <nav
+              className="flex lg:flex-col gap-1 overflow-x-auto lg:overflow-visible bg-white rounded-xl2 shadow-card p-2"
+              aria-label="Profile sections"
+            >
               {navItems.map((item) => {
-                const cls = `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition min-h-control ${
+                const cls = `flex items-center gap-2.5 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl text-sm font-semibold transition min-h-control whitespace-nowrap shrink-0 ${
                   item.active
                     ? 'bg-indigo-brand text-white'
                     : 'text-ink/70 hover:bg-indigo-brand/5 hover:text-indigo-brand'
                 }`;
                 const inner = (
                   <>
-                    <span className={item.active ? 'text-white' : 'text-ink/50'}>
+                    <span
+                      className={`shrink-0 ${
+                        item.active ? 'text-white' : 'text-ink/50'
+                      }`}
+                    >
                       {item.icon}
                     </span>
                     {item.label}
@@ -795,14 +803,14 @@ export default function Profile() {
           </aside>
 
           {/* RIGHT: content */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6 min-w-0">
             {/* Personal Information */}
             <section
               id="personal"
-              className="bg-white rounded-xl2 shadow-card p-6 sm:p-8"
+              className="bg-white rounded-xl2 shadow-card p-5 sm:p-8"
             >
-              <div className="flex items-center justify-between gap-4 pb-5 border-b border-ink/10">
-                <h1 className="font-display font-extrabold text-2xl sm:text-3xl text-ink">
+              <div className="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-ink/10">
+                <h1 className="font-display font-extrabold text-xl sm:text-3xl text-ink">
                   Personal Information
                 </h1>
                 {editingInfo ? (
@@ -825,8 +833,10 @@ export default function Profile() {
                 )}
               </div>
 
-              <div className="grid sm:grid-cols-2 gap-x-8 gap-y-6 pt-6">
-                <Field label="Full name">{user.name}</Field>
+              <div className="grid sm:grid-cols-2 gap-x-8 gap-y-5 pt-5 sm:pt-6">
+                <Field label="Full name">
+                  <span className="break-words">{user.name}</span>
+                </Field>
                 <Field label="Email address">
                   <span className="break-all">{user.email}</span>
                 </Field>
@@ -851,15 +861,15 @@ export default function Profile() {
             </section>
 
             {/* Current Accommodation */}
-            <section className="bg-white rounded-xl2 shadow-card p-6 sm:p-8">
-              <h2 className="font-display font-bold text-xl text-ink mb-5">
+            <section className="bg-white rounded-xl2 shadow-card p-5 sm:p-8">
+              <h2 className="font-display font-bold text-lg sm:text-xl text-ink mb-4 sm:mb-5">
                 Current Accommodation
               </h2>
 
               {activeBooking ? (
                 <div className="rounded-xl2 bg-paper p-4 sm:p-5">
                   <div className="flex flex-col sm:flex-row gap-4">
-                    <div className="w-full sm:w-40 h-32 sm:h-28 shrink-0 rounded-xl overflow-hidden bg-surface-mid">
+                    <div className="w-full sm:w-40 h-36 sm:h-28 shrink-0 rounded-xl overflow-hidden bg-surface-mid">
                       {activeBooking.pg?.images?.[0] ? (
                         <img
                           src={activeBooking.pg.images[0]}
@@ -876,7 +886,7 @@ export default function Profile() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
-                          <h3 className="font-display font-bold text-lg text-ink truncate">
+                          <h3 className="font-display font-bold text-base sm:text-lg text-ink truncate">
                             {activeBooking.pg?.name}
                           </h3>
                           <p className="mt-0.5 flex items-center gap-1 text-sm text-ink/60">
@@ -893,7 +903,7 @@ export default function Profile() {
                         </span>
                       </div>
 
-                      <div className="mt-4 flex flex-wrap items-end gap-3">
+                      <div className="mt-4 flex flex-wrap items-stretch gap-2 sm:gap-3">
                         {activeBooking.roomLabel && (
                           <div className="rounded-xl bg-white px-3 py-2">
                             <p className="text-[11px] uppercase tracking-wide text-ink/40 font-semibold">
@@ -933,17 +943,19 @@ export default function Profile() {
                         </div>
                         <Link
                           to={`/rent/${activeBooking._id}`}
-                          className="ml-auto"
+                          className="w-full sm:w-auto sm:ml-auto flex"
                         >
-                          <Button size="sm">Pay Rent</Button>
+                          <Button size="sm" className="w-full sm:w-auto">
+                            Pay Rent
+                          </Button>
                         </Link>
                       </div>
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className="rounded-xl2 bg-paper p-8 text-center">
-                  <p className="text-ink/60">
+                <div className="rounded-xl2 bg-paper p-6 sm:p-8 text-center">
+                  <p className="text-ink/60 text-sm sm:text-base">
                     You don't have an active accommodation yet.
                   </p>
                   <Link to="/" className="inline-block mt-4">
@@ -965,58 +977,100 @@ export default function Profile() {
             {/* Payment history */}
             <section
               id="payment-history"
-              className="bg-white rounded-xl2 shadow-card p-6 sm:p-8"
+              className="bg-white rounded-xl2 shadow-card p-5 sm:p-8"
             >
-              <h2 className="font-display font-bold text-xl text-ink mb-4">
+              <h2 className="font-display font-bold text-lg sm:text-xl text-ink mb-4">
                 Payment History
               </h2>
               {payments.length === 0 ? (
                 <p className="text-ink/60 text-center py-8">No payments yet</p>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="text-left text-ink/60 border-b border-ink/10">
-                        <th className="pb-3 font-semibold">Date</th>
-                        <th className="pb-3 font-semibold">PG</th>
-                        <th className="pb-3 font-semibold">Type</th>
-                        <th className="pb-3 font-semibold">Amount</th>
-                        <th className="pb-3 font-semibold">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {payments.map((p) => (
-                        <tr key={p._id} className="border-b border-ink/5">
-                          <td className="py-3 text-ink/70">
-                            {new Date(p.createdAt).toLocaleDateString('en-IN')}
-                          </td>
-                          <td className="py-3 text-ink">
-                            {p.booking?.pg?.name || '—'}
-                          </td>
-                          <td className="py-3 text-ink/70">{p.type}</td>
-                          <td className="py-3 font-mono font-semibold text-ink">
-                            ₹{p.amount.toLocaleString('en-IN')}
-                          </td>
-                          <td className="py-3">
-                            <span
-                              className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
-                                p.status === 'PAID'
-                                  ? 'bg-success/10 text-success'
-                                  : p.status === 'REFUNDED'
-                                  ? 'bg-indigo-brand/10 text-indigo-brand'
-                                  : p.status === 'FAILED'
-                                  ? 'bg-danger/10 text-danger'
-                                  : 'bg-ink/10 text-ink'
-                              }`}
-                            >
-                              {p.status}
-                            </span>
-                          </td>
+                <>
+                  {/* Mobile: stacked cards */}
+                  <div className="sm:hidden space-y-3">
+                    {payments.map((p) => (
+                      <div
+                        key={p._id}
+                        className="rounded-xl bg-paper border border-stone-line p-4"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <p className="font-semibold text-ink truncate">
+                              {p.booking?.pg?.name || '—'}
+                            </p>
+                            <p className="text-xs text-ink/50 mt-0.5">
+                              {new Date(p.createdAt).toLocaleDateString('en-IN')}
+                              {' · '}
+                              {p.type}
+                            </p>
+                          </div>
+                          <span
+                            className={`shrink-0 px-2 py-0.5 rounded-full text-xs font-semibold ${
+                              p.status === 'PAID'
+                                ? 'bg-success/10 text-success'
+                                : p.status === 'REFUNDED'
+                                ? 'bg-indigo-brand/10 text-indigo-brand'
+                                : p.status === 'FAILED'
+                                ? 'bg-danger/10 text-danger'
+                                : 'bg-ink/10 text-ink'
+                            }`}
+                          >
+                            {p.status}
+                          </span>
+                        </div>
+                        <p className="mt-2 font-mono font-semibold text-ink">
+                          ₹{p.amount.toLocaleString('en-IN')}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* sm+: table */}
+                  <div className="hidden sm:block overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="text-left text-ink/60 border-b border-ink/10">
+                          <th className="pb-3 font-semibold">Date</th>
+                          <th className="pb-3 font-semibold">PG</th>
+                          <th className="pb-3 font-semibold">Type</th>
+                          <th className="pb-3 font-semibold">Amount</th>
+                          <th className="pb-3 font-semibold">Status</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody>
+                        {payments.map((p) => (
+                          <tr key={p._id} className="border-b border-ink/5">
+                            <td className="py-3 text-ink/70">
+                              {new Date(p.createdAt).toLocaleDateString('en-IN')}
+                            </td>
+                            <td className="py-3 text-ink">
+                              {p.booking?.pg?.name || '—'}
+                            </td>
+                            <td className="py-3 text-ink/70">{p.type}</td>
+                            <td className="py-3 font-mono font-semibold text-ink">
+                              ₹{p.amount.toLocaleString('en-IN')}
+                            </td>
+                            <td className="py-3">
+                              <span
+                                className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+                                  p.status === 'PAID'
+                                    ? 'bg-success/10 text-success'
+                                    : p.status === 'REFUNDED'
+                                    ? 'bg-indigo-brand/10 text-indigo-brand'
+                                    : p.status === 'FAILED'
+                                    ? 'bg-danger/10 text-danger'
+                                    : 'bg-ink/10 text-ink'
+                                }`}
+                              >
+                                {p.status}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
               )}
             </section>
           </div>

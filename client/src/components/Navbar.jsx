@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -24,6 +24,8 @@ export default function Navbar() {
   const location = useLocation();
   const dispatch = useDispatch();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef(null);
 
   // Branding + navigation prefs. Defaults reproduce the current header exactly.
   const brandName = branding.brandName || general.shortName || 'NestSecure';
@@ -51,6 +53,8 @@ export default function Navbar() {
   };
 
   const handleLogout = () => {
+    setUserMenuOpen(false);
+    setMenuOpen(false);
     logout();
     navigate('/');
   };
@@ -60,9 +64,10 @@ export default function Navbar() {
     return location.pathname === path || location.pathname.startsWith(`${path}/`);
   };
 
-  // Close the mobile drawer whenever the route changes.
+  // Close mobile drawer + user dropdown whenever the route changes.
   useEffect(() => {
     setMenuOpen(false);
+    setUserMenuOpen(false);
   }, [location.pathname]);
 
   // Lock body scroll while the drawer is open.
@@ -72,6 +77,21 @@ export default function Navbar() {
       document.body.style.overflow = '';
     };
   }, [menuOpen]);
+
+  // Close the user dropdown on outside click / Escape.
+  useEffect(() => {
+    if (!userMenuOpen) return;
+    const onPointer = (e) => {
+      if (!userMenuRef.current?.contains(e.target)) setUserMenuOpen(false);
+    };
+    const onKey = (e) => e.key === 'Escape' && setUserMenuOpen(false);
+    document.addEventListener('pointerdown', onPointer);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('pointerdown', onPointer);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [userMenuOpen]);
 
   // Role-aware link set, defined once and rendered in both desktop + drawer.
   const links = [{ to: '/', label: 'Explore' }];
@@ -109,10 +129,10 @@ export default function Navbar() {
     : '';
 
   const linkClass = (path) =>
-    `text-sm font-medium transition pb-4 border-b-2 -mb-[1px] ${
+    `rounded-full px-3.5 py-2 text-sm font-semibold transition-colors ${
       isActive(path)
-        ? 'text-neutral-900 border-neutral-900'
-        : 'text-neutral-500 border-transparent hover:text-neutral-900'
+        ? 'bg-ink text-white'
+        : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'
     }`;
 
   const Badge = ({ count }) =>
@@ -123,7 +143,7 @@ export default function Navbar() {
     ) : null;
 
   return (
-    <nav className={`${sticky ? 'sticky top-0' : ''} z-50 bg-white/80 backdrop-blur-md border-b border-neutral-200`}>
+    <nav className={`${sticky ? 'sticky top-0' : ''} z-50 bg-white/85 backdrop-blur-xl border-b border-neutral-200/80`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -137,7 +157,7 @@ export default function Navbar() {
             ) : (
               <LogoMark className="h-9 w-9 rounded-lg shadow-sm transition group-hover:scale-105" />
             )}
-            <span className="font-display font-bold text-xl tracking-tight text-neutral-900">
+            <span className="font-display font-bold text-xl tracking-tight text-ink">
               {brandName}
             </span>
           </Link>
@@ -171,7 +191,7 @@ export default function Navbar() {
           </div>
 
           {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-1.5">
             {user ? (
               <>
                 {links.map((l) => (
@@ -188,21 +208,69 @@ export default function Navbar() {
                     {l.badge != null && <Badge count={l.badge} />}
                   </Link>
                 ))}
-                <div className="ml-1 flex items-center gap-2 rounded-full border border-neutral-200 bg-neutral-50 px-2.5 py-1.5">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
-                    {initials || 'U'}
-                  </span>
-                  <span className="hidden lg:block text-xs font-medium text-neutral-500">
-                    {roleLabel}
-                  </span>
+
+                {/* User menu */}
+                <div className="relative ml-1" ref={userMenuRef}>
+                  <button
+                    type="button"
+                    onClick={() => setUserMenuOpen((o) => !o)}
+                    aria-expanded={userMenuOpen}
+                    aria-haspopup="menu"
+                    className="flex items-center gap-2 rounded-full border border-neutral-200 bg-neutral-50 px-2 py-1.5 transition hover:border-neutral-300 hover:bg-neutral-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                  >
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
+                      {initials || 'U'}
+                    </span>
+                    <span className="hidden lg:block text-xs font-semibold text-neutral-700">
+                      {roleLabel}
+                    </span>
+                    <svg
+                      className={`h-4 w-4 text-neutral-400 transition-transform ${userMenuOpen ? 'rotate-180' : ''}`}
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                  {userMenuOpen && (
+                    <div
+                      role="menu"
+                      className="absolute right-0 mt-2 w-56 origin-top-right rounded-xl border border-neutral-200 bg-white p-1.5 shadow-dropdown-lg motion-safe:animate-drawer-in"
+                    >
+                      <div className="px-3 py-2 border-b border-stone-line mb-1">
+                        <p className="text-sm font-bold text-ink truncate">{user.name}</p>
+                        <p className="text-xs text-neutral-500">{user.email}</p>
+                      </div>
+                      {[
+                        { to: '/profile', label: 'Profile' },
+                        { to: '/settings', label: 'Settings' },
+                      ].map((item) => (
+                        <Link
+                          key={item.to}
+                          to={item.to}
+                          role="menuitem"
+                          onClick={() => setUserMenuOpen(false)}
+                          className="block rounded-lg px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900"
+                        >
+                          {item.label}
+                        </Link>
+                      ))}
+                      <button
+                        type="button"
+                        role="menuitem"
+                        onClick={handleLogout}
+                        className="block w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-error-600 hover:bg-error-50"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  )}
                 </div>
-                <Button variant="outline" size="sm" onClick={handleLogout}>
-                  Logout
-                </Button>
               </>
             ) : (
               showAuthButtons && (
-                <>
+                <div className="flex items-center gap-2">
                   <Link to="/login">
                     <Button variant="ghost" size="sm">
                       Login
@@ -211,7 +279,7 @@ export default function Navbar() {
                   <Link to="/register">
                     <Button size="sm">Sign up</Button>
                   </Link>
-                </>
+                </div>
               )
             )}
           </div>
@@ -240,24 +308,25 @@ export default function Navbar() {
       {menuOpen && (
         <div className="md:hidden fixed inset-0 top-16 z-40" id="mobile-menu">
           <div
-            className="absolute inset-0 bg-neutral-900/40"
+            className="absolute inset-0 bg-neutral-900/40 motion-safe:animate-fade-in"
             onClick={() => setMenuOpen(false)}
             aria-hidden="true"
           />
-          <div className="relative bg-white border-b border-neutral-200 shadow-sm max-h-[calc(100vh-4rem)] overflow-y-auto">
+          <div className="relative bg-white border-b border-neutral-200 shadow-lg max-h-[calc(100vh-4rem)] overflow-y-auto">
             <div className="px-4 py-4 flex flex-col gap-1">
               {user ? (
                 <>
-                  <div className="mb-2 rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2.5">
-                    <p className="text-sm font-semibold text-neutral-900">{user.name}</p>
+                  <div className="mb-2 rounded-xl border border-stone-line bg-paper px-3 py-2.5">
+                    <p className="text-sm font-bold text-ink">{user.name}</p>
                     <p className="text-xs text-neutral-500">{roleLabel} account</p>
                   </div>
-                  {links.map((l) => (
+                  {links.map((l, i) => (
                     <Link
                       key={l.to}
                       to={l.to}
                       aria-current={isActive(l.to) ? 'page' : undefined}
-                      className={`flex items-center gap-2 px-3 py-3 rounded-lg text-base font-medium min-h-11 ${
+                      style={{ transitionDelay: `${i * 25}ms` }}
+                      className={`motion-safe:animate-fade-up flex items-center gap-2 px-3 py-3 rounded-lg text-base font-semibold min-h-11 ${
                         isActive(l.to)
                           ? 'bg-indigo-50 text-indigo-700'
                           : 'text-neutral-700 hover:bg-neutral-100'
@@ -268,14 +337,21 @@ export default function Navbar() {
                       {l.badge != null && <Badge count={l.badge} />}
                     </Link>
                   ))}
-                  <Button
-                    variant="outline"
-                    fullWidth
-                    className="mt-2"
-                    onClick={handleLogout}
-                  >
-                    Logout
-                  </Button>
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    <Link to="/profile" onClick={() => setMenuOpen(false)}>
+                      <Button variant="secondary" fullWidth size="sm">
+                        Profile
+                      </Button>
+                    </Link>
+                    <Button
+                      variant="danger"
+                      fullWidth
+                      size="sm"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </Button>
+                  </div>
                 </>
               ) : (
                 showAuthButtons && (

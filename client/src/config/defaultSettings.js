@@ -34,8 +34,8 @@ export const DEFAULT_PUBLIC_SETTINGS = {
   appearance: {
     activeTheme: DEFAULT_THEME_KEY,
     mode: 'light',
-    headingFont: 'Inter',
-    bodyFont: 'Inter',
+    headingFont: 'Bricolage Grotesque',
+    bodyFont: 'Manrope',
     fontWeight: 'semibold',
     fontScale: 'default',
     radius: 'default',

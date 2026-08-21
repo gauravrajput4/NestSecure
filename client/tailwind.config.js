@@ -14,7 +14,8 @@ export default {
   theme: {
     extend: {
       colors: {
-        ink: { DEFAULT: '#151C27', soft: '#2A313D', muted: '#4F46E5' },
+        // dusk ink — deep navy that carries the "city at night" identity
+        ink: { DEFAULT: '#0D1526', soft: '#1C2436', muted: '#4F46E5' },
         indigo: {
           brand: ch('--c-primary-600'),
           deep: ch('--c-primary-deep'),
@@ -26,12 +27,19 @@ export default {
           700: ch('--c-primary-700'),
         },
         marigold: { DEFAULT: '#F59E0B', soft: '#FBBF24', deep: '#D97706' },
-        paper: { DEFAULT: '#F9F9FF', sunk: '#F0F3FF' },
+        // warm stone surfaces — the "residential" counterpoint to the dusk hero
+        stone: {
+          DEFAULT: '#F3F0EA',
+          soft: '#FAF8F4',
+          line: '#E7E3D9',
+          deep: '#EAE5DB',
+        },
+        paper: { DEFAULT: '#F6F4EE', sunk: '#EEE9E0' },
         surface: {
           DEFAULT: '#FFFFFF', low: '#F0F3FF', mid: '#E7EEFE', high: '#E2E8F8', highest: '#DCE2F3',
           100: '#F9FAFB', 200: '#F3F4F6', 300: '#E5E7EB',
         },
-        outline: { DEFAULT: '#777587', soft: '#C7C4D8' },
+        outline: { DEFAULT: '#8A8691', soft: '#DCD8CC' },
 
         // Expanded scales for a complete UI system
         neutral: {
@@ -100,6 +108,9 @@ export default {
         elevated: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1)',
         'dropdown-md': '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
         'dropdown-lg': '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1)',
+        // warm, low-saturation card shadow for the stone surfaces
+        'card-soft': '0 1px 2px rgba(13,21,38,0.04), 0 8px 24px rgba(13,21,38,0.05)',
+        glass: '0 8px 32px rgba(13,21,38,0.18), inset 0 1px 0 rgba(255,255,255,0.25)',
       },
       borderRadius: {
         xl2: '1rem',
@@ -122,20 +133,55 @@ export default {
           '0%': { opacity: '0', transform: 'translateY(12px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
+        'fade-in': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
         'pin-drop': {
           '0%': { opacity: '0', transform: 'translateY(-18px) scale(0.9)' },
           '60%': { transform: 'translateY(2px) scale(1.02)' },
           '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
         },
+        'pulse-ring': {
+          '0%': { transform: 'scale(0.6)', opacity: '0.7' },
+          '100%': { transform: 'scale(2.4)', opacity: '0' },
+        },
         shimmer: {
           '0%': { backgroundPosition: '-400px 0' },
           '100%': { backgroundPosition: '400px 0' },
         },
+        'toast-in': {
+          '0%': { opacity: '0', transform: 'translateY(12px) scale(0.97)' },
+          '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
+        },
+        'modal-pop': {
+          '0%': { opacity: '0', transform: 'translateY(8px) scale(0.97)' },
+          '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
+        },
+        'drawer-in': {
+          '0%': { opacity: '0', transform: 'translateY(-6px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        'float-slow': {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+        'glow-drift': {
+          '0%, 100%': { opacity: '0.72', transform: 'translateY(0) scale(1)' },
+          '50%': { opacity: '1', transform: 'translateY(-12px) scale(1.03)' },
+        },
       },
       animation: {
         'fade-up': 'fade-up 0.5s ease-out both',
+        'fade-in': 'fade-in 0.4s ease-out both',
         'pin-drop': 'pin-drop 0.5s cubic-bezier(0.22,1,0.36,1) both',
+        'pulse-ring': 'pulse-ring 1.6s cubic-bezier(0.2,0.6,0.4,1) infinite',
         shimmer: 'shimmer 1.4s linear infinite',
+        'toast-in': 'toast-in 0.28s cubic-bezier(0.22,1,0.36,1) both',
+        'modal-pop': 'modal-pop 0.22s cubic-bezier(0.22,1,0.36,1) both',
+        'drawer-in': 'drawer-in 0.18s ease-out both',
+        'float-slow': 'float-slow 7s ease-in-out infinite',
+        'glow-drift': 'glow-drift 26s ease-in-out infinite',
       },
     },
   },

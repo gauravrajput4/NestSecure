@@ -11,6 +11,7 @@ const ALWAYS_ALLOWED = [
   '/api/auth/login',
   '/api/auth/me',
   '/api/admin', // entire admin surface (already admin-gated downstream)
+  '/api/payment/webhook', // gateway callbacks carry their own signature
 ];
 
 function isAllowlisted(path) {

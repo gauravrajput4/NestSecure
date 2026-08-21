@@ -96,8 +96,8 @@ const siteSettingsSchema = new Schema(
       {
         activeTheme: { type: String, default: DEFAULT_THEME_KEY }, // key or custom _id
         mode: { type: String, default: 'light' }, // light | dark | system | light-dark
-        headingFont: { type: String, default: 'Inter' },
-        bodyFont: { type: String, default: 'Inter' },
+        headingFont: { type: String, default: 'Bricolage Grotesque' },
+        bodyFont: { type: String, default: 'Manrope' },
         fontWeight: { type: String, default: 'semibold' },
         fontScale: { type: String, default: 'default' }, // compact|default|comfortable|large
         radius: { type: String, default: 'default' }, // sharp|subtle|default|rounded|soft

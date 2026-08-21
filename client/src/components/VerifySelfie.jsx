@@ -93,13 +93,13 @@ export default function VerifySelfie() {
   };
 
   return (
-    <div className="bg-white rounded-xl2 shadow-card p-8">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="font-display font-bold text-xl text-ink">
+    <div className="bg-white rounded-xl2 shadow-card p-5 sm:p-8">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <h2 className="font-display font-bold text-lg sm:text-xl text-ink">
           Identity Verification
         </h2>
         <span
-          className={`px-3 py-1 rounded-full text-xs font-semibold ${
+          className={`px-3 py-1 rounded-full text-xs font-semibold shrink-0 ${
             verified
               ? 'bg-success/10 text-success'
               : 'bg-warning/15 text-warning'
@@ -110,12 +110,12 @@ export default function VerifySelfie() {
       </div>
 
       {verified ? (
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
           {user.verificationPhoto && (
             <img
               src={user.verificationPhoto}
               alt="Your verification selfie"
-              className="h-20 w-20 rounded-xl object-cover"
+              className="h-20 w-20 rounded-xl object-cover shrink-0"
             />
           )}
           <p className="text-sm text-ink/70">
@@ -160,30 +160,47 @@ export default function VerifySelfie() {
           </div>
           <canvas ref={canvasRef} className="hidden" />
 
-          <div className="mt-5 flex flex-wrap justify-center gap-3">
+          <div className="mt-5 flex flex-col sm:flex-row flex-wrap justify-center gap-2 sm:gap-3">
             {!live && !preview && (
               <>
-                <Button onClick={startCamera}>Open camera</Button>
-                <Button variant="outline" onClick={() => fileRef.current?.click()}>
+                <Button onClick={startCamera} className="w-full sm:w-auto">
+                  Open camera
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => fileRef.current?.click()}
+                  className="w-full sm:w-auto"
+                >
                   Upload instead
                 </Button>
               </>
             )}
             {live && (
               <>
-                <Button onClick={capture}>📸 Capture</Button>
-                <Button variant="ghost" onClick={stopCamera}>
+                <Button onClick={capture} className="w-full sm:w-auto">
+                  📸 Capture
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={stopCamera}
+                  className="w-full sm:w-auto"
+                >
                   Cancel
                 </Button>
               </>
             )}
             {preview && (
               <>
-                <Button onClick={submit} loading={busy}>
+                <Button
+                  onClick={submit}
+                  loading={busy}
+                  className="w-full sm:w-auto"
+                >
                   Submit for verification
                 </Button>
                 <Button
                   variant="ghost"
+                  className="w-full sm:w-auto"
                   onClick={() => {
                     setPreview(null);
                     startCamera();

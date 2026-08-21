@@ -52,6 +52,8 @@ const CONTAINER_MAX = {
 // injection: anything not in this map (or "Inter" / "System UI", already
 // available) is ignored and falls back to the system stack.
 const FONT_LINKS = {
+  'Bricolage Grotesque':
+    'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&display=swap',
   Manrope:
     'https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap',
   'DM Sans':

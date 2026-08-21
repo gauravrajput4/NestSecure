@@ -104,6 +104,13 @@ export default function AddListing() {
         return next;
       })
     );
+  const toggleUseRooms = (checked) => {
+    setUseRooms(checked);
+    // Seed one blank room so owners can fill Label / Rent immediately.
+    if (checked) {
+      setRooms((prev) => (prev.length === 0 ? [{ ...emptyRoom }] : prev));
+    }
+  };
 
   // ---- Per-step validation ------------------------------------------------
   const validateStep = (s) => {
@@ -158,6 +165,12 @@ export default function AddListing() {
         totalBeds: Number(r.totalBeds),
       }));
 
+      // Send derived aggregates for room-level listings so API validation and
+      // listing cards stay consistent before the server syncs beds/price.
+      const totalBeds = useRooms
+        ? roomPayload.reduce((sum, r) => sum + r.totalBeds, 0)
+        : 0;
+
       const payload = {
         name: form.name,
         description: form.description,
@@ -166,12 +179,16 @@ export default function AddListing() {
         city: form.city,
         latitude: Number(form.latitude),
         longitude: Number(form.longitude),
-        price: useRooms ? 0 : Number(form.price),
-        securityDeposit: useRooms ? 0 : Number(form.securityDeposit) || 0,
-        totalRooms: useRooms ? 0 : Number(form.totalRooms),
-        availableRooms: useRooms ? 0 : Number(form.availableRooms),
+        price: useRooms
+          ? Math.min(...roomPayload.map((r) => r.rent))
+          : Number(form.price),
+        securityDeposit: useRooms
+          ? Math.min(...roomPayload.map((r) => r.deposit))
+          : Number(form.securityDeposit) || 0,
+        totalRooms: useRooms ? totalBeds : Number(form.totalRooms),
+        availableRooms: useRooms ? totalBeds : Number(form.availableRooms),
         facilities,
-        ...(useRooms ? { rooms: roomPayload } : { rooms: [] }),
+        rooms: useRooms ? roomPayload : [],
       };
 
       const res = await createPG(payload);
@@ -473,7 +490,7 @@ export default function AddListing() {
                 <input
                   type="checkbox"
                   checked={useRooms}
-                  onChange={(e) => setUseRooms(e.target.checked)}
+                  onChange={(e) => toggleUseRooms(e.target.checked)}
                   className="w-5 h-5 rounded border-ink/20 text-indigo-brand focus:ring-indigo-brand"
                 />
                 <div>

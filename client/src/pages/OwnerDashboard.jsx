@@ -6,7 +6,7 @@ import Loader from '../components/Loader.jsx';
 
 function StatCard({ label, value, accent, tint, icon }) {
   return (
-    <div className="bg-white rounded-xl2 shadow-subtle border border-outline-soft/70 p-5 sm:p-6">
+    <div className="bg-white rounded-xl2 shadow-card-soft border border-stone-line p-5 sm:p-6 transition-shadow hover:shadow-lift">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-sm text-ink/60 mb-1">{label}</p>
@@ -31,7 +31,7 @@ function StatCard({ label, value, accent, tint, icon }) {
 
 function ProgressBar({ percent }) {
   return (
-    <div className="w-full h-2 bg-surface-highest rounded-full overflow-hidden">
+    <div className="w-full h-2 bg-stone-deep rounded-full overflow-hidden">
       <div
         className="h-full bg-indigo-brand rounded-full transition-all"
         style={{ width: `${percent}%` }}
