@@ -225,13 +225,27 @@ export async function provisionPayout(req, res, next) {
     }
 
     // Provision now.
-    const result = await createLinkedAccount({
-      method: user.payout.method,
-      accountHolder: user.payout.accountHolder,
-      accountNumber: user.payout.accountNumber,
-      ifsc: user.payout.ifsc,
-      upiId: user.payout.upiId,
-    });
+    let result;
+    try {
+      result = await createLinkedAccount({
+        method: user.payout.method,
+        accountHolder: user.payout.accountHolder,
+        accountNumber: user.payout.accountNumber,
+        ifsc: user.payout.ifsc,
+        upiId: user.payout.upiId,
+      });
+    } catch (provisionErr) {
+      console.error('Razorpay linked account creation failed:', provisionErr);
+      // Check if it's a Razorpay Route not enabled error
+      const msg = provisionErr.message || String(provisionErr);
+      if (msg.includes('Route') || msg.includes('route') || msg.includes('not enabled') || msg.includes('permission') || msg.includes('unauthorized')) {
+        return res.status(400).json({
+          success: false,
+          message: 'Razorpay Route (transfers) is not enabled on this account. Contact Razorpay support to enable payouts, or use a live account with Route access.',
+        });
+      }
+      throw provisionErr;
+    }
 
     user.payout.razorpayAccountId = result.accountId;
     user.payout.razorpayFundAccountId = result.fundAccountId;

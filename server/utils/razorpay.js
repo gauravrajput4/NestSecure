@@ -117,18 +117,25 @@ export async function createRefund(paymentId, amountRupees) {
  * @param {object} details - { method: 'BANK'|'UPI', accountHolder, accountNumber?, ifsc?, upiId? }
  */
 export async function createLinkedAccount(details) {
-  const contact = await gateway().contacts.create({
+  const g = gateway();
+  // Check if Route APIs are available (contacts, fundAccounts, transfers)
+  if (!g.contacts || !g.fundAccounts || !g.transfers) {
+    const err = new Error('Razorpay Route (transfers/linked accounts) is not enabled on this account. Contact Razorpay support to enable it, or use a live account with Route access.');
+    err.code = 'ROUTE_NOT_ENABLED';
+    throw err;
+  }
+  const contact = await g.contacts.create({
     name: details.accountHolder,
     type: 'vendor',
   });
   const fundAccount =
     details.method === 'UPI'
-      ? await gateway().fundAccounts.create({
+      ? await g.fundAccounts.create({
           contact_id: contact.id,
           account_type: 'vpa',
           vpa: { address: details.upiId },
         })
-      : await gateway().fundAccounts.create({
+      : await g.fundAccounts.create({
           contact_id: contact.id,
           account_type: 'bank_account',
           bank_account: {
@@ -151,8 +158,14 @@ export async function createLinkedAccount(details) {
  * @param {string} paymentId - used for idempotency key
  */
 export async function createTransfer(fundAccountId, amountRupees, paymentId) {
+  const g = gateway();
+  if (!g.transfers) {
+    const err = new Error('Razorpay Route (transfers) is not enabled on this account.');
+    err.code = 'ROUTE_NOT_ENABLED';
+    throw err;
+  }
   const amountPaise = Math.round(amountRupees * 100);
-  return gateway().transfers.create({
+  return g.transfers.create({
     account: fundAccountId,
     amount: amountPaise,
     currency: 'INR',
@@ -165,5 +178,11 @@ export async function createTransfer(fundAccountId, amountRupees, paymentId) {
  * @param {string} transferId
  */
 export async function reverseTransfer(transferId) {
-  return gateway().transfers.reverse(transferId);
+  const g = gateway();
+  if (!g.transfers) {
+    const err = new Error('Razorpay Route (transfers) is not enabled on this account.');
+    err.code = 'ROUTE_NOT_ENABLED';
+    throw err;
+  }
+  return g.transfers.reverse(transferId);
 }
